@@ -2,7 +2,7 @@ const TherapistChats = {
     chatPage: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
-      height: '85vh',
+      height: '100vh',
       fontFamily: 'Arial, sans-serif',
       marginTop:'1%'
     },

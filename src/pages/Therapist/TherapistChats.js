@@ -6,7 +6,7 @@ import { Typography } from "@mui/material";
 function TherapistChats() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <div style={styles.chatPage}>
         {/* Left Panel */}
         <div style={styles.leftPanel}>

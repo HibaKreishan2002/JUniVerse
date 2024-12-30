@@ -115,7 +115,7 @@ function MentalHealthHub() {
         }}
       >
         <Grid container justifyContent="center">
-          {modalContent.map((content, index) => (
+          {modalContent.map((content, index) => ( //And I change the map func to be one func 
             <Grid
               item
               xs={12}

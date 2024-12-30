@@ -99,10 +99,10 @@ const FormLogin = () => {
   });
 
   // prevent Default
-  const preventDefault = (e) => e.preventDefault();
+  const preventDefault = (e) => e.preventDefault();  //
 
   // form submit
-  const onSubmit = (data) => {
+  const onSubmit = (data) => {//This method we are use it to handle Login Button 
     console.table(data);
     navigate("/");
   };
@@ -116,10 +116,10 @@ const FormLogin = () => {
       <TextField
         variant="outlined"
         fullWidth
-        type="email"
-        label="Email address"
+        type="text"
+        label="Username"
         error={errors.email ? true : false}
-        helperText={errors.email && "Enter a valid email address"}
+        helperText={errors.email && "Enter a valid username"}//Done 
         {...register("email", { required: true })}
       />
 

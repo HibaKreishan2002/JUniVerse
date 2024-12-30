@@ -144,6 +144,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
+import Text from '../assets/images/Text.png';
 import MenuItem from "@mui/material/MenuItem";
 import {
   AppBar,
@@ -223,7 +224,9 @@ const MainHeader = (props) => {
       <ToolbarStyle>
         {/* Left side's items */}
         <ContainerStyle>
-          <img src={WhiteLogo} width={"55px"} height={"55px"} />
+          <img src={WhiteLogo} width={"50px"} height={"50px"} style={{marginLeft:15}} />
+          <img src={Text} width={'82px'} height={'15px'} style={{marginLeft:8,marginTop:18}} />
+
         </ContainerStyle>
 
         <Box

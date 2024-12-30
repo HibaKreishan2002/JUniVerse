@@ -15,7 +15,7 @@ function App() {
         {/* Route for login */}
         <Route path="/Login" element={<Login />} />
 
-        {/* Routes wrapped in ProjectLayout */}
+        {/* Routes wrapped in ProjectLayout This is NEW */}
         <Route element={<ProjectLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/SocialHub" element={<SocialHub />} />

@@ -152,14 +152,16 @@ const RightPanelStyle = styled(Box)(({ theme }) => ({
 const Login = () => {
   return (
     <>
+    {/* This is a login Page have two main Component */}
       <ContainerBoxStyle container>
+        {/* This is a Left Image Component */}
         <LeftPanel img={LoginPhoto} imgAlt="Login Image" />
 
         <RightPanelStyle>
           <Container maxWidth="xs" className="form_Container">
             {/* Buttons */}
 
-            {/* The Actual Form 👇 */}
+            {/* The Actual Form (username and password component) 👇 */}
             <FormLogin />
           </Container>
         </RightPanelStyle>
