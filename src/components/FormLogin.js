@@ -14,6 +14,7 @@ import { Box } from "@mui/material";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import SectionDivider from "./SectionDivider";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // style
 const FormStyle = styled("form")(({ theme }) => ({
@@ -104,8 +105,17 @@ const FormLogin = () => {
   // form submit
   const onSubmit = (data) => {//This method we are use it to handle Login Button 
     console.table(data);
-    navigate("/");
-  };
+    axios.post("http://localhost:8080/api/v1/authentication/authenticate",{id:data.email,password:data.password}).then((Result)=>{
+console.log(Result);
+
+      alert("SSSSSSS")
+    }).catch((error)=>{
+      alert(error.message)
+      console.log(error);
+
+    })
+   // navigate("/");//
+  }; 
 
   // for reset
   // couldn't make it work

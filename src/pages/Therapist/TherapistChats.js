@@ -2,10 +2,12 @@ import React from "react";
 import styles from "./TherapistChatsStyle.js"; // Import the JavaScript styles
 import Header from "../../components/Header.js";
 import { Typography } from "@mui/material";
+import ResponsiveDev from "../../components/ResponsiveDev.js";
 
 function TherapistChats() {
   return (
     <>
+    
       {/* <Header /> */}
       <div style={styles.chatPage}>
         {/* Left Panel */}

@@ -2,9 +2,10 @@ const TherapistChats = {
     chatPage: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
-      height: '100vh',
+      height: '80vh',
       fontFamily: 'Arial, sans-serif',
-      marginTop:'1%'
+      // marginTop:'1%',
+      marginRight:'70px'
     },
     leftPanel: {
       backgroundColor: '#f5f5f5',
@@ -18,6 +19,7 @@ const TherapistChats = {
     userList: {
       listStyle: 'none',
       padding: 0,
+      
     },
     userListItem: {
       margin: '10px 0',
@@ -25,6 +27,8 @@ const TherapistChats = {
       border: '1px solid #ddd',
       borderRadius: '5px',
       cursor: 'pointer',
+     
+
     },
     userListItemHover: {
       backgroundColor: '#e9e9e9',
@@ -33,6 +37,7 @@ const TherapistChats = {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
+      marginLeft:'28px'
     },
     chatHeader: {
       backgroundColor: '#333',

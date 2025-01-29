@@ -1,20 +1,37 @@
-import React from 'react'
-import Header from './Header';
-import Footer from './Footer';
-import { Outlet } from 'react-router-dom';
+import { useState } from "react";
+import { Box, styled, Toolbar } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
-function Layout() {
+// import MainHeader from "./MainHeader";
+import Header from "./Header";
+const MainStyle = styled("main")(({ theme }) => ({
+  flexGrow: 1,
+  minHeight: "100vh",
+  padding: theme.spacing(2.5),
+}));
+
+// window width
+const ProjectLayout = (props) => {
+  const [toggleMenu, setToggleMenu] = useState(false);
+
+  // toggle drawer
+  const handleToggleDrawer = () => setToggleMenu(!toggleMenu);
+
   return (
-    <>
-    <Header/>
+    <Box sx={{ display: "flex" }}>
+      {/* App Bar */}
+      <Header />
+      {/* Content */}
+      <MainStyle>
+        <Toolbar />
+        {/* Main parts */}
+        {/* {props.children} */}
+        <Outlet />
+      </MainStyle>
+    </Box>
+  );
+};
 
-<Outlet/>
+export default ProjectLayout;
 
-
-    {/* <Footer/> */}
-    {/* This is the footer place  */}
-    </>
-  )
-}
-
-export default Layout
+export const drawerWidth = 0;

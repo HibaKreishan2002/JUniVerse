@@ -155,7 +155,7 @@ import {
   Button,
 } from "@mui/material";
 
-import { drawerWidth } from "./ProjectLayout";
+import { drawerWidth } from "./Layout";
 import WhiteLogo from "../assets/images/WhiteLogo.png";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -225,7 +225,7 @@ const MainHeader = (props) => {
         {/* Left side's items */}
         <ContainerStyle>
           <img src={WhiteLogo} width={"50px"} height={"50px"} style={{marginLeft:15}} />
-          <img src={Text} width={'82px'} height={'15px'} style={{marginLeft:8,marginTop:18}} />
+          <img src={Text} width={'90px'} height={'15px'} style={{marginLeft:8,marginTop:18}} />
 
         </ContainerStyle>
 
