@@ -1,4 +1,3 @@
-import { width } from "@mui/system";
 
 const SocialHubStyle = {
   // chatPage: {
@@ -10,7 +9,10 @@ const SocialHubStyle = {
   //  marginLeft:'20%',
   //   fontFamily: 'Arial, sans-serif',
   //   marginTop: '1%',
-  // },
+  // }
+  DateTimeStyle:{
+fontSize:"10px"
+  },
 
   rightPanel: {
     display: "flex",
@@ -36,6 +38,10 @@ const SocialHubStyle = {
     borderRadius: "10px",
     marginBottom: "10px",
     maxWidth: "70%",
+    marginLeft:"auto",
+    wordWrap:"break-word", // يجبر النص على النزول للسطر عند الحاجة
+    overflowWrap: "break-word", // يعالج الكلمات الطويلة
+    whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
   },
   sentMessage: {
     backgroundColor: "#d1e7dd",
@@ -44,6 +50,10 @@ const SocialHubStyle = {
     marginBottom: "10px",
     alignSelf: "flex-end",
     maxWidth: "70%",
+    wordWrap: "break-word", // يجبر النص على النزول للسطر عند الحاجة
+    overflowWrap: "break-word", // يعالج الكلمات الطويلة
+    whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
+
   },
   messageInput: {
     display: "flex",

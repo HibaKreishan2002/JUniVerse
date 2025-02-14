@@ -7,7 +7,7 @@ import Header from "./Header";
 const MainStyle = styled("main")(({ theme }) => ({
   flexGrow: 1,
   minHeight: "100vh",
-  padding: theme.spacing(2.5),
+  // padding: theme.spacing(2.5),
 }));
 
 // window width

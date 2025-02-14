@@ -2,9 +2,9 @@ const TherapistChats = {
     chatPage: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
-      height: '80vh',
+      height: '90vh',
       fontFamily: 'Arial, sans-serif',
-      // marginTop:'1%',
+      //  marginTop:'1%',
       marginRight:'70px'
     },
     leftPanel: {
@@ -57,6 +57,7 @@ const TherapistChats = {
       borderRadius: '10px',
       marginBottom: '10px',
       maxWidth: '70%',
+       marginLeft:'auto'
     },
     sentMessage: {
       backgroundColor: '#d1e7dd',
@@ -89,6 +90,9 @@ const TherapistChats = {
     messageInputButtonHover: {
       backgroundColor: '#555',
     },
+    DateTimeStyle:{
+      fontSize:"10px"
+        },
   };
   
   export default TherapistChats;

@@ -9,22 +9,25 @@
         backgroundPosition: 'center',  // This will center the image
         paddingTop: '3px',  // Moves the content down a little, you can adjust this value
   }  */
-  ::-webkit-scrollbar {
-    width: 2px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: rgb(223, 223, 223);
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: rgb(0, 171, 85);
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: purple;
-  }
-  
+ /* Customize the scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Scrollbar track styling */
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb styling */
+::-webkit-scrollbar-thumb {
+  background: #22a9d3;
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background: #1b8ea5;
+}

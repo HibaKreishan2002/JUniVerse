@@ -5,24 +5,25 @@ import MentalHealthHub from "./pages/MentalHealthHub/MentalHealthHub";
 import Login from "./pages/Registeration/Login";
 import TherapistChats from "./pages/Therapist/TherapistChats";
 import Layout from "./components/Layout";
-import Home from "./pages/Home/Home";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ECard from "./pages/E-Card/ECard";
-
+import Homepage from "./pages/Homepage/Homepage";
 function App() {
   return (
     <>
       <Routes>
         {/* Route for login */}
-        <Route path="/Login" element={<Login />} />
+        <Route path="/" element={<Login />} />
 
         {/* Routes wrapped in Layout This is NEW */}
         <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/ProfilePage" element={<ProfilePage />} />
           <Route path="/SocialHub" element={<SocialHub />} />
           <Route path="/MentalHealthHub" element={<MentalHealthHub />} />
           <Route path="/TherapistChats" element={<TherapistChats />} />
           <Route path="/ECard" element={<ECard />} />
         </Route>
+        <Route path="/Homepage" element={<Homepage/>} />
       </Routes>
     </>
   );

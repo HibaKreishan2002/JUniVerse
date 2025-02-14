@@ -17,6 +17,7 @@ function SocialHub() {
             </Typography>
 
             <div style={SocialHubStyle.chatArea}>
+              
               <p style={SocialHubStyle.receivedMessage}>
                 This is a message from a student.
               </p>

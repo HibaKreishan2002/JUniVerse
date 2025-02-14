@@ -6,13 +6,14 @@ import Modal from "@mui/material/Modal";
 import PrivateChat from "../../components/PrivateChat";
 import ResponsiveDev from "../../components/ResponsiveDev";
 import { Grid } from "@mui/material";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
 function MentalHealthHub() {
   const [open, setOpen] = useState(null);
-
   const handleOpen = (index) => setOpen(index);
   const handleClose = () => setOpen(null);
 
-  const modalContent = [
+  const modalContent = [ //array
     {
       title: "Depression",
       description: (
@@ -25,6 +26,18 @@ function MentalHealthHub() {
             -Talk to someone you trust, try to stay active, and speak to a
             doctor if it doesn’t get better.
           </p>
+          <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(#6861bd , #3873D4 , #22a9d3)',
+    color: 'white',
+justifyContent:"center",
+marginLeft:15
+  }}
+  onClick={handleClose}
+>
+<FavoriteIcon/>
+</Button>
         </>
       ),
     },
@@ -40,6 +53,18 @@ function MentalHealthHub() {
             -Take deep breaths, try to relax, and focus on one thing at a time.
             Talking to someone can also help.
           </p>
+          <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(#6861bd , #3873D4 , #22a9d3)',
+    color: 'white',
+justifyContent:"center",
+marginLeft:15
+  }}
+  onClick={handleClose}
+>
+<FavoriteIcon/>
+</Button>
         </>
       ),
     },
@@ -54,6 +79,18 @@ function MentalHealthHub() {
           <p>
             -Take breaks, get enough sleep, and do something you enjoy to relax.
           </p>
+          <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(#6861bd , #3873D4 , #22a9d3)',
+    color: 'white',
+justifyContent:"center",
+marginLeft:15
+  }}
+  onClick={handleClose}
+>
+<FavoriteIcon/>
+</Button>
         </>
       ),
     },
@@ -69,6 +106,18 @@ function MentalHealthHub() {
             -Stick to a bedtime routine, avoid screens before bed, and talk to a
             doctor if it continues.
           </p>
+          <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(#6861bd , #3873D4 , #22a9d3)',
+    color: 'white',
+justifyContent:"center",
+marginLeft:15
+  }}
+  onClick={handleClose}
+>
+<FavoriteIcon/>
+</Button>
         </>
       ),
     },
@@ -84,6 +133,18 @@ function MentalHealthHub() {
             -Remind yourself it’s okay to make mistakes. Focus on doing your
             best, not being perfect.
           </p>
+          <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(#6861bd , #3873D4 , #22a9d3)',
+    color: 'white',
+justifyContent:"center",
+marginLeft:15
+  }}
+  onClick={handleClose}
+>
+<FavoriteIcon/>
+</Button>
         </>
       ),
     },
@@ -98,6 +159,18 @@ function MentalHealthHub() {
             -Remind yourself of your successes and talk to a friend or mentor
             for support.
           </p>
+          <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(#6861bd , #3873D4 , #22a9d3)',
+    color: 'white',
+justifyContent:"center",
+marginLeft:15
+  }}
+  onClick={handleClose}
+>
+<FavoriteIcon/>
+</Button>
         </>
       ),
     },
@@ -105,7 +178,7 @@ function MentalHealthHub() {
 
   return (
     <ResponsiveDev>
-      <Box
+      <Box //The entire screen style
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -116,36 +189,40 @@ function MentalHealthHub() {
       >
         <Grid container justifyContent="center">
           {modalContent.map((content, index) => ( //And I change the map func to be one func 
-            <Grid
+            <Grid //extra style for small/large screens
               item
               xs={12}
               sm={6}
-              md={4}
+              md={4} //done extra style
               key={index}
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+              
               }}
             >
               <Box
                 sx={{
                   width: "200px", // Fixed width
                   height: "60px", // Fixed height
-                  marginBottom: "16px", // Space below each button
+                  marginBottom: "50px",
+                  marginTop: "20px", // Space below each button
                 }}
               >
                 <Button
                   onClick={() => handleOpen(index)}
                   sx={{
-                    width: "100%",
-                    height: "100%",
+                    width: "95%",
+                    height: "160%",
                     fontSize: "1rem",
-                    bgcolor: "transparent",
-                    border: "2px solid black",
-                    color: "black",
+                    border: "6px solid rgb(159, 187, 219)  ",
+                    borderRadius: "70px",
+                    color: "#474189",
+                    fontFamily: "cursive",
                     "&:hover": {
-                      bgcolor: "rgba(0, 0, 0, 0.1)",
+                      bgcolor: "#c4c2dc",
+                   
                     },
                   }}
                 >
@@ -160,23 +237,18 @@ function MentalHealthHub() {
                       transform: "translate(-50%, -50%)",
                       width: "90%",
                       maxWidth: 400,
-                      bgcolor: "white",
+                      bgcolor: "#eeeeee",
                       boxShadow: 24,
                       p: 4,
                       borderRadius: 2,
                     }}
                   >
-                    <Typography
-                      id={`modal-title-${index}`}
-                      variant="h6"
-                      component="h2"
-                      sx={{ mb: 2 }}
-                    >
-                      {content.title}
-                    </Typography>
+                  
                     <Typography
                       id={`modal-description-${index}`}
-                      sx={{ mt: 2 }}
+                      sx={{fontWeight: "bold" , mt: 2 , backgroundColor: "#efe7f4 "}}
+                      color= "#474189"
+                      
                     >
                       {content.description}
                     </Typography>
@@ -187,9 +259,14 @@ function MentalHealthHub() {
           ))}
         </Grid>
       </Box>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px'  }}><a href="https://www.who.int/health-topics/mental-health#tab=tab_1"> <strong > Read more about your mental health! </strong> </a> 
+      <a href="https://findahelpline.com/countries/jo"> <strong >Reach out for JCPA Hotline! 
+
+</strong> </a> 
+  </div>;
       <PrivateChat></PrivateChat>
     </ResponsiveDev>
   );
 }
 
-export default MentalHealthHub;
+export default MentalHealthHub;  

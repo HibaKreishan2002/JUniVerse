@@ -1,21 +1,15 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  InputAdornment,
-  Link,
-} from "@mui/material";
+import {Button,Checkbox,FormControlLabel,IconButton,InputAdornment,Link,} from "@mui/material";
 import { styled } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Box } from "@mui/material";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import SectionDivider from "./SectionDivider";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
+//import axios from "axios";
+import JuUniVerseAxios from "../API/JuUniVerseAxios";
+import Swal from "sweetalert2";
 // style
 const FormStyle = styled("form")(({ theme }) => ({
   // root style
@@ -78,14 +72,15 @@ const FormStyle = styled("form")(({ theme }) => ({
   },
 }));
 
-const FormLogin = () => {
+function FormLogin () {
+ //Handlling show password and remember 
   const [showPassword, setShowPassord] = useState(false);
   const [remember, setRemember] = useState(true);
-
+  const [token , setToken]=useState("")
   const handleTogglePassword = () => setShowPassord(!showPassword);
   const handleToggleRemember = () => setRemember(!remember);
-  const navigate = useNavigate();
-
+  const navigate = useNavigate(); // why here?
+ 
   // hook form
   const {
     register,
@@ -103,22 +98,20 @@ const FormLogin = () => {
   const preventDefault = (e) => e.preventDefault();  //
 
   // form submit
-  const onSubmit = (data) => {//This method we are use it to handle Login Button 
-    console.table(data);
-    axios.post("http://localhost:8080/api/v1/authentication/authenticate",{id:data.email,password:data.password}).then((Result)=>{
-console.log(Result);
 
-      alert("SSSSSSS")
-    }).catch((error)=>{
-      alert(error.message)
-      console.log(error);
-
-    })
-   // navigate("/");//
-  }; 
-
-  // for reset
-  // couldn't make it work
+  const onSubmit = (data) => {//This method we use it to handle Login Button 
+  JuUniVerseAxios.post("/auth/signIn",{username:data.email,password:data.password}).then(res=>{
+ 
+    sessionStorage.setItem("AUTH_TOKEN",res.data.data.token)
+  navigate("/ProfilePage");
+}).catch(err=>{
+  Swal.fire({
+    title: "ERROR",
+    text: "Invalid username/password",
+    icon: "error"
+  });
+console.log(err.response.data.message);
+}) }; 
 
   return (
     <FormStyle component="form" onSubmit={handleSubmit(onSubmit)}>

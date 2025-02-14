@@ -146,6 +146,8 @@ import { useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
 import Text from '../assets/images/Text.png';
 import MenuItem from "@mui/material/MenuItem";
+ 
+
 import {
   AppBar,
   Box,
@@ -191,6 +193,7 @@ const MainHeader = (props) => {
   const [showNotification, setShowNotification] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(null);
   const navigate = useNavigate();
+ 
   const handlePageNavigation = (hub) => {
     if (hub == "Soical") {
       navigate("SocialHub");
@@ -215,7 +218,8 @@ const MainHeader = (props) => {
   const handleClose = (buttonName) => {
     setMenuList(null);
     if (buttonName == "Logout") {
-      navigate("/Login");
+      sessionStorage.setItem("AUTH_TOKEN","")
+      navigate("/");
     }
   };
 
@@ -223,9 +227,9 @@ const MainHeader = (props) => {
     <AppBarStyle position="fixed">
       <ToolbarStyle>
         {/* Left side's items */}
-        <ContainerStyle>
-          <img src={WhiteLogo} width={"50px"} height={"50px"} style={{marginLeft:15}} />
-          <img src={Text} width={'90px'} height={'15px'} style={{marginLeft:8,marginTop:18}} />
+        <ContainerStyle onClick={()=>navigate("/Home")}>
+          <img src={WhiteLogo} width={"40px"} height={"40px"} style={{marginLeft:15}} />
+          <img src={Text} width={'90px'} height={'15px'} style={{marginLeft:5,marginTop:18}} />
 
         </ContainerStyle>
 
