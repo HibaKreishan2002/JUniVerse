@@ -283,7 +283,8 @@ const MainHeader = (props) => {
             anchorEl={MenuList}
             onClose={() => handleClose()}
           >
-            <MenuItem onClick={() => handleClose}>Username</MenuItem>
+            <MenuItem onClick={() =>{navigate("/ProfilePage")
+               handleClose} }>{sessionStorage.getItem("fullname")}</MenuItem>
             <MenuItem onClick={() => handleClose}>Help</MenuItem>
             <MenuItem onClick={() => handleClose("Logout")}>Logout</MenuItem>
           </Menu>

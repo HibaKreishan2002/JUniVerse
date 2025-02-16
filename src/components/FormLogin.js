@@ -105,12 +105,20 @@ function FormLogin () {
     sessionStorage.setItem("AUTH_TOKEN",res.data.data.token)
   navigate("/ProfilePage");
 }).catch(err=>{
-  Swal.fire({
-    title: "ERROR",
-    text: "Invalid username/password",
-    icon: "error"
-  });
-console.log(err.response.data.message);
+  if (err?.response?.data?.message==undefined){
+    Swal.fire({
+      title: "ERROR",
+      text: "Network Error!!",
+      icon: "error"
+    });
+  }else{
+
+    Swal.fire({
+      title: "ERROR",
+      text: "Invalid username/password",
+      icon: "error"
+    });
+  }
 }) }; 
 
   return (

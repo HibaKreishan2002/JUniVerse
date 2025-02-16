@@ -2,7 +2,7 @@ const TherapistChats = {
     chatPage: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
-      height: '90vh',
+      height: '89vh',
       fontFamily: 'Arial, sans-serif',
       //  marginTop:'1%',
       marginRight:'70px'
@@ -27,6 +27,17 @@ const TherapistChats = {
       border: '1px solid #ddd',
       borderRadius: '5px',
       cursor: 'pointer',
+      
+     
+
+    },
+    userListItem : {
+      margin: '10px 0',
+      padding: '10px',
+      border: '1px solid #ddd',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      
      
 
     },
@@ -36,21 +47,25 @@ const TherapistChats = {
     rightPanel: {
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'space-between',
-      marginLeft:'28px'
+      // justifyContent: 'space-between',
+      marginLeft: '28px',
+      height: '89vh', // Ensures it takes full height
     },
     chatHeader: {
       backgroundColor: '#333',
       color: '#fff',
-      padding: '10px',
       textAlign: 'center',
       fontSize: '18px',
     },
     chatArea: {
       flex: 1,
       padding: '20px',
-      overflowY: 'auto',
+      overflowY: 'auto',  // Enables scrolling only inside the chat area
+      maxHeight: '60vh',  // Limits the height to keep scrolling inside the box
+      minHeight: '60vh',  // Ensures the height remains fixed
+       flexDirection: 'column',
     },
+
     receivedMessage: {
       backgroundColor: '#f0f0f0',
       padding: '10px',
@@ -71,10 +86,11 @@ const TherapistChats = {
       display: 'flex',
       borderTop: '1px solid #ddd',
       padding: '10px',
+      marginTop:'auto'
     },
     messageInputField: {
       flex: 1,
-      padding: '10px',
+      // padding: '10px',
       border: '1px solid #ddd',
       borderRadius: '5px',
       marginRight: '10px',

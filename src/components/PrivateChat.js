@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useRef} from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import CloudIcon from '@mui/icons-material/Cloud';
 import SocialHubStyle from '../pages/SocialHub/SocialHubStyle';
@@ -7,14 +7,17 @@ import JuUniVerseAxios from '../API/JuUniVerseAxios';
 
 
 function PrivateChat() {
+  const chatRef = useRef(null);
 
   const [isChatVisible, setIsChatVisible] = useState(false);
 const [message,setMessage]=useState("");
 const [refershPage,setRefershPage]=useState(0);
+const [scrollPage,setScrollPage]=useState(0);
 const [data,setData]=useState([])
   // Function to toggle chat visibility
   const handleChatToggle = () => {
     setIsChatVisible(!isChatVisible);
+    setScrollPage(scrollPage+1)
   };
 
   const handleSendMessage=()=>{
@@ -33,17 +36,22 @@ JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then(
 
   }
   useEffect(()=>{
-    JuUniVerseAxios.get(`/private-chat/allMessages`).then(res=>{
-      console.log(res)    
-      setData(res.data.data)
+    const getAllMessage= ()=>{
 
-    }).catch(error=>{
-//alert(error?.response?.data?.message)
-
-    })
-
+      JuUniVerseAxios.get(`/private-chat/allMessages`).then(res=>{
+        console.log(res)
+        setData(res.data.data)
+  
+      }).catch(error=>{
+  //alert(error?.response?.data?.message)
+      })
+    }
+    // getAllMessage();
+    const interval =setInterval(getAllMessage,1000)
+    return ()=>clearInterval(interval);
 
   },[refershPage])
+
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${(date.getMonth() + 1)
@@ -56,8 +64,16 @@ JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then(
       .toString()
       .padStart(2, "0")}`;
   }
+  useEffect(() => {
+    const chatBox = document.getElementById("chatContainer");
+    if (chatBox) {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  }, [scrollPage,data.length]); // Runs when `data` updates
+  
   return (
     <Box
+
       sx={{
         position: 'fixed',
         bottom: '20px',
@@ -66,6 +82,7 @@ JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then(
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        overflowY: "auto"
       }}
     >
       {/* If chat is not visible, show the Cloud Icon */}
@@ -105,36 +122,16 @@ JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then(
 
           {/* <Box sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}> */}
           <Box
-          sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}
-  // sx={{
-  //   flexGrow: 1,
-  //   overflowY: "auto",
-  //   overflowX: "auto",
-  //   marginBottom: "20px",
-  //   "&::-webkit-scrollbar": {
-  //     width: "10px",  
-  //     height: "50px", 
-  //   },
-  //   "&::-webkit-scrollbar-track": {
-  //     background: "#f0f0f0",
-  //     borderRadius: "10px",
-  //   },
-  //   "&::-webkit-scrollbar-thumb": {
-  //     background: "#22a9d3",
-  //     borderRadius: "10px",
-  //   },
-  //   "&::-webkit-scrollbar-thumb:hover": {
-  //     background: "#1b8ea5",
-  //   },
-    
-    
-  // }}
+               id="chatContainer" // Add an ID to target it
+
+          sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px'  }}
+
 >
 
   
             {/* Chat area */}
             <div style={SocialHubStyle.chatArea}>
-              {data.map((data)=>
+              {data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).map((data)=>
                 
                 "omar_khaled"!=data.senderUsername?(<p index={data.id} style={SocialHubStyle.receivedMessage}>{data.content}<br/> <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(data.timestamp)}</sub></p>):<p style={SocialHubStyle.sentMessage}>{data.content}<br/> <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(data.timestamp)}</sub></p>
 
@@ -164,12 +161,7 @@ JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then(
           justifyContent: 'center',
           alignItems: 'center',
           marginRight:'10px',
-   cursor:'pointer',
-          // width: 200,
-          // height: 200,
-          // backgroundColor: '#E50916',
-          // borderRadius: '50%',
-          // color: 'white',
+          cursor:'pointer',
           overflow: 'hidden',
         }}
       >
