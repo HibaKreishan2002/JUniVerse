@@ -9,7 +9,7 @@ const SocialHubStyle = {
   //  marginLeft:'20%',
   //   fontFamily: 'Arial, sans-serif',
   //   marginTop: '1%',
-  // }
+  // },
   DateTimeStyle:{
 fontSize:"10px"
   },
@@ -20,24 +20,26 @@ fontSize:"10px"
     justifyContent: "space-between",
     padding: "20px",
     backgroundColor: "#fff",
-    width: "80%", // Make the panel wider (adjust as necessary)
-    maxWidth: "1000px", // Maximum width for the panel
-    height: "100%", // Make it stretch to the full height of its container
-    margin: "auto", // Center the panel
-    borderRadius: "8px", // Optional: Add rounded corners
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Optional: Add a subtle shadow for depth
+    width: "80%",
+    maxWidth: "1000px",
+    height: "79vh", // Set height to ensure it fits the screen
+    margin: "auto",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+    position: "relative", // Ensures positioning of the input field
   },
   chatArea: {
-    flex: 1,
+    flex: 1, 
     padding: "20px",
-    overflowY: "auto",
+    overflowY: "auto", // Enable scrolling
   },
+
   receivedMessage: {
     backgroundColor: "#f0f0f0",
     padding: "10px",
     borderRadius: "10px",
     marginBottom: "10px",
-    maxWidth: "70%",
+    maxWidth: "55%",
     marginLeft:"auto",
     wordWrap:"break-word", // يجبر النص على النزول للسطر عند الحاجة
     overflowWrap: "break-word", // يعالج الكلمات الطويلة
@@ -49,7 +51,7 @@ fontSize:"10px"
     borderRadius: "10px",
     marginBottom: "10px",
     alignSelf: "flex-end",
-    maxWidth: "70%",
+    maxWidth: "55%",
     wordWrap: "break-word", // يجبر النص على النزول للسطر عند الحاجة
     overflowWrap: "break-word", // يعالج الكلمات الطويلة
     whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
@@ -59,6 +61,8 @@ fontSize:"10px"
     display: "flex",
     borderTop: "1px solid #ddd",
     padding: "10px",
+    position: "sticky",
+    backgroundColor: "#fff", // Ensure it has a background to not overlap content
   },
   messageInputField: {
     flex: 1,
@@ -75,5 +79,17 @@ fontSize:"10px"
     borderRadius: "5px",
     cursor: "pointer",
   },
+  content:{
+    marginBottom:0
+  },
+  senderUsername: {
+    fontWeight: "bold",
+    color: "#333",
+    fontSize: "17px",
+    marginBottom: "1px",
+    marginTop: 0
+  },
+
 };
+
 export default SocialHubStyle;

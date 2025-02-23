@@ -183,7 +183,7 @@ marginLeft:15
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "80vh", // Full screen height
+          height: "79vh", // Full screen height
           p: 2,
         }}
       >
@@ -263,7 +263,7 @@ marginLeft:15
       <a href="https://findahelpline.com/countries/jo"> <strong >Reach out for JCPA Hotline! 
 
 </strong> </a> 
-  </div>;
+  </div>
       <PrivateChat></PrivateChat>
     </ResponsiveDev>
   );

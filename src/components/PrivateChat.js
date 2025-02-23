@@ -1,109 +1,94 @@
-import React, { useEffect, useState ,useRef} from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
-import CloudIcon from '@mui/icons-material/Cloud';
-import SocialHubStyle from '../pages/SocialHub/SocialHubStyle';
+import React, { useEffect, useState, useRef } from 'react';
+import { Box, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ClearIcon from '@mui/icons-material/Clear';
+import SocialHubStyle from '../pages/SocialHub/SocialHubStyle';
 import JuUniVerseAxios from '../API/JuUniVerseAxios';
-
 
 function PrivateChat() {
   const chatRef = useRef(null);
 
   const [isChatVisible, setIsChatVisible] = useState(false);
-const [message,setMessage]=useState("");
-const [refershPage,setRefershPage]=useState(0);
-const [scrollPage,setScrollPage]=useState(0);
-const [data,setData]=useState([])
-  // Function to toggle chat visibility
+  const [message, setMessage] = useState("");
+  const [refreshPage, setRefreshPage] = useState(0);
+  const [scrollPage, setScrollPage] = useState(0);
+  const [data, setData] = useState([]);
+  const [messageInfo, setMessageInfo] = useState(null);
+  const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
+
   const handleChatToggle = () => {
     setIsChatVisible(!isChatVisible);
-    setScrollPage(scrollPage+1)
+    setScrollPage(scrollPage + 1);
   };
 
-  const handleSendMessage=()=>{
+  const handleClose = () => {
+    setMenuData({ anchorEl: null, selectedMsg: null });
+  };
 
-console.log(message);
+  const handleClick = (event, msg) => {
+    setMenuData({ anchorEl: event.currentTarget, selectedMsg: msg });
+  };
 
-JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then((res) => {
-  setMessage(""); // Clear the input field after sending
-  setRefershPage(refershPage+1)
-//alert("MESSAGE SENT")
-}).catch((error)=>{
- // alert(error?.response?.data?.message)
-  console.log(error);
-
-})
-
-  }
-  useEffect(()=>{
-    const getAllMessage= ()=>{
-
-      JuUniVerseAxios.get(`/private-chat/allMessages`).then(res=>{
-        console.log(res)
-        setData(res.data.data)
-  
-      }).catch(error=>{
-  //alert(error?.response?.data?.message)
-      })
+  const handleSendMessage = () => {
+    if (messageInfo) {
+      JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, { content: messageInfo.content })
+        .then(() => {
+          setMessageInfo(null);
+          setRefreshPage(refreshPage + 1);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      JuUniVerseAxios.post("/private-chat/messageToTherapist", { content: message })
+        .then(() => {
+          setMessage("");
+          setRefreshPage(refreshPage + 1);
+        })
+        .catch((error) => console.log(error));
     }
-    // getAllMessage();
-    const interval =setInterval(getAllMessage,1000)
-    return ()=>clearInterval(interval);
+  };
 
-  },[refershPage])
+  useEffect(() => {
+    const getAllMessages = () => {
+      JuUniVerseAxios.get(`/private-chat/allMessages`)
+        .then(res => setData(res.data.data))
+        .catch(error => console.log(error));
+    };
+
+    const interval = setInterval(getAllMessages, 1000);
+    return () => clearInterval(interval);
+  }, [refreshPage]);
+
+  useEffect(() => {
+    const chatBox = document.getElementById("chatContainer");
+    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+  }, [scrollPage, data.length]);
 
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
-    return `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date
-      .getSeconds()
-      .toString()
-      .padStart(2, "0")}`;
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
   }
-  useEffect(() => {
-    const chatBox = document.getElementById("chatContainer");
-    if (chatBox) {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  }, [scrollPage,data.length]); // Runs when `data` updates
-  
+
   return (
-    <Box
-
-      sx={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: 1000,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        overflowY: "auto"
-      }}
-    >
-      {/* If chat is not visible, show the Cloud Icon */}
-      {/* shorthand if else (condition ?true : false)*/}  
-
-      {/* If chat is visible, show the chat interface */}
-      {isChatVisible?   (
+    <>
+      {/* Chat Box - Appears above the chat button when opened */}
+      {isChatVisible && (
         <Box
           sx={{
+            position: 'fixed',
+            bottom: '10px', // Position above the button
+            right: '20px',
             backgroundColor: '#fff',
             width: 400,
             height: 500,
             borderRadius: '10px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)',
             display: 'flex',
             flexDirection: 'column',
             padding: '16px',
-            position: 'relative',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.3)',
+            zIndex: 1001,
           }}
         >
-          {/* Close Button */}
           <IconButton
             sx={{
               position: 'absolute',
@@ -117,71 +102,122 @@ JuUniVerseAxios.post("/private-chat/messageToTherapist",{content:message}).then(
           </IconButton>
 
           <Typography sx={{ fontWeight: 'bold', color: '#333', marginBottom: '10px' }}>
-            Chat 
+            Chat
           </Typography>
 
-          {/* <Box sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}> */}
-          <Box
-               id="chatContainer" // Add an ID to target it
-
-          sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px'  }}
-
->
-
-  
-            {/* Chat area */}
+          <Box id="chatContainer" sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}>
             <div style={SocialHubStyle.chatArea}>
-              {data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).map((data)=>
-                
-                "omar_khaled"!=data.senderUsername?(<p index={data.id} style={SocialHubStyle.receivedMessage}>{data.content}<br/> <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(data.timestamp)}</sub></p>):<p style={SocialHubStyle.sentMessage}>{data.content}<br/> <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(data.timestamp)}</sub></p>
-
-                            //  condition ? true : false
-
+              {data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).map((msg) =>
+                msg.senderUsername !== "omar_khaled" ? (
+                  <div key={msg.id} style={{ position: "relative" }}>
+                    <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <p index={msg.id} style={SocialHubStyle.receivedMessage}>
+                      {msg.content}
+                      <br />
+                      <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                    </p>
+                  </div>
+                ) : (
+                  <p key={msg.id} style={SocialHubStyle.sentMessage}>
+                    {msg.content}
+                    <br />
+                    <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                  </p>
+                )
               )}
             </div>
           </Box>
 
+          {/* Single Menu Component Outside the Map Function */}
+          <Menu
+            anchorEl={menuData.anchorEl}
+            open={Boolean(menuData.anchorEl)}
+            onClose={handleClose}
+            elevation={8}
+            sx={{
+              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
+              borderRadius: "8px",
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                setMessageInfo({
+                  id: menuData.selectedMsg?.id,
+                  content: menuData.selectedMsg?.content
+                });
+                setMenuData({ anchorEl: null, selectedMsg: null });
+              }}
+            >
+              Edit
+            </MenuItem>
+          </Menu>
+
           <div style={SocialHubStyle.messageInput}>
             <input
               type="text"
-              value={message}
+              value={messageInfo ? messageInfo.content : message}
               placeholder="Write a message"
-              onChange={(e)=>setMessage(e.currentTarget.value)}
+              onChange={(e) =>
+                messageInfo
+                  ? setMessageInfo({ ...messageInfo, content: e.target.value })
+                  : setMessage(e.target.value)
+              }
               style={SocialHubStyle.messageInputField}
             />
-            <button style={SocialHubStyle.messageInputButton} onClick={handleSendMessage}>Send</button>
+            {messageInfo && (
+              <button
+                onClick={() => setMessageInfo(null)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  marginRight: "10px",
+                }}
+              >
+                <ClearIcon />
+              </button>
+            )}
+            <button
+              style={SocialHubStyle.messageInputButton}
+              onClick={handleSendMessage}
+            >
+              {messageInfo ? "Update" : "Send"}
+            </button>
           </div>
         </Box>
-      ):( 
-        <Box
+      )}
+
+      {/* Floating Chat Button at Bottom-Right */}
+      <Box
         onClick={handleChatToggle}
         sx={{
-          position: 'relative',
-          display: 'inline-flex',
+          position: 'fixed',
+          bottom: '10px',
+          right: '50px',
+          display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          marginRight:'10px',
-          cursor:'pointer',
-          overflow: 'hidden',
+          cursor: 'pointer',
+          zIndex: 1000,
         }}
       >
-        <ChatBubbleIcon sx={{ fontSize: 110  , color:'#22a9d3'}} />
+        <ChatBubbleIcon sx={{ fontSize: 110, color: '#22a9d3' }} />
         <Typography
           sx={{
             position: 'absolute',
-            bottom: '45px', // Adjust the position
+            bottom: '45px',
             fontSize: '12px',
             fontWeight: 'bold',
             textAlign: 'center',
-            cursor:'pointer',
-            color:"white"
+            color: "white"
           }}
         >
           Chat with a Therapist!
         </Typography>
-      </Box>)}
-      
-    </Box>
+      </Box>
+    </>
   );
 }
 

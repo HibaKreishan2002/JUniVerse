@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {Button,Checkbox,FormControlLabel,IconButton,InputAdornment,Link,} from "@mui/material";
 import { styled } from "@mui/material";
@@ -94,6 +94,9 @@ function FormLogin () {
     },
   });
 
+  useEffect(()=>{
+    sessionStorage.clear();
+  },[])
   // prevent Default
   const preventDefault = (e) => e.preventDefault();  //
 

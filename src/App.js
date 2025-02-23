@@ -8,22 +8,32 @@ import Layout from "./components/Layout";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ECard from "./pages/E-Card/ECard";
 import Homepage from "./pages/Homepage/Homepage";
+import NotFound from "./pages/NotFound"; // صفحة الخطأ 404
+import ProtectedRoute from "./components/ProtectedRoute"; // حماية الصفحات
+
 function App() {
   return (
     <>
       <Routes>
-        {/* Route for login */}
+
         <Route path="/" element={<Login />} />
 
-        {/* Routes wrapped in Layout This is NEW */}
-        <Route element={<Layout />}>
-          <Route path="/ProfilePage" element={<ProfilePage />} />
-          <Route path="/SocialHub" element={<SocialHub />} />
-          <Route path="/MentalHealthHub" element={<MentalHealthHub />} />
-          <Route path="/TherapistChats" element={<TherapistChats />} />
-          <Route path="/ECard" element={<ECard />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<Layout />}>
+            <Route path="/ProfilePage" element={<ProfilePage />} />
+            <Route path="/SocialHub" element={<SocialHub />} />
+            <Route path="/MentalHealthHub" element={<MentalHealthHub />} />
+              <Route path="/TherapistChats" element={<TherapistChats />} />
+            <Route path="/ECard" element={<ECard />} />
+          </Route>
         </Route>
-        <Route path="/Homepage" element={<Homepage/>} />
+
+
+        <Route path="/Homepage" element={<Homepage />} />
+
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

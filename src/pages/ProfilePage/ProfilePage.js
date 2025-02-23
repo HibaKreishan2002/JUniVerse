@@ -71,7 +71,7 @@ import JuUniVerseAxios from '../../API/JuUniVerseAxios';
 import EditIcon from '@mui/icons-material/Edit';
 import LinearProgress from '@mui/material/LinearProgress';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
+import CloseIcon from '@mui/icons-material/Close';
 
 function ProfilePage() {
   const [userName, setUserName] = useState("")
@@ -120,7 +120,9 @@ function ProfilePage() {
       setUserRole(res.data.data.role)
       setUserMajor(res.data.data.major)
       setUserBio(res.data.data.bio)
-sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.lastName)
+ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.lastName)
+sessionStorage.setItem("username",res.data.data.username)
+sessionStorage.setItem("role",res.data.data.role)
     })
 
     JuUniVerseAxios.get("/sys-user/profile-and-cover-picture").then(res => {
@@ -151,10 +153,19 @@ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.
       }));
       convertToBase64(file, name);
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      if (name=="bio"){
+        setUserBio(value)
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
+else{
+  setFormData((prevData) => ({
+    ...prevData,
+    [name]: value,
+  }));
+}      
     }
   };
   const VisuallyHiddenInput = styled('input')({
@@ -200,6 +211,7 @@ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.
 
 
         })
+       
       }
       // Here you can send the formData to the backend to update the profile.
       console.log('Profile Updated:', formData);
@@ -228,6 +240,28 @@ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.
     };
     reader.readAsDataURL(file);
   };
+
+  const handleRemoveProfilePic = () => {
+    JuUniVerseAxios.delete("/sys-user/profile-picture").then(res => {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        profilePic: ""  // Only clear the profilePic field, not the whole form
+      }));
+ 
+      setRefershPage(refershPage + 1);
+    });
+  }
+  const handleRemoveCoverPic = () => {
+
+    JuUniVerseAxios.delete("/sys-user/cover-picture").then(res => {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        coverPic: ""  // Only clear the coverPic field, not the whole form
+      }));
+ 
+      setRefershPage(refershPage + 1);
+    });
+  }
   return (
     <>
       {/* COVER_PHOTO */}
@@ -267,14 +301,18 @@ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.
             <DialogTitle>Edit Profile</DialogTitle>
             <DialogContent sx={{width:'400px'}}>
               <form onSubmit={handleSubmit}>
+                <br/>
                 <Box sx={{ marginBottom: 2 }}>
                   <TextField
                     label="Bio"
                     variant="outlined"
                     fullWidth
                     name="bio"
-                    value={formData.bio}
-                    onChange={handleInputChange}
+                    value={userBio}
+                    onChange={
+                      handleInputChange
+
+                    }
                   />
                 </Box>
                 <Box sx={{ marginBottom: 2 }}>
@@ -294,7 +332,21 @@ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.
                     />
 
                   </Button>
-                  <lable style={{ float: 'right' }}>Profile Photo</lable>
+                  <lable style={{ float: 'right' }}>Profile Photo</lable> 
+                  <Button sx={{  fontSize: '10px',marginLeft:'8px' }}
+                    variant="contained"
+                    component="label"
+                    color="error"
+                    startIcon={<CloseIcon />}
+                  >
+Remove 
+                    <VisuallyHiddenInput
+             
+                      onClick={handleRemoveProfilePic}
+
+                    />
+
+                  </Button>
                 </Box>
 
 
@@ -315,6 +367,27 @@ sessionStorage.setItem("fullname",res.data.data.firstName + ' ' + res.data.data.
                     />
 
                   </Button>
+                  <Button sx={{  fontSize: '10px',marginLeft:'8px' }}
+                    variant="contained"
+                    component="label"
+                    color="error"
+                    startIcon={<CloseIcon />}
+                  >
+Remove 
+                    <VisuallyHiddenInput
+             
+                      onClick={handleRemoveCoverPic}
+
+                    />
+
+                  </Button>
+                  {/* <Button
+            variant="outlined"
+            sx={{ marginLeft: 2, backgroundColor: '#f1f1f1', color: 'black' }}
+            onClick={handleRemoveCoverPic}
+          >
+            Remove Cover Picture
+          </Button> */}
                   <lable style={{ float: 'right' }}>Cover Photo</lable>
                 </Box>
 
