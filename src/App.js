@@ -10,6 +10,7 @@ import ECard from "./pages/E-Card/ECard";
 import Homepage from "./pages/Homepage/Homepage";
 import NotFound from "./pages/NotFound"; // صفحة الخطأ 404
 import ProtectedRoute from "./components/ProtectedRoute"; // حماية الصفحات
+import FileSharingHub from "./pages/FileSharingHub/FileSharingHub";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/SocialHub" element={<SocialHub />} />
             <Route path="/MentalHealthHub" element={<MentalHealthHub />} />
               <Route path="/TherapistChats" element={<TherapistChats />} />
+              <Route path="/FileSharing" element={<FileSharingHub />} />
             <Route path="/ECard" element={<ECard />} />
           </Route>
         </Route>

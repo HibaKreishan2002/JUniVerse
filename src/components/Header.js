@@ -56,7 +56,7 @@ const MainHeader = () => {
       } else {
         setHubs(["Soical", "Mental Health", "News", "File Sharing", "E-Card"]);
       }
-    }, 90);
+    }, 100);
   }, [sessionStorage.getItem("role")]); // Updates when role changes
 
   const handlePageNavigation = (hub) => {

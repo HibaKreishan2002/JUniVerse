@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import styles from "./SocialHubStyle.js"; // Import the JavaScript styles
+import React, { useEffect, useState,useRef } from 'react';
 import Header from "../../components/Header.js";
 import JuUniVerseAxios from '../../API/JuUniVerseAxios';
 import { Typography, Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
@@ -17,7 +16,8 @@ function SocialHub() {
   const [messageInfo, setMessageInfo] = useState(null); // New state for editing
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
-
+  const chatContainerRef = useRef(null);
+  const hasScrolledOnceRef = useRef(false);
   const handleClick = (event, msg) => {
     setMenuData({ anchorEl: event.currentTarget, selectedMsg: msg });
   };
@@ -45,6 +45,13 @@ function SocialHub() {
         .catch((error) => console.log(error));
     }
   };
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [data.length]); // Only triggers when the number of messages changes
+  
   const handleDeletteMessage = (id) => {
     JuUniVerseAxios.delete(`/public-chat/${id}`).then(res => {
       setRefershPage(refershPage + 1); // Refresh chat
@@ -57,6 +64,7 @@ function SocialHub() {
   }
 
   useEffect(() => {
+  
     const getAllMessage = () => {
       JuUniVerseAxios.get(`/public-chat/messages`)
         .then((res) => {
@@ -101,15 +109,15 @@ function SocialHub() {
   return (
     <>
       <ResponsiveDev>
-        <div style={SocialHubStyle.chatPage}>
+        <div style={SocialHubStyle.chatPage} >
           {/* Right Panel */}
           <div style={SocialHubStyle.rightPanel}>
             <Typography sx={{ fontWeight: "bold", color: "Black" }}>
               Chat
             </Typography>
-            <Box sx={{ flexGrow: 1, overflowY: 'auto'  }}>
+            <div style={{...SocialHubStyle.chatArea, flexGrow: 1}}   ref={chatContainerRef} >
               {/* Chat area */}
-              <div style={SocialHubStyle.chatArea}>
+              < >
                 {data
                   .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                   .map((msg) => (
@@ -170,8 +178,8 @@ function SocialHub() {
                   )
 
                   )}
-              </div>
-            </Box>
+              </>
+            </div>
 
             {/* Message Input and Send/Update Button */}
             {/* Message Input and Send/Update Button */}
