@@ -153,13 +153,13 @@ function FormLogin () {
         }}
         label="Password"
         error={errors.password ? true : false}
-        helperText={
-          errors.password && "Enter a valid password (5-15 characters)"
-        }
+        // helperText={
+        //   errors.password && "Enter a valid password (5-15 characters)"
+        // }
         {...register("password", {
           required: true,
-          minLength: 5,
-          maxLength: 15,
+          // minLength: 5,
+          // maxLength: 15,
         })}
       />
 
@@ -183,17 +183,12 @@ function FormLogin () {
           {...register("rememberUser")}
         />
 
-        <Link href="#" onClick={preventDefault} underline="always">
-          Forgot password?
-        </Link>
       </Box>
 
       <Button type="submit" variant="contained" disableElevation>
         Login
       </Button>
-      <SectionDivider />
 
-      <Button variant="contained">Registeration</Button>
     </FormStyle>
   );
 };

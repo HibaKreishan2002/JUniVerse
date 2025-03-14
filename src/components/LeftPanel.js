@@ -1,6 +1,4 @@
-import { Typography } from "@mui/material";
-import { styled } from "@mui/material";
-import { Box } from "@mui/material";
+import { Typography, styled, Box } from "@mui/material";
 
 // styles
 const LeftPaneStyle = styled(Box)(({ theme }) => ({

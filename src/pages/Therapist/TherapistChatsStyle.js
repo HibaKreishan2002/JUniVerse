@@ -2,14 +2,14 @@ const TherapistChats = {
     chatPage: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
-      height: '89vh',
+      // height: '50vh',
       fontFamily: 'Arial, sans-serif',
       //  marginTop:'1%',
       marginRight:'70px'
     },
     leftPanel: {
       backgroundColor: '#f5f5f5',
-      padding: '20px',
+      paddingLeft: '14px',
       borderRight: '1px solid #ddd',
     },
     leftPanelHeading: {
@@ -19,6 +19,10 @@ const TherapistChats = {
     userList: {
       listStyle: 'none',
       padding: 0,
+      overflowY: 'auto',  // Enables scrolling only inside the chat area
+      maxHeight: '60vh',  // Limits the height to keep scrolling inside the box
+      minHeight: '60vh',  // Ensures the height remains fixed
+       flexDirection: 'column',
       
     },
     userListItem: {
@@ -37,7 +41,7 @@ const TherapistChats = {
       border: '1px solid #ddd',
       borderRadius: '5px',
       cursor: 'pointer',
-      
+     
      
 
     },
@@ -49,7 +53,8 @@ const TherapistChats = {
       flexDirection: 'column',
       // justifyContent: 'space-between',
       marginLeft: '28px',
-      height: '89vh', // Ensures it takes full height
+      // height: '50vh', // Ensures it takes full height
+      
     },
     chatHeader: {
       backgroundColor: '#333',

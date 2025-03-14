@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import TherapistChatsStyle from "./TherapistChatsStyle.js";
-import { Typography, Badge, IconButton, Menu, MenuItem } from "@mui/material";
+import { Typography, Badge, IconButton, Menu, MenuItem , TextField, InputAdornment ,Button} from "@mui/material";
 import JuUniVerseAxios from "../../API/JuUniVerseAxios.js";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ClearIcon from '@mui/icons-material/Clear';
 import { Navigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search"; 
+
 
 function TherapistChats() {
   const [dataStudent, setDataStudent] = useState([]);
@@ -18,6 +20,7 @@ function TherapistChats() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [messageInfo, setMessageInfo] = useState(null);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
   
@@ -33,6 +36,10 @@ function TherapistChats() {
     const interval = setInterval(getAllChats, 5000);
     return () => clearInterval(interval);
   }, []);
+  const filteredUsers = dataStudent.filter(user =>
+    `${user.userFirstName} ${user.userLastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
 
   const handleClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
@@ -98,8 +105,28 @@ function TherapistChats() {
     <div style={TherapistChatsStyle.chatPage}>
       <div style={TherapistChatsStyle.leftPanel}>
         <h2 style={TherapistChatsStyle.leftPanelHeader}>Messages</h2>
+        <Button onClick={()=>         { setMessageInfo(null);
+ setChatID(null)
+ setData([])
+ setReceiverFullName("")
+ setSelectedUserId(null)}}>Reset</Button>
+        <TextField
+          fullWidth
+          placeholder="Search users..."
+          variant="outlined"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ marginBottom: 2 }}
+        />
         <ul style={TherapistChatsStyle.userList}>
-          {dataStudent.map((user) => (
+          {filteredUsers.map((user) => (
             <li
               key={user.id}
               onClick={() => {
@@ -189,7 +216,7 @@ function TherapistChats() {
         </Menu>
 
         {/* Message Input */}
-        <div
+        {chatID!=null?<div
           style={{
             ...TherapistChatsStyle.messageInput,
             position: "sticky",
@@ -231,7 +258,8 @@ function TherapistChats() {
               >
                 {messageInfo ? "Update" : "Send"}
               </button>
-            </div>
+            </div>:""}
+        
       </div>
     </div>
   );

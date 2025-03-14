@@ -11,6 +11,7 @@ import Homepage from "./pages/Homepage/Homepage";
 import NotFound from "./pages/NotFound"; // صفحة الخطأ 404
 import ProtectedRoute from "./components/ProtectedRoute"; // حماية الصفحات
 import FileSharingHub from "./pages/FileSharingHub/FileSharingHub";
+import FileScreen from "./pages/FileSharingHub/FileScreen";
 
 function App() {
   return (
@@ -27,7 +28,8 @@ function App() {
             <Route path="/MentalHealthHub" element={<MentalHealthHub />} />
               <Route path="/TherapistChats" element={<TherapistChats />} />
               <Route path="/FileSharing" element={<FileSharingHub />} />
-            <Route path="/ECard" element={<ECard />} />
+              <Route path="/files/:folderId" element={<FileScreen />} />
+              <Route path="/ECard" element={<ECard />} />
           </Route>
         </Route>
 
