@@ -54,16 +54,18 @@ export default function FileScreen() {
   const [fileDetails, setFileDetails] = useState([]);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
   const [hovered, setHovered] = useState(null);
-  const [modelTitle, setModelTitle] = useState("Create Folder");
+  const [modelTitle, setModelTitle] = useState("Edit File");
   const [fileExtension, setFileExtension] = useState("")
   const [fileID, setFileID] = useState(0);
   const [fileDescription, setFileDescription] = useState("");
-   const [refershPage, setRefershPage] = useState(0);
+  const [refershPage, setRefershPage] = useState(0);
   const [openViewer, setOpenViewer] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
   const handleOpenViewer = () => setOpenViewer(true);
-  const handleClose = () => setOpenViewer(false);
-  const [base64FileContent , setBase64FileContent] = useState("")
-const [base64FileExtension , setBase64FileExtension] = useState("")
+  const handleClose = () => setOpen(false);
+  const [base64FileContent, setBase64FileContent] = useState("")
+  const [base64FileExtension, setBase64FileExtension] = useState("")
 
 
   useEffect(() => {
@@ -135,22 +137,22 @@ const [base64FileExtension , setBase64FileExtension] = useState("")
       });
 
   }
-const getFileByID=(fileID,transition)=>{
-JuUniVerseAxios.get(`/files/file/${fileID}`).then(res=>{
-console.log(res)
-setBase64FileContent(res.data.data.fileAsBase64)
-setBase64FileExtension(res.data.data.extension)
-if (transition=="Download"){
-handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
-}else{
+  const getFileByID = (fileID, transition) => {
+    JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
+      console.log(res)
+      setBase64FileContent(res.data.data.fileAsBase64)
+      setBase64FileExtension(res.data.data.extension)
+      if (transition == "Download") {
+        handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
+      } else {
 
-  handleView(res.data.data.fileAsBase64,res.data.data.extension)
-}
-})
-.catch(err=>{
+        handleView(res.data.data.fileAsBase64, res.data.data.extension)
+      }
+    })
+      .catch(err => {
 
-})
-}
+      })
+  }
   const getFileUrl = (base64, fileType) => {
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length).fill(null).map((_, i) => byteCharacters.charCodeAt(i));
@@ -191,19 +193,19 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
       js: "application/javascript",
       mpeg: "video/mpeg",
     };
-  
+
     const mimeType = mimeTypes[fileExtension.toLowerCase()];
     if (!mimeType) {
       alert("Unsupported file type");
       return;
     }
-  
+
     // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
     const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: mimeType });
-  
+
     // Create object URL and open in new tab
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
@@ -230,13 +232,13 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
       js: "application/javascript",
       mpeg: "video/mpeg",
     };
-  
+
     const mimeType = mimeTypes[fileExtension.toLowerCase()];
     if (!mimeType) {
       alert("Unsupported file type");
       return;
     }
-  
+
     // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
     const byteNumbers = new Array(byteCharacters.length)
@@ -244,10 +246,10 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
       .map((_, i) => byteCharacters.charCodeAt(i));
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: mimeType });
-  
+
     // Create object URL
     const url = URL.createObjectURL(blob);
-  
+
     // Create a temporary anchor tag to trigger download
     const a = document.createElement("a");
     a.href = url;
@@ -255,16 +257,46 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  
+
     // Revoke the object URL to free memory
     URL.revokeObjectURL(url);
   };
-  
+
   return (
 
     <ResponsiveDev>
 
+<Modal open={open} onClose={handleClose}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 3,
+              borderRadius: 2,
+            }}
+          >
+            <Typography variant="h6" mb={2}>{modelTitle}<FolderIcon sx={{ fontSize: 28, color: "#ffd35a", position: "relative", top: 10 }} />
 
+            </Typography>
+            <TextField fullWidth label="File Name" variant="outlined" margin="normal" value={fileName}
+              onChange={(e) => setFileName(e.target.value)} />
+            <TextField fullWidth label="File Description" variant="outlined" margin="normal" value={fileDescription}
+              onChange={(e) => setFileDescription(e.target.value)} />
+            <Box mt={2} display="flex" gap={2}>
+              <Button variant="contained" color="primary" >
+                SAVE
+              </Button>
+              <Button variant="outlined" color="secondary" onClick={handleClose}>
+                CANCEL
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       <Box sx={{
         float: "right"
 
@@ -330,7 +362,7 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
                 }}
               >
                 <MenuItem onClick={() => {
-                  setModelTitle("Edit Folder")
+                  setModelTitle("Edit File")
                   setFileID(menuData.selectedMsg?.id)
                   setFileName(menuData.selectedMsg?.name);
                   setFileDescription(menuData.selectedMsg?.description);
@@ -358,20 +390,20 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
                     }
                   });
                 }}>Delete</MenuItem>
-                  <MenuItem onClick={() => {
-                 
+                <MenuItem onClick={() => {
+
                   setFileID(menuData.selectedMsg?.id)
                   getFileByID(menuData.selectedMsg?.id)
-                
+
                   setMenuData({ anchorEl: null });
                   console.log(menuData.selectedMsg);
                   // setOpenViewer(true)
                 }}>View</MenuItem>
-                  <MenuItem onClick={() => {
-                 
+                <MenuItem onClick={() => {
+
                   setFileID(menuData.selectedMsg?.id)
-                  getFileByID(menuData.selectedMsg?.id,"Download")
-                
+                  getFileByID(menuData.selectedMsg?.id, "Download")
+
                   setMenuData({ anchorEl: null });
                   console.log(menuData.selectedMsg);
                   // setOpenViewer(true)
@@ -447,10 +479,10 @@ handleDownload(res.data.data.fileAsBase64,"JuUnFile",res.data.data.extension)
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-        <button onClick={handleView} className="text-blue-500 mr-4">
-        View
-      </button>
-        <FileViewer fileType={base64FileExtension} filePath={getFileUrl(base64FileContent,"m4a")} />
+          <button onClick={handleView} className="text-blue-500 mr-4">
+            View
+          </button>
+          <FileViewer fileType={base64FileExtension} filePath={getFileUrl(base64FileContent, "m4a")} />
 
         </Box>
       </Modal>
