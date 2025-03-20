@@ -361,7 +361,9 @@ export default function FileScreen() {
                   }
                 }}
               >
-                <MenuItem onClick={() => {
+                   {(sessionStorage.getItem("role") === "ADMIN" ) ||( sessionStorage.getItem("role") === "MODERATOR" ) && (
+               <> 
+               <MenuItem onClick={() => {
                   setModelTitle("Edit File")
                   setFileID(menuData.selectedMsg?.id)
                   setFileName(menuData.selectedMsg?.name);
@@ -371,6 +373,7 @@ export default function FileScreen() {
                   console.log(menuData.selectedMsg);
 
                 }}>Edit</MenuItem>
+        
                 <MenuItem onClick={() => {
 
                   setMenuData({ anchorEl: null });
@@ -389,7 +392,11 @@ export default function FileScreen() {
 
                     }
                   });
-                }}>Delete</MenuItem>
+                }}>Delete</MenuItem> </>
+
+)} 
+
+        
                 <MenuItem onClick={() => {
 
                   setFileID(menuData.selectedMsg?.id)
