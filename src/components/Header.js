@@ -53,7 +53,10 @@ const MainHeader = () => {
       const role = sessionStorage.getItem("role");
       if (role === "THERAPIST") {
         setHubs(["Soical", "Mental Health", "News", "E-Card", "Therapist"]);
-      } else {
+      } 
+      else if (role=="MODERATOR") 
+        { setHubs (["Soical", "Mental Health", "News", "File Sharing", "E-Card", "Files Management"])}
+    else  {
         setHubs(["Soical", "Mental Health", "News", "File Sharing", "E-Card"]);
       }
     }, 100);
@@ -79,6 +82,9 @@ const MainHeader = () => {
       case "Therapist":
         navigate("TherapistChats");
         break;
+        case "Files Management":
+          navigate("FilesManagement")
+          break;
       default:
         break;
     }

@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound"; // صفحة الخطأ 404
 import ProtectedRoute from "./components/ProtectedRoute"; // حماية الصفحات
 import FileSharingHub from "./pages/FileSharingHub/FileSharingHub";
 import FileScreen from "./pages/FileSharingHub/FileScreen";
+import FilesManagement from "./pages/FileSharingHub/FilesManagement";
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
               <Route path="/FileSharing" element={<FileSharingHub />} />
               <Route path="/files/:folderId" element={<FileScreen />} />
               <Route path="/ECard" element={<ECard />} />
+              <Route path="/FilesManagement" element={<FilesManagement />} />
+
           </Route>
         </Route>
 

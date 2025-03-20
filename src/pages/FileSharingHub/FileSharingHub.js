@@ -95,14 +95,14 @@ console.log(error);
         float: "right"
 
       }}>
-
+    {(sessionStorage.getItem("role") === "ADMIN" ) && (
         <Button variant={'contained'} sx={{ fontWeight: 'bold' }} onClick={() => {
           setModelTitle("Create Folder")
           handleOpen()
         }} >
           Add Folder
 
-        </Button>
+        </Button>)}
         <Modal open={open} onClose={handleClose}>
           <Box
             sx={{
@@ -168,6 +168,8 @@ console.log(error);
               sx={{ WebkitBoxPack: 'unset', WebkitJustifyContent: "start" }}
 
             >
+                               {(sessionStorage.getItem("role") === "ADMIN" ) && (
+<>
               <IconButton onClick={(e) => handleClick(e, folder)} sx={{ ml: 15, paddingBottom: 0 }}  >
                 <MoreVertIcon />
               </IconButton>
@@ -176,6 +178,7 @@ console.log(error);
                 open={Boolean(menuData.anchorEl)}
                 onClose={handleMenuClose}
               >
+                
                 <MenuItem onClick={() => {
                   setModelTitle("Edit Folder")
                   setFolderID(menuData.selectedMsg?.id)
@@ -205,7 +208,7 @@ console.log(error);
                       } 
                     });
                 }}>Delete</MenuItem>
-              </Menu>
+              </Menu></>)}
               <Tooltip title={folder.description} placement="top" arrow
 
                 slotProps={{
