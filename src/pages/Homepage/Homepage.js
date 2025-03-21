@@ -15,6 +15,7 @@ function Homepage() {
         src={video}
         autoPlay
         loop
+        muted
         style={{
           position: 'absolute',
           top: 0,
