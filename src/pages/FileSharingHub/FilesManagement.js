@@ -95,7 +95,7 @@ const onRejectBtn=(params)=>{ console.log(params);
     ]
   return (
     <ResponsiveDev>
-    <Box style={{ height: 300, width: '100%' }}>
+    <Box style={{ height: 635, width: '100%' }}>
     <DataGrid rows={Data} columns={columns}  pageSizeOptions={[10]}
        disableColumnFilter={true}
        disableColumnSorting={true}

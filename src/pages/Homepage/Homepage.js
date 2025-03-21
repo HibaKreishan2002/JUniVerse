@@ -15,7 +15,6 @@ function Homepage() {
         src={video}
         autoPlay
         loop
-        muted
         style={{
           position: 'absolute',
           top: 0,
@@ -32,7 +31,7 @@ function Homepage() {
           position: 'absolute',
           top: 0,
           width: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark transparent overlay
+          backgroundColor: 'rgba(0, 0, 0, 0.28)', // Dark transparent overlay
           color: 'white',
           display: 'flex',
           justifyContent: 'space-between',

@@ -8,8 +8,8 @@ import Layout from "./components/Layout";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ECard from "./pages/E-Card/ECard";
 import Homepage from "./pages/Homepage/Homepage";
-import NotFound from "./pages/NotFound"; // صفحة الخطأ 404
-import ProtectedRoute from "./components/ProtectedRoute"; // حماية الصفحات
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 import FileSharingHub from "./pages/FileSharingHub/FileSharingHub";
 import FileScreen from "./pages/FileSharingHub/FileScreen";
 import FilesManagement from "./pages/FileSharingHub/FilesManagement";
@@ -18,8 +18,9 @@ function App() {
   return (
     <>
       <Routes>
+      <Route path="/" element={<Homepage />} />
 
-        <Route path="/" element={<Login />} />
+        <Route path="/Login" element={<Login />} />
 
 
         <Route element={<ProtectedRoute />}>
@@ -37,7 +38,6 @@ function App() {
         </Route>
 
 
-        <Route path="/Homepage" element={<Homepage />} />
 
 
         <Route path="*" element={<NotFound />} />
