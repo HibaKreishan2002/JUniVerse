@@ -50,7 +50,7 @@ function Homepage() {
         {/* Right - Login Button */}
         <Button
           sx={{ color: 'white', fontWeight: 'bold', border: '1px solid white' }}
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/Login')}
         >
         
           LOGIN
