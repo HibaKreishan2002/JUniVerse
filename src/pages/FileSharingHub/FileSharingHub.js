@@ -9,9 +9,9 @@ import Swal from "sweetalert2";
 
 function FileSharingHub() {
   const [folderDetails, setFolderDetails] = useState([]);
-  const [folderName, setFolderName] = useState("");
+  const [folderName, setFolderName] = useState(" ");
   const [modelTitle, setModelTitle] = useState("Create Folder");
-  const [folderDescription, setFolderDescription] = useState("");
+  const [folderDescription, setFolderDescription] = useState(" ");
   const [open, setOpen] = useState(false);
   const [refershPage, setRefershPage] = useState(0);
   const [folderID, setFolderID] = useState(0);
@@ -115,9 +115,9 @@ console.log(error);
               boxShadow: 24,
               p: 3,
               borderRadius: 2,
-            }}
+            }}i
           >
-            <Typography variant="h6" mb={2}>{modelTitle}<FolderIcon sx={{ fontSize: 28, color: "#ffd35a", position: "relative", top: 10 }} />
+            <Typography variant="h6" mb={2}>{modelTitle}
 
             </Typography>
             <TextField fullWidth label="Folder Name" variant="outlined" margin="normal" value={folderName}
@@ -164,8 +164,9 @@ console.log(error);
               alignItems="center"
               justifyContent="center"
               textAlign="center"
+              
               spacing={2}
-              sx={{ WebkitBoxPack: 'unset', WebkitJustifyContent: "start" }}
+              sx={{ WebkitBoxPack: 'unset', WebkitJustifyContent: "start",cursor:'pointer',marginTop:5 }}
 
             >
                                {(sessionStorage.getItem("role") === "ADMIN" ) && (
@@ -189,27 +190,45 @@ console.log(error);
                   console.log(menuData.selectedMsg);
 
                 }}>Edit</MenuItem>
-                <MenuItem onClick={() => {
-                    
-                    setMenuData({ anchorEl: null });
-                    Swal.fire({
-                      title:` Do you want to Delete "${menuData.selectedMsg?.name}" Folder? ` ,
-                      showCancelButton: true,
-                      showDenyButton: true,
-                      showConfirmButton:false,
-                      denyButtonText: `Delete`
+           <MenuItem onClick={() => {
+  setMenuData({ anchorEl: null });
 
-
-                    }).then((result) => {
-                      /* Read more about isConfirmed, isDenied below */
-                      if (result.isDenied) {
-                        handleDeletteFolders(menuData.selectedMsg?.id)
-
-                      } 
-                    });
-                }}>Delete</MenuItem>
+  // First Swal: Confirm folder deletion
+  Swal.fire({
+    title: `Do you want to Delete "${menuData.selectedMsg?.name}" Folder?`,
+    showCancelButton: true,
+    showDenyButton: true,
+    showConfirmButton: false,
+    denyButtonText: `Delete`
+  }).then((result) => {
+    if (result.isDenied) {
+      // Second Swal: Warning about related files being deleted
+      Swal.fire({
+        title: 'All related files are going to be deleted!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        confirmButtonColor: '#d33',
+        cancelButtonText: 'Cancel'
+      }).then((warningResult) => {
+        if (warningResult.isConfirmed) {
+          // Proceed with deletion
+          handleDeletteFolders(menuData.selectedMsg?.id);
+          
+          // Optionally show a success message after deletion
+          Swal.fire({
+            title: 'Folder Deleted Successfully!',
+            icon: 'success',
+            confirmButtonText: 'Okay'
+          });
+        }
+      });
+    }
+  });
+}}>Delete</MenuItem>
               </Menu></>)}
-              <Tooltip title={folder.description} placement="top" arrow
+              <Tooltip title={folder.description} placement="top" arrow                   onClick={() => navigate(`/files/${folder.id}`)} // Navigate to file screen
+
 
                 slotProps={{
                   popper: {
@@ -239,7 +258,7 @@ console.log(error);
                     fontSize: 150,
                     padding: 0,
                     margin: '-32px',
-                    color: "#ffd35a",
+                    color: "#ADD8E6",
                     transition: "0.3s",
                     cursor: "pointer",
                   }}
@@ -249,7 +268,8 @@ console.log(error);
                   onMouseLeave={() => setHovered(null)}
                 />
               </Tooltip>
-              <Typography variant="h6" sx={{ marginTop: 1, fontSize: 15, fontWeight: "bold" }}>
+              <Typography on variant="h6" sx={{ marginTop: 1, fontSize: 15, fontWeight: "bold" }}                   onClick={() => navigate(`/files/${folder.id}`)} // Navigate to file screen
+              >
                 {folder.name}
               </Typography>
             </Grid>

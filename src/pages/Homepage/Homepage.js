@@ -32,8 +32,8 @@ function Homepage() {
           position: 'absolute',
           top: 0,
           width: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.28)', // Dark transparent overlay
-          color: 'white',
+  background: "linear-gradient(to right, #6861bd, #3873d4,#22a9d3)",
+                    color: 'white',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -64,11 +64,11 @@ function Homepage() {
             position: 'absolute',
             bottom: 0,
             width: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark transparent overlay
-            color: 'white',
+            background: "linear-gradient(to right, #6861bd, #3873d4,#22a9d3)",
             textAlign: 'center',
             padding: '10px',
             display: 'flex',
+            color:'white',
             justifyContent: 'center',
             gap: '10px',
           }}

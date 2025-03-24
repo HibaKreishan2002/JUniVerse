@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import ResponsiveDev from "../../components/ResponsiveDev";
 import FolderIcon from '@mui/icons-material/Folder';
@@ -46,18 +45,17 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-
-export default function FileScreen() {
+    function FileScreen() {
   const { folderId } = useParams(); // Get folderId from URL
   const [fileName, setFileName] = useState("")
   const [base64File, setBase64File] = useState("")
   const [fileDetails, setFileDetails] = useState([]);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
   const [hovered, setHovered] = useState(null);
-  const [modelTitle, setModelTitle] = useState("Edit File");
+  const [modelTitle, setModelTitle] = useState("");
   const [fileExtension, setFileExtension] = useState("")
   const [fileID, setFileID] = useState(0);
-  const [fileDescription, setFileDescription] = useState("");
+  const [fileDescription, setFileDescription] = useState(" ");
   const [refershPage, setRefershPage] = useState(0);
   const [openViewer, setOpenViewer] = useState(false);
   const [open, setOpen] = useState(false);
@@ -77,18 +75,66 @@ export default function FileScreen() {
 
     })
   }, [refershPage])
+
+  //EDIT
+  const handleEditFile=()=>{
+
+    JuUniVerseAxios.put(`files/file/${fileID}/name?fileName=${fileName}`, { name: fileName, description: fileDescription }).then((res) => {
+      setRefershPage(refershPage + 1);
+      Swal.fire({
+        title: "Success",
+        text: "Updated Successfully",
+        icon: "success"
+      });
+      setFileDescription(" ");
+      setFileName("");
+      setOpen(false)
+    }).catch(err=>{console.log(err?.response?.data?.errorDescription)
+  
+        Swal.fire({
+            title: "ERROR",
+            text: err?.response?.data?.errorDescription,
+            icon: "error"
+          });
+          handleClose();
+  
+    }
+    )
+
+    JuUniVerseAxios.put(`files/file/${fileID}/description?fileDescription=${fileDescription}`, { name: fileName, description: fileDescription }).then((res) => {
+      setRefershPage(refershPage + 1);
+      Swal.fire({
+        title: "Success",
+        text: "Updated Successfully",
+        icon: "success"
+      });
+      setFileDescription(" ");
+      setFileName("");
+      setOpen(false)
+    }).catch(err=>{console.log(err?.response?.data?.errorDescription)
+  
+        Swal.fire({
+            title: "ERROR",
+            text: err?.response?.data?.errorDescription,
+            icon: "error"
+          });
+          handleClose();
+  
+    }
+    )
+  }
+
   const convertToBase64 = async (file, name) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
       console.log(reader.result);
       const Base64 = reader.result.split(",")[1];
       setFileName(file.name);
-      setFileExtension(file.type)
-      setBase64File(reader.result)
+      setBase64File(Base64)
       const fileExtensionBase = file.name.split(".");
+      setFileExtension( fileExtensionBase[fileExtensionBase.length - 1])
       console.log(fileExtensionBase[fileExtensionBase.length - 1]);
 
-      AddFile(file.name, fileExtensionBase[fileExtensionBase.length - 1], Base64)
     }
       ;
     reader.readAsDataURL(file);
@@ -108,13 +154,20 @@ export default function FileScreen() {
 
   }
   const AddFile = (name, type, base64) => {
-    JuUniVerseAxios.post("/files", { name: name, extension: type, description: " ", folderId: folderId, fileAsBase64: base64 }).then((res) => {
+   if (modelTitle=="Upload File"){
+    JuUniVerseAxios.post("/files", { name: fileName, extension: type, description: fileDescription, folderId: folderId, fileAsBase64: base64 }).then((res) => {
+      setRefershPage(refershPage + 1);
+      Swal.fire("Your file is being moderated!");
 
 
+      setOpen(false)
     }).catch((err) => {
       console.log(err);
 
     })
+  }else{
+    handleEditFile();
+  }
   }
   const handleMenuClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
@@ -261,7 +314,6 @@ export default function FileScreen() {
     // Revoke the object URL to free memory
     URL.revokeObjectURL(url);
   };
-
   return (
 
     <ResponsiveDev>
@@ -280,15 +332,32 @@ export default function FileScreen() {
               borderRadius: 2,
             }}
           >
+          
             <Typography variant="h6" mb={2}>{modelTitle}<FolderIcon sx={{ fontSize: 28, color: "#ffd35a", position: "relative", top: 10 }} />
 
             </Typography>
+            {  modelTitle==="Upload File"?
+        <Button sx={{ float: "right" }}
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+    
+          startIcon={<CloudUploadIcon />}
+        >
+          Choose file
+       <VisuallyHiddenInput
+            type="file"
+            onChange={handleInputChange}
+
+          /> 
+        </Button>:""}
             <TextField fullWidth label="File Name" variant="outlined" margin="normal" value={fileName}
               onChange={(e) => setFileName(e.target.value)} />
             <TextField fullWidth label="File Description" variant="outlined" margin="normal" value={fileDescription}
               onChange={(e) => setFileDescription(e.target.value)} />
             <Box mt={2} display="flex" gap={2}>
-              <Button variant="contained" color="primary" >
+              <Button variant="contained" color="primary" onClick={()=>AddFile(fileName, fileExtension, base64File)}>
                 SAVE
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleClose}>
@@ -307,14 +376,20 @@ export default function FileScreen() {
           role={undefined}
           variant="contained"
           tabIndex={-1}
+          onClick={()=>{
+            setModelTitle("Upload File")
+            setFileName("");
+            setFileDescription(" ");
+
+            setOpen(true)}}
           startIcon={<CloudUploadIcon />}
         >
           Upload files
-          <VisuallyHiddenInput
+          {/* <VisuallyHiddenInput
             type="file"
             onChange={handleInputChange}
 
-          />
+          /> */}
         </Button>
       </Box>
       {/* <img src={pdficon} width={'133px'}/> */}
@@ -361,7 +436,8 @@ export default function FileScreen() {
                   }
                 }}
               >
-                   {(sessionStorage.getItem("role") === "ADMIN" ) ||( sessionStorage.getItem("role") === "MODERATOR" ) && (
+          
+                   {(sessionStorage.getItem("role") == "ADMIN" ) ||( sessionStorage.getItem("role") == "MODERATOR" )?(
                <> 
                <MenuItem onClick={() => {
                   setModelTitle("Edit File")
@@ -378,7 +454,7 @@ export default function FileScreen() {
 
                   setMenuData({ anchorEl: null });
                   Swal.fire({
-                    title: ` Do you want to Delete "${menuData.selectedMsg?.name}" Folder? `,
+                    title: ` Do you want to Delete "${menuData.selectedMsg?.name}" File? `,
                     showCancelButton: true,
                     showDenyButton: true,
                     showConfirmButton: false,
@@ -394,7 +470,7 @@ export default function FileScreen() {
                   });
                 }}>Delete</MenuItem> </>
 
-)} 
+):""} 
 
         
                 <MenuItem onClick={() => {
@@ -495,4 +571,6 @@ export default function FileScreen() {
       </Modal>
     </ResponsiveDev>
   );
-}
+    }
+
+  export default FileScreen; 
