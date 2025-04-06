@@ -23,7 +23,7 @@ const AppBarStyle = styled(AppBar)(({ theme }) => ({
   background: "linear-gradient(to right, #6861bd, #3873d4,#22a9d3)",
   color: "#333333",
   [theme.breakpoints.up("sm")]: {
-    width: `calc(100% - ${drawerWidth}px)`,
+    width: `calc(100% - ${drawerWidth}px)`, 
     flexShrink: 0,
   },
 }));
@@ -52,14 +52,16 @@ const MainHeader = () => {
   
       const role = sessionStorage.getItem("role");
       if (role === "THERAPIST") {
-        setHubs(["Soical", "Mental Health", "News", "E-Card", "Therapist"]);
+        setHubs(["Soical", "Mental Health", "News", "E-Card", "Therapist","Notes"]);
       } 
       else if (role=="MODERATOR") 
         { setHubs (["Soical", "Mental Health", "News", "File Sharing", "E-Card", "Files Management"])}
+      else if (role=="ADMIN") 
+        { setHubs (["Soical", "Mental Health", "News", "File Sharing", "E-Card", "News Management"] )}
     else  {
         setHubs(["Soical", "Mental Health", "News", "File Sharing", "E-Card"]);
       }
-    }, 100);
+    }, 200);
   }, [sessionStorage.getItem("role")]); // Updates when role changes
 
   const handlePageNavigation = (hub) => {
@@ -73,6 +75,9 @@ const MainHeader = () => {
       case "News":
         navigate("News");
         break;
+        case "News Management":
+          navigate("NewsManagement");
+          break;
       case "File Sharing":
         navigate("FileSharing");
         break;
@@ -82,6 +87,10 @@ const MainHeader = () => {
       case "Therapist":
         navigate("TherapistChats");
         break;
+        case "Notes":
+          navigate("TherapistNotes");
+          break;
+
         case "Files Management":
           navigate("FilesManagement")
           break;

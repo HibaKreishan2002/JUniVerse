@@ -1,0 +1,23 @@
+.hide-toolbar .rbc-btn-group {
+    display: none !important;
+  }
+  /* Custom style to remove the border around events */
+.custom-event {
+  border: none !important;
+  border-radius: 0 !important;  /* Ensure no rounded corners */
+  box-shadow: none !important;  /* Ensure there's no shadow either */
+  background-color: rgb(201, 198, 238);
+
+}
+.rbc-event, .rbc-day-slot .rbc-background-event{
+  background-color: rgb(201, 198, 238);
+
+}
+
+.custom-event::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-event::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}

@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import ResponsiveDev from "../../components/ResponsiveDev";
 import FolderIcon from '@mui/icons-material/Folder';
 import JuUniVerseAxios from "../../API/JuUniVerseAxios";
-import { Box, Grid, Stack, Tooltip, Typography, Button, IconButton, TextField, tooltipClasses, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, styled, Modal } from '@mui/material';
+import { Box, Grid, Alert, Tooltip, Typography, Button, IconButton, TextField, tooltipClasses, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, styled, Modal } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Swal from "sweetalert2";
+
 
 function FileSharingHub() {
   const [folderDetails, setFolderDetails] = useState([]);
   const [folderName, setFolderName] = useState(" ");
   const [modelTitle, setModelTitle] = useState("Create Folder");
   const [folderDescription, setFolderDescription] = useState(" ");
+  const [errorMessage, setErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [refershPage, setRefershPage] = useState(0);
   const [folderID, setFolderID] = useState(0);
@@ -19,6 +21,7 @@ function FileSharingHub() {
   const handleOpen = () => setOpen(true);
   const handleClose = () =>{setFolderName("");
     setFolderDescription("");
+    setErrorMessage("")
     setOpen(false);} 
   const [hovered, setHovered] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -32,6 +35,24 @@ function FileSharingHub() {
   }, [refershPage])
 
   const addFolder = () => {
+    console.log(folderDescription);
+    console.log(folderName);
+    if (folderName==undefined || folderName.trim()==""){
+      // handleClose();
+
+     
+      setErrorMessage("Please fill Folder Name")
+
+      return;
+    }
+    if (folderDescription==undefined || folderDescription.trim()==""){
+
+      setErrorMessage("Please fill Folder Description")
+      
+      return;
+    }
+
+
     if (modelTitle == "Create Folder") {
 
       JuUniVerseAxios.post("/folder", { name: folderName, description: folderDescription }).then((res) => {
@@ -41,27 +62,67 @@ function FileSharingHub() {
         handleClose();
       })
     } else {
-      JuUniVerseAxios.put(`/folder/${folderID}`, { name: folderName, description: folderDescription }).then((res) => {
-        setRefershPage(refershPage + 1);
-        Swal.fire({
-          title: "Success",
-          text: "Updated Successfully",
-          icon: "success"
+if (folderDescription!=undefined && folderDescription!=""){
+  JuUniVerseAxios.put(`/folder/${folderID}/description`, { description: folderDescription }).then((res) => {
+    setRefershPage(refershPage + 1);
+    Swal.fire({
+      title: "Success",
+      text: "Updated Successfully",
+      icon: "success"
+    });
+    setFolderDescription("");
+    setFolderName("");
+    handleClose();
+  }).catch(err=>{console.log(err?.response?.data?.errorDescription)
+
+      Swal.fire({
+          title: "ERROR",
+          text: err?.response?.data?.errorDescription,
+          icon: "error"
         });
-        setFolderDescription("");
-        setFolderName("");
         handleClose();
-      }).catch(err=>{console.log(err?.response?.data?.errorDescription)
 
-          Swal.fire({
-              title: "ERROR",
-              text: err?.response?.data?.errorDescription,
-              icon: "error"
-            });
-            handleClose();
+  }
+  )
+}else{
+  Swal.fire({
+    title: "ERROR",
+    text: "Please fill Folder Description",
+    icon: "error"
+  });
+  handleClose();
+}
 
-      }
-      )
+if (folderName!=undefined && folderName!=""){
+  JuUniVerseAxios.put(`/folder/${folderID}/name?folderName=${folderName}`).then((res) => {
+    setRefershPage(refershPage + 1);
+    Swal.fire({
+      title: "Success",
+      text: "Updated Successfully",
+      icon: "success"
+    });
+    setFolderDescription("");
+    setFolderName("");
+    handleClose();
+  }).catch(err=>{console.log(err?.response?.data?.errorDescription)
+
+      Swal.fire({
+          title: "ERROR",
+          text: err?.response?.data?.errorDescription,
+          icon: "error"
+        });
+        handleClose();
+
+  }
+  )
+}else{
+  Swal.fire({
+    title: "ERROR",
+    text: "Please fill Folder Description",
+    icon: "error"
+  });
+  handleClose();
+}
     }
 
   }
@@ -117,11 +178,13 @@ console.log(error);
               borderRadius: 2,
             }}i
           >
+            {errorMessage!=""?            <Alert severity="error">{errorMessage}</Alert>
+:""}
             <Typography variant="h6" mb={2}>{modelTitle}
 
             </Typography>
             <TextField fullWidth label="Folder Name" variant="outlined" margin="normal" value={folderName}
-              onChange={(e) => setFolderName(e.target.value)} />
+              onChange={(e) => setFolderName(e.target.value)} required={true} />
             <TextField fullWidth label="Folder Description" variant="outlined" margin="normal" value={folderDescription}
               onChange={(e) => setFolderDescription(e.target.value)} />
             <Box mt={2} display="flex" gap={2}>
@@ -219,7 +282,7 @@ console.log(error);
           Swal.fire({
             title: 'Folder Deleted Successfully!',
             icon: 'success',
-            confirmButtonText: 'Okay'
+            confirmButtonText: 'Ok'
           });
         }
       });

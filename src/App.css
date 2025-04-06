@@ -31,3 +31,6 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #1b8ea5;
 }
+.swal-popup-front {
+  z-index: 2000 !important;
+}

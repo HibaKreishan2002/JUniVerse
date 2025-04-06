@@ -20,8 +20,8 @@ const TherapistChats = {
       listStyle: 'none',
       padding: 0,
       overflowY: 'auto',  // Enables scrolling only inside the chat area
-      maxHeight: '60vh',  // Limits the height to keep scrolling inside the box
-      minHeight: '60vh',  // Ensures the height remains fixed
+      maxHeight: '61vh',  // Limits the height to keep scrolling inside the box
+      minHeight: '61vh',  // Ensures the height remains fixed
        flexDirection: 'column',
       
     },
@@ -34,6 +34,14 @@ const TherapistChats = {
       
      
 
+    },
+    notesBox:{
+      listStyle: 'none',
+      padding: 0,
+      overflowY: 'auto',  // Enables scrolling only inside the chat area
+      maxHeight: '70vh',  // Limits the height to keep scrolling inside the box
+      minHeight: '70vh',  // Ensures the height remains fixed
+       flexDirection: 'column',
     },
     userListItem : {
       margin: '10px 0',
@@ -54,6 +62,8 @@ const TherapistChats = {
       // justifyContent: 'space-between',
       marginLeft: '28px',
       // height: '50vh', // Ensures it takes full height
+      
+      
       
     },
     chatHeader: {

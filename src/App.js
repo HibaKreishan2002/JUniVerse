@@ -13,6 +13,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import FileSharingHub from "./pages/FileSharingHub/FileSharingHub";
 import FileScreen from "./pages/FileSharingHub/FileScreen";
 import FilesManagement from "./pages/FileSharingHub/FilesManagement";
+import TherapistNotes from "./pages/Therapist/TherapistNotes";
+import News from "./pages/NewsHub/News";
+import NewsManagement from "./pages/NewsHub/NewsManagement";
 
 function App() {
   return (
@@ -29,10 +32,16 @@ function App() {
             <Route path="/SocialHub" element={<SocialHub />} />
             <Route path="/MentalHealthHub" element={<MentalHealthHub />} />
               <Route path="/TherapistChats" element={<TherapistChats />} />
+              <Route path="/TherapistNotes" element={<TherapistNotes />} />
               <Route path="/FileSharing" element={<FileSharingHub />} />
               <Route path="/files/:folderId" element={<FileScreen />} />
               <Route path="/ECard" element={<ECard />} />
               <Route path="/FilesManagement" element={<FilesManagement />} />
+              <Route path="/News" element={<News/>} />
+              <Route path="/NewsManagement" element={<NewsManagement/>} />
+
+
+
 
           </Route>
         </Route>

@@ -94,12 +94,13 @@ function SocialHub() {
                 <div key={msg.id} style={sessionStorage.getItem("username") === msg.senderUsername ? SocialHubStyle.receivedMessage : SocialHubStyle.sentMessage}>
                   <h4 style={{ ...SocialHubStyle.senderUsername }}>
                   <sup style={{color:getUsernameColor(msg.senderUsername)}}>                      
-                      {msg.senderUsername}</sup>
+                      {msg.senderUsername}  ({msg.senderRole})</sup>
                   </h4>
                   {(sessionStorage.getItem("username") === msg.senderUsername || sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "MODERATOR") && (
-                    <IconButton onClick={(e) => handleMenuClick(e, msg)} sx={{ float: "right" }}>
+                ((msg.senderRole!="ADMIN"||(msg.senderUsername==sessionStorage.getItem("username")))&& (msg.senderRole!="MODERATOR"||(msg.senderUsername==sessionStorage.getItem("username"))))?
+                <IconButton onClick={(e) => handleMenuClick(e, msg)} sx={{ float: "right" }}>
                       <MoreVertIcon />
-                    </IconButton>
+                    </IconButton>:""
                   )}
                   <p style={SocialHubStyle.content}>{msg.content}</p>
                   <sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
@@ -107,6 +108,7 @@ function SocialHub() {
               ) : null
             ))}
           </div>
+          
           <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
             {selectedMsg && sessionStorage.getItem("username") === selectedMsg.senderUsername && (
               <MenuItem onClick={() => {
@@ -114,11 +116,15 @@ function SocialHub() {
                 handleMenuClose();
               }}>Edit</MenuItem>
             )}
-            {selectedMsg && (sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "MODERATOR") && (
-              <MenuItem onClick={() => {
+            {console.log(selectedMsg)
+            }
+            {selectedMsg && ( sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "MODERATOR") && (
+
+<MenuItem onClick={() => {
                 handleDeleteMessage(selectedMsg.id);
                 handleMenuClose();
               }}>Delete</MenuItem>
+          
             )}
           </Menu>
           <div style={SocialHubStyle.messageInput}>
