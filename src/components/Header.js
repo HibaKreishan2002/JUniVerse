@@ -1,21 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Menu from "@mui/material/Menu";
+import{ Menu, Modal, Typography , MenuItemfrom,  AppBar, Box, IconButton, styled, Toolbar, Button,MenuItem} from "@mui/material";
 import Text from "../assets/images/Text.png";
-import MenuItem from "@mui/material/MenuItem";
-import {
-  AppBar,
-  Box,
-  IconButton,
-  styled,
-  Toolbar,
-  Button,
-} from "@mui/material";
-
 import { drawerWidth } from "./Layout";
 import WhiteLogo from "../assets/images/WhiteLogo.png";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+
+
 
 const AppBarStyle = styled(AppBar)(({ theme }) => ({
   boxShadow: "none",
@@ -45,6 +37,9 @@ const MainHeader = () => {
   const [showUserMenu, setShowUserMenu] = useState(null);
   const [hubs, setHubs] = useState([]);
   const navigate = useNavigate();
+
+  const [openHelpModal, setOpenHelpModal] = useState(false);
+  
 
   // Update menu based on user role
   useEffect(() => {
@@ -168,11 +163,47 @@ const MainHeader = () => {
             <MenuItem onClick={() => { navigate("/ProfilePage"); handleCloseUserMenu(); }}>
               {sessionStorage.getItem("fullname")}
             </MenuItem>
-            <MenuItem onClick={() => handleCloseUserMenu()}>Help</MenuItem>
+            <MenuItem onClick={() => {
+setOpenHelpModal(true)
+handleCloseUserMenu()
+            }}>Help</MenuItem>
             <MenuItem onClick={() => handleCloseUserMenu("Logout")}>Logout</MenuItem>
           </Menu>
         </ContainerStyle>
       </ToolbarStyle>
+      <Modal
+  open={openHelpModal}
+  onClose={() => setOpenHelpModal(false)}
+  aria-labelledby="help-modal-title"
+  aria-describedby="help-modal-description"
+>
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 400,
+      bgcolor: 'background.paper',
+      borderRadius: 2,
+      boxShadow: 24,
+      p: 4,
+    }}
+  >
+    <Typography id="help-modal-title" variant="h6" component="h2" sx={{textAlign:"center" , fontWeight:"bold"}}>
+Need Help?    </Typography>
+    <Typography id="help-modal-description" sx={{ mt: 2 }}>
+    For assistance, please contact us at 
+    <br/> 
+    <a href="mailto:help@juniverse.com">help@juniverse.com.  </a>
+    <br/> 
+Our support team wil get back to you as soon as possible.
+      </Typography>
+    <Button onClick={() => setOpenHelpModal(false)} sx={{ mt: 3 }} variant="contained" fullWidth>
+      Close
+    </Button>
+  </Box>
+</Modal>
     </AppBarStyle>
   );
 };

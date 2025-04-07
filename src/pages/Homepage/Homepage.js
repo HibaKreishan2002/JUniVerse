@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import video from '../../assets/video.mp4'; // Correct import path
 import WhiteLogo from "../../assets/images/WhiteLogo.png";
 import Text from "../../assets/images/Text.png";
+import Footer from '../../components/Footer';
 
 
 function Homepage() {
@@ -59,50 +60,7 @@ function Homepage() {
       </Box>
 
       {/* Footer */}
-      <Box
-           sx={{
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-            background: "linear-gradient(to right, #6861bd, #3873d4,#22a9d3)",
-            textAlign: 'center',
-            padding: '10px',
-            display: 'flex',
-            color:'white',
-            justifyContent: 'center',
-            gap: '10px',
-          }}
-        >
-          <Typography variant="body2">© 2025 Juniverse |</Typography>
-  
-          {/* Clickable About Us */}
-          <Typography
-            variant="body2"
-            sx={{
-              cursor: 'pointer',
-              '&:hover': { color: 'red' },
-            }}
-            onClick={() => navigate('/about')}
-          >
-            About Us
-          </Typography>
-  
-          <Typography variant="body2">|</Typography>
-  
-          {/* Clickable Contact Us */}
-          <Typography
-            variant="body2"
-            sx={{
-              cursor: 'pointer',
-              '&:hover': { color: 'red' },
-            }}
-            onClick={() => navigate('/contact')}
-          >
-            Contact Us
-          </Typography>
-
-      </Box>
-
+     <Footer/>
       
     </div>
   );

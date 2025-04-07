@@ -16,6 +16,7 @@ import FilesManagement from "./pages/FileSharingHub/FilesManagement";
 import TherapistNotes from "./pages/Therapist/TherapistNotes";
 import News from "./pages/NewsHub/News";
 import NewsManagement from "./pages/NewsHub/NewsManagement";
+import AboutUs from "./pages/Info/AboutUs";
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
       <Route path="/" element={<Homepage />} />
 
         <Route path="/Login" element={<Login />} />
+        <Route path="/AboutUs" element={<AboutUs/>} />
+
 
 
         <Route element={<ProtectedRoute />}>
@@ -39,6 +42,7 @@ function App() {
               <Route path="/FilesManagement" element={<FilesManagement />} />
               <Route path="/News" element={<News/>} />
               <Route path="/NewsManagement" element={<NewsManagement/>} />
+
 
 
 
