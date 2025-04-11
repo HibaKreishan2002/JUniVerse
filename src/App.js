@@ -17,6 +17,9 @@ import TherapistNotes from "./pages/Therapist/TherapistNotes";
 import News from "./pages/NewsHub/News";
 import NewsManagement from "./pages/NewsHub/NewsManagement";
 import AboutUs from "./pages/Info/AboutUs";
+import Students from "./pages/UsersManagement/Students";
+import Moderators from "./pages/UsersManagement/Moderators";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -42,6 +45,10 @@ function App() {
               <Route path="/FilesManagement" element={<FilesManagement />} />
               <Route path="/News" element={<News/>} />
               <Route path="/NewsManagement" element={<NewsManagement/>} />
+              <Route path="/Students" element={<Students/>} />
+              <Route path="/Moderators" element={<Moderators/>} />
+
+
 
 
 
