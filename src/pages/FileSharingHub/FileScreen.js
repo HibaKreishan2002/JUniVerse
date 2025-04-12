@@ -154,21 +154,33 @@ const VisuallyHiddenInput = styled('input')({
 
   }
   const AddFile = (name, type, base64) => {
-   if (modelTitle=="Upload File"){
-    JuUniVerseAxios.post("/files", { name: fileName, extension: type, description: fileDescription, folderId: folderId, fileAsBase64: base64 }).then((res) => {
-      setRefershPage(refershPage + 1);
-      Swal.fire("Your file is being moderated!");
-
-
-      setOpen(false)
-    }).catch((err) => {
-      console.log(err);
-
-    })
-  }else{
-    handleEditFile();
-  }
-  }
+    if (modelTitle === "Upload File") {
+      JuUniVerseAxios.post("/files", {
+        name: fileName,
+        extension: type,
+        description: fileDescription,
+        folderId: folderId,
+        fileAsBase64: base64,
+      })
+        .then((res) => {
+          setRefershPage(refershPage + 1);
+  
+          if (
+            sessionStorage.getItem("role") == "STUDENT" 
+          ) {
+            Swal.fire("Your file is being moderated!");
+          }
+  
+          setOpen(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      handleEditFile();
+    }
+  };
+  
   const handleMenuClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
   };
