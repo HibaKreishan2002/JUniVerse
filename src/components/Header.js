@@ -263,7 +263,7 @@ const MainHeader = () => {
     setTimeout(() => {
       const role = sessionStorage.getItem("role");
       if (role === "THERAPIST") {
-        setHubs(["Soical", "Mental Health", "News", "E-Card", "Therapist", "Notes"]);
+        setHubs(["Soical", "Mental Health", "News", "E-Card", "Chats", "Notes"]);
       } else if (role === "MODERATOR") {
         setHubs(["Soical", "Mental Health", "News", "File Sharing", "E-Card", "Files Management"]);
       } else if (role === "ADMIN") {
@@ -294,7 +294,7 @@ const MainHeader = () => {
       case "E-Card":
         navigate("ECard");
         break;
-      case "Therapist":
+      case "Chats":
         navigate("TherapistChats");
         break;
       case "Notes":
@@ -308,6 +308,9 @@ const MainHeader = () => {
         break;
       case "Moderators":
         navigate("Moderators");
+        break;
+        case "Banned Users":
+        navigate("BannedUsers");
         break;
       case "News Management":
         navigate("NewsManagement");

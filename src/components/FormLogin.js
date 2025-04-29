@@ -118,7 +118,7 @@ function FormLogin () {
 
     Swal.fire({
       title: "ERROR",
-      text: "Invalid username/password",
+      text: err?.response?.data?.message,
       icon: "error"
     });
   }

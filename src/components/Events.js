@@ -7,8 +7,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,ButtonGroup
 } from "@mui/material";
+
 import "./CustomCalendar.css";
 import ResponsiveDev from "./ResponsiveDev";
 import JuUniVerseAxios from "../API/JuUniVerseAxios";
@@ -28,7 +29,12 @@ const CustomCalendar = ({ reservations }) => {
   const [data, setData] = useState([])
   const [openModal, setOpenModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-
+  const [error,setError]=useState(false);
+const getMinDateTime=()=>{
+  const now=new Date ();
+  const local =new Date (now.getTime()-now.getTimezoneOffset()*6000);
+  return local.toISOString().slice(0,16);
+}
   const [newEvent, setNewEvent] = useState({
     id:0,
     title: "",
@@ -39,18 +45,31 @@ const CustomCalendar = ({ reservations }) => {
   
 const AddEvent =()=>{
   try{
-JuUniVerseAxios.post(`/events`,{...newEvent,time:moment(newEvent.time).toISOString(),date:""}).then(res=>{
-  setNewEvent({
-    id:0,
-    title: "",
-    description: "",
-    location: "",
-    time: "",
-  })
-  setOpenModal(false)
-  setRefersh(refersh+1)
+    const defData=new Date();
+    console.log(newEvent.time);
+    console.log(defData.toISOString());
+    console.log(new Date(newEvent.time)>defData);
+    
+    if (new Date(newEvent.time)>defData){
+      JuUniVerseAxios.post(`/events`,{...newEvent,time:moment(newEvent.time).toISOString(),date:""}).then(res=>{
+        setNewEvent({
+          id:0,
+          title: "",
+          description: "",
+          location: "",
+          time: "",
+        })
+        setOpenModal(false)
+        setError(false)
 
-})  }
+        setRefersh(refersh+1)
+      
+      })
+    }else{
+      setError(true)
+ 
+    }
+  }
   catch (error) {
     console.error(error);
   }
@@ -104,9 +123,23 @@ JuUniVerseAxios.post(`/events`,{...newEvent,time:moment(newEvent.time).toISOStri
     console.log(event);
     
   };
- const handleDelete=()=>{
+  const handlePrev=()=>{
+    const newDate=moment(currentDate).subtract(1,'month').toDate();
+    setCurrentDate(newDate)
+  }
+  const handleNext=()=>{
+    const newDate=moment(currentDate).add(1,'month').toDate();
+    setCurrentDate(newDate)
+
+  }
+
+  const handleToday=()=>{
+    setCurrentDate(new Date())
+
+  }
+ const handleDelete=(event)=>{
   Swal.fire({
-    title: `Do you want to Delete "${selectedEvent.title}" ?`,
+    title: `Do you want to Delete "${event?.title}" ?`,
     showCancelButton: true,
     showDenyButton: true,
     showConfirmButton: false,
@@ -114,7 +147,7 @@ JuUniVerseAxios.post(`/events`,{...newEvent,time:moment(newEvent.time).toISOStri
   }).then((result) => {
     if (result.isDenied) {
 // Optionally show a success message after deletion
-JuUniVerseAxios.delete(`/events/${selectedEvent.id}`).then(res=>{
+JuUniVerseAxios.delete(`/events/${event.id}`).then(res=>{
 
 Swal.fire({
   title: 'Event Deleted Successfully!',
@@ -146,11 +179,17 @@ setRefersh(refersh+1)
         position: 'relative',
       }}
     >
+   
       {/* Delete Button */}
+      { sessionStorage.getItem("role") === "ADMIN"?
       <span
         onClick={(e) => {
-          e.stopPropagation(); // Prevents triggering parent calendar click
-          handleDelete();
+          console.log("event " , event);
+          
+          console.log("e ",e);
+          
+          // e.stopPropagation(); // Prevents triggering parent calendar click
+          handleDelete(event);
         }}
         style={{
           color: 'red',
@@ -163,9 +202,10 @@ setRefersh(refersh+1)
           fontSize: '1rem',
           lineHeight: 1,
         }}
+        
       >
         X
-      </span>
+      </span>:""}
 
       {/* Event Info */}
       <Typography variant="subtitle2" fontWeight="bold" sx={{ color: 'black' }}>
@@ -184,6 +224,7 @@ setRefersh(refersh+1)
   return (
     <ResponsiveDev sx={{ padding: 3 }}>
       <Box sx={{ border: "1px solid #ddd", padding: 2, marginBottom: 0 }}>
+  
         <Select
           value={view}
           onChange={(e) => setView(e.target.value)}
@@ -204,8 +245,9 @@ setRefersh(refersh+1)
           <MenuItem value="day">Day</MenuItem>
           <MenuItem value="agenda">Agenda</MenuItem>
         </Select>
-        <Button sx={{ float: 'right', marginRight: 4 }} variant="contained" color="primary"   onClick={() => setOpenModal(true)}
-        >Add Event</Button>
+        { sessionStorage.getItem("role") === "ADMIN"?        <Button sx={{ float: 'right', marginRight: 4 }} variant="contained" color="primary"   onClick={() => setOpenModal(true)}
+        >Add Event</Button>:""}
+
         <Dialog open={openModal} onClose={() => setOpenModal(false)}>
   <DialogTitle>Add New Event</DialogTitle>
   <DialogContent>
@@ -240,11 +282,27 @@ setRefersh(refersh+1)
       fullWidth
       InputLabelProps={{ shrink: true }}
       value={newEvent.time}
+      error={error}
+    inputProps={{
+      min:getMinDateTime()
+    }}
+    helperText={error?'Cannot select a past date/time':""}
       onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
     />
   </DialogContent>
   <DialogActions>
-    <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+    <Button onClick={() => {setOpenModal(false)
+     setNewEvent({
+      id:0,
+      title: "",
+      description: "",
+      location: "",
+      time: "",
+    })
+setError(false)
+
+
+    }}>Cancel</Button>
     <Button
       variant="contained"
       onClick={AddEvent}
@@ -261,8 +319,13 @@ setRefersh(refersh+1)
         >
           {moment(currentDate).format("MMMM YYYY")}
         </Typography>
+        <ButtonGroup variant="contained" aria-label="Basic button group">
+      <Button onClick={handleToday}>Current</Button>
+      <Button onClick={handlePrev}>Back</Button>
+      <Button onClick={handleNext}>Next</Button>
+    </ButtonGroup>
       </Box>
-
+    
       <Calendar
         localizer={localizer}
         events={events}
@@ -271,6 +334,7 @@ setRefersh(refersh+1)
         views={{ month: true, week: true, day: true, agenda: true }}
         view={view}
         onView={(newView) => setView(newView)}
+        date={currentDate}
         onNavigate={(date) => setCurrentDate(date)}
         components={{ event: CustomEvent }}
         style={{ height: 500 }}
@@ -280,6 +344,8 @@ setRefersh(refersh+1)
         onSelectEvent={handleEventClick} // Attach the event click handler
 
       />
+      <br/>
+      <br/>
     </ResponsiveDev>
   );
 };

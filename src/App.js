@@ -20,6 +20,7 @@ import AboutUs from "./pages/Info/AboutUs";
 import Students from "./pages/UsersManagement/Students";
 import Moderators from "./pages/UsersManagement/Moderators";
 import Dashboard from "./components/Dashboard";
+import BannedUsers from "./pages/UsersManagement/BannedUsers";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
               <Route path="/NewsManagement" element={<NewsManagement/>} />
               <Route path="/Students" element={<Students/>} />
               <Route path="/Moderators" element={<Moderators/>} />
+              <Route path="/BannedUsers" element={<BannedUsers/>} />
 
 
 

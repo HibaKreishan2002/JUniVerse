@@ -92,8 +92,12 @@ function NewsManagement() {
     },
 
     {
-      field: "createdAt", headerName: "Timestamp", headerAlign: 'center', align: 'center', width: 200, resizable: false,
-      disableColumnMenu: true,
+      field: "createdAt", headerName: "Date", headerAlign: 'center', align: 'center', width: 200, resizable: false,
+      disableColumnMenu: true, renderCell:(Params)=>{
+        const date =new Date(Params.value)
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+            }
+      
 
 
     },

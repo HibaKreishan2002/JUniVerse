@@ -6,7 +6,73 @@ import JuUniVerseAxios from '../../API/JuUniVerseAxios';
 import Swal from "sweetalert2";
 
 function Students() {
+    const [Data, setData] = useState([])
+    const [refershPage, setRefershPage] = useState(0);
+
+    const handleBan=(id,username)=>{
+  console.log(username);
   
+
+          Swal.fire({
+            title: ` Do you want to Ban "${username}" ? `,
+            showCancelButton: true,
+            showDenyButton: true,
+            showConfirmButton: false,
+            denyButtonText: `Ban`
+      
+      
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isDenied) {
+              JuUniVerseAxios.put(`/users/${id}/ban`).then(res=>{
+        
+                setRefershPage(refershPage+1)
+                Swal.fire({
+                  title: "Success",
+                  icon: "success",
+                });
+                      }).catch(err=>{
+                        console.log(err)
+                      })
+            }
+          });
+    }
+    const handlePromote=(id,username)=>{
+ 
+
+      Swal.fire({
+        title: ` Do you want to Promote "${username}" ? `,
+        showCancelButton: true,
+        showDenyButton: true,
+        showConfirmButton: false,
+        denyButtonText: `Promote`
+  
+  
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isDenied) {
+          JuUniVerseAxios.put(`/users/${id}/promote`).then(res=>{
+            setRefershPage(refershPage+1)
+            Swal.fire({
+              title: "Success",
+              icon: "success",
+            });
+    
+          }).catch(err=>{
+                    console.log(err)
+                  })
+        }
+      });
+    }
+  
+    useEffect(() => {
+      JuUniVerseAxios.get("/users/STUDENT").then((res) => {
+        setData(res?.data?.data)
+      }).catch(err => {
+        setData([])
+  
+      })
+    }, [refershPage])
     
       const columns = [
         {
@@ -15,7 +81,7 @@ function Students() {
     
         },
         {
-          field: "Fname", headerName: "First Name",
+          field: "firstName", headerName: "First Name",
           headerAlign: 'center',
           align: 'center',
           width: 280,
@@ -24,35 +90,34 @@ function Students() {
     
         },
         {
-          field: "Lname", headerName: "Last Name", headerAlign: 'center', headerAlign: 'center', align: 'center', width: 200, resizable: false,
+          field: "lastName", headerName: "Last Name", headerAlign: 'center', headerAlign: 'center', align: 'center', width: 200, resizable: false,
     
         },
     
         {
-          field: "Email", headerName: "Email", headerAlign: 'center', align: 'center', width: 200, resizable: false,
+          field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 200, resizable: false,
           disableColumnMenu: true,
     
     
         },
         {
-          field: "actions", headerName: "Action", headerAlign: 'center', align: 'center', width: 220, disableColumnMenu: true,
+          field: "actions", headerName: "Action", headerAlign: 'center', align: 'center', width: 240, disableColumnMenu: true,
           resizable: false,
     
     
           renderCell: (params) => (
             <>
-              <Button variant="contained" color="error" size="small" style={{ marginRight: 5 }}>
+              <Button variant="contained" color="error" size="small" onClick={()=>handleBan(params.id,params.row.username)} sx={{ marginRight: 5 }}>
                 Ban
               </Button>
-              <Button variant="contained" color="primary" size="small">
-                Make a moderator
+              <Button variant="contained" color="primary" size="small"  onClick={()=>handlePromote(params.id,params.row.username)} >
+                Promote
               </Button>
             </>
           ),
         },
     
       ]
-      const [Data, setData] = useState([])
 
   return (
   

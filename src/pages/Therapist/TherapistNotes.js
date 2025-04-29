@@ -156,7 +156,10 @@ function TherapistNotes() {
   return (
     <div style={TherapistChatsStyle.chatPage}>
       <div style={TherapistChatsStyle.leftPanel}>
-        <h2 style={TherapistChatsStyle.leftPanelHeader}>Messages</h2>
+        <h2 style={TherapistChatsStyle.leftPanelHeader}  onClick={()=>         { 
+      setSelectedUser(null)
+    }
+}>Messages</h2>
         <TextField
           fullWidth
           placeholder="Search users..."

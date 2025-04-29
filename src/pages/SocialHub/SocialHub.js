@@ -96,8 +96,9 @@ function SocialHub() {
                   <sup style={{color:getUsernameColor(msg.senderUsername)}}>                      
                       {msg.senderUsername}  ({msg.senderRole})</sup>
                   </h4>
+        
                   {(sessionStorage.getItem("username") === msg.senderUsername || sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "MODERATOR") && (
-                ((msg.senderRole!="ADMIN"||(msg.senderUsername==sessionStorage.getItem("username")))&& (msg.senderRole!="MODERATOR"||(msg.senderUsername==sessionStorage.getItem("username"))))?
+                ((msg.senderRole!="ADMIN"||(msg.senderUsername==sessionStorage.getItem("username"))))?
                 <IconButton onClick={(e) => handleMenuClick(e, msg)} sx={{ float: "right" }}>
                       <MoreVertIcon />
                     </IconButton>:""

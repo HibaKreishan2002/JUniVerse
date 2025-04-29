@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList, Box } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const options = ["News", "Students", "Moderators"];
+const options = ["News", "Students", "Moderators","Banned Users"];
 
 function GroupButtons({ handlePageNavigation }) {
   const [open, setOpen] = React.useState(false);

@@ -104,12 +104,11 @@ function TherapistChats() {
   return (
     <div style={TherapistChatsStyle.chatPage}>
       <div style={TherapistChatsStyle.leftPanel}>
-        <h2 style={TherapistChatsStyle.leftPanelHeader}>Messages</h2>
-        <Button onClick={()=>         { setMessageInfo(null);
+        <h2 style={TherapistChatsStyle.leftPanelHeader}  onClick={()=>         { setMessageInfo(null);
  setChatID(null)
  setData([])
  setReceiverFullName("")
- setSelectedUserId(null)}}>Reset</Button>
+ setSelectedUserId(null)}}>Messages</h2>
         <TextField
           fullWidth
           placeholder="Search users..."
