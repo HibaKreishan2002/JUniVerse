@@ -1,13 +1,38 @@
+// Full TherapistChats component with auto-scroll after sending a message
+
 import React, { useEffect, useState, useRef } from "react";
 import TherapistChatsStyle from "./TherapistChatsStyle.js";
-import { Typography, Badge, IconButton, Menu, MenuItem , TextField, InputAdornment ,Button} from "@mui/material";
+import {
+  Typography,
+  Badge,
+  IconButton,
+  Menu,
+  MenuItem,
+  TextField,
+  InputAdornment,
+  Button,
+  styled,
+  Box,
+} from "@mui/material";
 import JuUniVerseAxios from "../../API/JuUniVerseAxios.js";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ClearIcon from '@mui/icons-material/Clear';
-import { Navigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search"; 
-
-
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchIcon from "@mui/icons-material/Search";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import pdficon from '../../assets/images/pdficon.png'
+import ImageIcon from '@mui/icons-material/Image';
+import wordicon from '../../assets/images/wordicon.png'
+import powerpointicon from '../../assets/images/powerpointicon.png'
+import jsicon from '../../assets/images/jsicon.png'
+import excelicon from '../../assets/images/excelicon.png'
+import texticon from '../../assets/images/texticon.png'
+import mp4icon from '../../assets/images/mp4icon.png'
+import mp3icon from '../../assets/images/mp3icon.png'
+import javaicon from '../../assets/images/javaicon.png'
+import htmlicon from '../../assets/images/htmlicon.png'
+import cssicon from '../../assets/images/cssicon.png'
+import phpicon from '../../assets/images/phpicon.png'
+import FileIcon from '@mui/icons-material/InsertDriveFile';
 function TherapistChats() {
   const [dataStudent, setDataStudent] = useState([]);
   const [message, setMessage] = useState("");
@@ -22,8 +47,16 @@ function TherapistChats() {
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
   const [searchQuery, setSearchQuery] = useState("");
 
+
+
+  const [attachedFile, setAttachedFile] = useState(null);
+  const [attachedFilePreviewUrl, setAttachedFilePreviewUrl] = useState(null);
+  const [attachedFileBase64, setAttachedFileBase64] = useState(null);
+  const [attachedFileName, setAttachedFileName] = useState("");
+  const [attachedFileExtension, setAttachedFileExtension] = useState("");
+
+
   useEffect(() => {
-  
     const getAllChats = async () => {
       try {
         const res = await JuUniVerseAxios.get("/private-chat/allTherapistChats");
@@ -36,10 +69,10 @@ function TherapistChats() {
     const interval = setInterval(getAllChats, 5000);
     return () => clearInterval(interval);
   }, []);
-  const filteredUsers = dataStudent.filter(user =>
+
+  const filteredUsers = dataStudent.filter((user) =>
     `${user.userFirstName} ${user.userLastName}`.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
 
   const handleClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
@@ -60,55 +93,241 @@ function TherapistChats() {
     return () => clearInterval(interval);
   }, [chatID]);
 
-  const handleClick = (event, msg) => {
-    setMenuData({ anchorEl: event.currentTarget, selectedMsg: msg });
-  };
-
   useEffect(() => {
-    if (chatContainerRef.current && !hasScrolledOnceRef.current) {
-      setTimeout(() => {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        hasScrolledOnceRef.current = true;
-      }, 90);
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [chatID]);
+  }, [data.length]);
 
-  const handleSendMessage = () => {
-    if (messageInfo) {
-      JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, { content: messageInfo.content })
-        .then(() => {
-          setMessageInfo(null);
-          setRefreshPage(refreshPage + 1);
-        })
-        .catch((error) => console.log(error));
-    } else {
-      try {
-         JuUniVerseAxios.post("/private-chat/messageFromTherapist", {
+  const handleSendMessage = async () => {
+    // if (!message && !messageInfo) return;
+    try {
+      if (messageInfo) {
+        await JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, {
+          content: messageInfo.content,
+        });
+        setMessageInfo(null);
+      } else {
+        if (message){
+        await JuUniVerseAxios.post("/private-chat/messageFromTherapist", {
           privateChatId: chatID,
           receiverUsername,
           content: message,
-        });
-        setMessage("");
-      } catch (error) {
-        console.error(error);
+        }).then(res=>{
+          setMessage("");
+
+        }).catch(err=>{
+          console.log(err);
+          
+        });}
+        console.log(attachedFileBase64);
+        
+        if (attachedFileBase64) {
+          const fileUploadPayload = {
+            name: attachedFileName,
+            extension: attachedFileExtension,
+            fileAsBase64: attachedFileBase64,
+          };
+  
+          JuUniVerseAxios.post(`/private-chat/${chatID}/attachFileFromTherapist`, fileUploadPayload)
+            .then(() => {
+              setAttachedFile(null);
+              setAttachedFilePreviewUrl(null);
+              setAttachedFileBase64(null);
+              setAttachedFileName("");
+              setAttachedFileExtension("");
+            })
+            .catch((error) => console.log(error));
+        }
       }
+    
+
+
+      // Scroll to bottom after sending
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    } catch (error) {
+      console.error(error);
     }
   };
-
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
 
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      console.warn("No file selected");
+      return;
+    }
+
+    console.log("Selected file:", file);
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const result = reader.result;
+      if (!result) {
+        console.error("Failed to read file as Base64");
+        return;
+      }
+
+      const base64 = result.split(",")[1];
+      const fileExtension = file.name.split(".").pop();
+
+      setAttachedFile(file);
+      setAttachedFileBase64(base64);
+      setAttachedFilePreviewUrl(URL.createObjectURL(file));
+      setAttachedFileName(file.name);
+      setAttachedFileExtension(fileExtension);
+
+      console.log("Base64 ready:", base64.slice(0, 30) + "...");
+    };
+
+    reader.onerror = (err) => {
+      console.error("Error reading file:", err);
+    };
+
+    reader.readAsDataURL(file);
+  };
+  
+  const getFileByID = (fileID, transition) => {
+    JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
+      console.log(res)
+  
+      if (transition == "Download") {
+        handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
+      } else {
+  
+        handleView(res.data.data.fileAsBase64, res.data.data.extension)
+      }
+    })
+      .catch(err => {
+  
+      })
+  }
+  const handleDownload = (base64FileContent, fileName, fileExtension) => {
+    const mimeTypes = {
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      xls: "application/vnd.ms-excel",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ppt: "application/vnd.ms-powerpoint",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      pdf: "application/pdf",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      css: "text/css",
+      html: "text/html",
+      txt: "text/plain",  // Fixed incorrect MIME type
+      php: "application/x-httpd-php",
+      java: "text/x-java-source",
+      mp4: "video/mp4",
+      mp3: "audio/mpeg",
+      js: "application/javascript",
+      mpeg: "video/mpeg",
+    };
+  
+    const mimeType = mimeTypes[fileExtension.toLowerCase()];
+    if (!mimeType) {
+      alert("Unsupported file type");
+      return;
+    }
+  
+    // Convert Base64 to binary
+    const byteCharacters = atob(base64FileContent);
+    const byteNumbers = new Array(byteCharacters.length)
+      .fill(0)
+      .map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
+  
+    // Create object URL
+    const url = URL.createObjectURL(blob);
+  
+    // Create a temporary anchor tag to trigger download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${fileName}.${fileExtension}`; // Set filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  
+    // Revoke the object URL to free memory
+    URL.revokeObjectURL(url);
+  };
+  const handleView = (base64FileContent, fileExtension) => {
+    const mimeTypes = {
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      xls: "application/vnd.ms-excel",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ppt: "application/vnd.ms-powerpoint",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      pdf: "application/pdf",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      css: "text/css",
+      html: "text/html",
+      txt: "text/html",
+      php: "application/x-httpd-php",
+      java: "text/x-java-source",
+      mp4: "video/mp4",
+      mp3: "audio/mpeg",
+      js: "application/javascript",
+      mpeg: "video/mpeg",
+    };
+  
+    const mimeType = mimeTypes[fileExtension.toLowerCase()];
+    if (!mimeType) {
+      alert("Unsupported file type");
+      return;
+    }
+  
+    // Convert Base64 to binary
+    const byteCharacters = atob(base64FileContent);
+    const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
+  
+    // Create object URL and open in new tab
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+  };
+
+
+
   return (
     <div style={TherapistChatsStyle.chatPage}>
       <div style={TherapistChatsStyle.leftPanel}>
-        <h2 style={TherapistChatsStyle.leftPanelHeader}  onClick={()=>         { setMessageInfo(null);
- setChatID(null)
- setData([])
- setReceiverFullName("")
- setSelectedUserId(null)}}>Messages</h2>
+        <h2 style={TherapistChatsStyle.leftPanelHeader} onClick={() => {
+          setMessageInfo(null);
+          setChatID(null);
+          setData([]);
+          setReceiverFullName("");
+          setSelectedUserId(null);
+        }}>Messages</h2>
+
         <TextField
           fullWidth
           placeholder="Search users..."
@@ -124,6 +343,7 @@ function TherapistChats() {
           }}
           sx={{ marginBottom: 2 }}
         />
+
         <ul style={TherapistChatsStyle.userList}>
           {filteredUsers.map((user) => (
             <li
@@ -133,10 +353,7 @@ function TherapistChats() {
                 setReceiverUsername(user.userUsername);
                 setReceiverFullName(user.userFirstName + " " + user.userLastName);
                 setSelectedUserId(user.id);
-                hasScrolledOnceRef.current = false;
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e9e9e9")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
               style={{
                 ...TherapistChatsStyle.userListItem,
                 border: user.id === selectedUserId ? "3px solid black" : "1px solid #ddd",
@@ -154,42 +371,89 @@ function TherapistChats() {
       <div style={TherapistChatsStyle.rightPanel}>
         <Typography sx={{ fontWeight: "bold", color: "black", marginTop: 3 }}>{receiverFullName}</Typography>
         <hr />
-        <div style={{ ...TherapistChatsStyle.chatArea, flexGrow: 1 }} ref={chatContainerRef}>
-          {data
-            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-            .map((msg) => (
-              <div key={msg.id} style={{ position: "relative" }}>
-                {msg.senderUsername === "omar_khaled" && (
-                  <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}>
-                    <MoreVertIcon />
-                  </IconButton>
-                )}
 
-                <p
+        <Box id="chatContainer" sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}>
+          <div style={TherapistChatsStyle.chatArea} ref={chatContainerRef}>
+            {data
+              .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+              .map((msg) => (
+                <div key={msg.id} style={{ position: "relative" }}>
+                  {msg.senderUsername === "omar_khaled" && (
+                    <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    
+                  )}
+                  {msg.file?
+                  
+                  
+                  <p
+             onClick={()=> getFileByID(msg?.fileId)} 
                   style={
                     msg.receiverUsername === receiverUsername
                       ? TherapistChatsStyle.receivedMessage
                       : TherapistChatsStyle.sentMessage
                   }
                 >
-                  {msg.content}
-                  <br />
+                 {
+                   msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                   : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                     : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
+                       : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                         : msg.content.split(".")[1] == "xls" || msg.content.split(".")[1] == "xlsx" ? <img src={excelicon} width={'70x'} />
+                           : msg.content.split(".")[1] == "js" ? <img src={jsicon} width={'70px'} />
+                             : msg.content.split(".")[1] == "txt" ? <img src={texticon} width={'70px'} />
+                               : msg.content.split(".")[1] == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                 : msg.content.split(".")[1] == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                   : msg.content.split(".")[1] == "java" ? <img src={javaicon} width={'70px'} />
+                                     : msg.content.split(".")[1] == "php" ? <img src={phpicon} width={'70px'} />
+                                       : msg.content.split(".")[1] == "html" ? <img src={htmlicon} width={'70px'} />
+                                         : msg.content.split(".")[1] == "css" ? <img src={cssicon} width={'70px'} />
+                                           : <FileIcon
+                                             sx={{
+                                               fontSize: 75,
+                                               padding: 0,
+                                               margin: '-32px',
+                                               color: "#ffd35a",
+                                               transition: "0.3s",
+                                               cursor: "pointer",
+                                             }}
+                                             onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
+ 
+                                             onMouseEnter={() => setHovered(index)}
+                                             onMouseLeave={() => setHovered(null)}
+                                           />
+                 }
+                  <br/>
+                  {msg.content.split(".")[0]}<br />
                   <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
                 </p>
-              </div>
-            ))}
-        </div>
+                  
+                  :
+                  
+                  
+                  
+                  <p
+                  style={
+                    msg.receiverUsername === receiverUsername
+                      ? TherapistChatsStyle.receivedMessage
+                      : TherapistChatsStyle.sentMessage
+                  }
+                >
+                  {msg.content}<br />
+                  <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                </p>
+                  }
+              
+                </div>
+              ))}
+          </div>
+        </Box>
 
-        {/* Single Menu Component (Outside the Loop) */}
         <Menu
           anchorEl={menuData.anchorEl}
           open={Boolean(menuData.anchorEl)}
           onClose={handleClose}
-          elevation={8}
-          sx={{
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-          }}
         >
           <MenuItem
             onClick={() => {
@@ -197,68 +461,71 @@ function TherapistChats() {
                 id: menuData.selectedMsg?.id,
                 content: menuData.selectedMsg?.content
               });
-              setMenuData({ anchorEl: null, selectedMsg: null });
+              handleClose();
             }}
-          >
-            Edit
-          </MenuItem>
-          {sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "MODERATOR" ? (
-            <MenuItem
-              onClick={() => {
-                handleDeleteMessage(menuData.selectedMsg?.id);
-                setMenuData({ anchorEl: null, selectedMsg: null });
-              }}
-            >
-              Delete
-            </MenuItem>
-          ) : null}
+          >Edit</MenuItem>
+             <MenuItem onClick={() => {
+                      
+                      // setFileID(menuData.selectedMsg?.id)
+                       getFileByID(menuData.selectedMsg?.fileId)
+          
+                      setMenuData({ anchorEl: null });
+                      console.log(menuData.selectedMsg);
+                      // setOpenViewer(true)
+                    }}>View</MenuItem>
+                    <MenuItem onClick={() => {
+          
+                      // setFileID(menuData.selectedMsg?.id)
+                       getFileByID(menuData.selectedMsg?.fileId, "Download")
+          
+                      setMenuData({ anchorEl: null });
+                      console.log(menuData.selectedMsg.fileId);
+                    }}>Download</MenuItem>
         </Menu>
 
-        {/* Message Input */}
-        {chatID!=null?<div
-          style={{
-            ...TherapistChatsStyle.messageInput,
-            position: "sticky",
-            bottom: 0,
-            backgroundColor: "#fff",
-            zIndex: 1,
-          }}
-        >
-      <input
-                type="text"
-                value={messageInfo ? messageInfo.content : message}
-                placeholder="Write a message"
-                onChange={(e) =>
-                  messageInfo
-                    ? setMessageInfo({ ...messageInfo, content: e.target.value })
-                    : setMessage(e.target.value)
-                }
-                style={TherapistChatsStyle.messageInputField}
-              />
+          {attachedFile && (
+              <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" sx={{ color: "gray" }}>{attachedFile.name}</Typography>
+                {attachedFile.type.startsWith('image/') && (
+                  <img src={attachedFilePreviewUrl} alt="preview" width={40} height={40} style={{ borderRadius: 4 }} />
+                )}
+              </Box>
+            )}
+        {chatID != null && (
+          <div style={{ ...TherapistChatsStyle.messageInput, position: "sticky", bottom: 0, backgroundColor: "#fff" }}>
+            <input
+              type="text"
+              value={messageInfo ? messageInfo.content : message}
+              placeholder="Write a message"
+              onChange={(e) =>
+                messageInfo
+                  ? setMessageInfo({ ...messageInfo, content: e.target.value })
+                  : setMessage(e.target.value)
+              }
+              style={TherapistChatsStyle.messageInputField}
+            />
+            
 
-              {/* Show ClearIcon only when editing */}
-              {messageInfo && (
-                <button
-                  onClick={() => setMessageInfo(null)} // Exit edit mode
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    marginRight: "10px", // Adjusts spacing between ClearIcon and Update button
-                  }}
-                >
-                  <ClearIcon />
-                </button>
-              )}
-
+            {messageInfo && (
               <button
-                style={TherapistChatsStyle.messageInputButton}
-                onClick={handleSendMessage}
+                onClick={() => setMessageInfo(null)}
+                style={{ background: "transparent", border: "none", cursor: "pointer", marginRight: "10px" }}
               >
-                {messageInfo ? "Update" : "Send"}
+                <ClearIcon />
               </button>
-            </div>:""}
-        
+            )}
+            <label style={{ cursor: 'pointer', marginRight: 5 }}>
+              <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
+              <AttachFileIcon sx={{ color: 'black', float: 'left' }} />
+            </label>
+            <button
+              style={TherapistChatsStyle.messageInputButton}
+              onClick={handleSendMessage}
+            >
+              {messageInfo ? "Update" : "Send"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

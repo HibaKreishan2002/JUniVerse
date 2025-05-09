@@ -22,7 +22,7 @@ fontSize:"10px"
     backgroundColor: "#fff",
     width: "80%",
     maxWidth: "1000px",
-    height: "79vh", // Set height to ensure it fits the screen
+    height: "85vh", // Set height to ensure it fits the screen
     margin: "auto",
     borderRadius: "8px",
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
@@ -69,7 +69,7 @@ fontSize:"10px"
     padding: "10px",
     border: "1px solid #ddd",
     borderRadius: "5px",
-    marginRight: "10px",
+    marginRight: "0",
   },
   messageInputButton: {
     padding: "10px 20px",

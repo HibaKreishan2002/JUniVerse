@@ -140,6 +140,7 @@ const VisuallyHiddenInput = styled('input')({
     reader.readAsDataURL(file);
   };
   const handleInputChange = (e) => {
+    
     const { name, value, files } = e.target;
 
     if (files) {

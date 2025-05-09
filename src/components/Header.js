@@ -220,13 +220,16 @@
 // export default MainHeader;
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, Modal, Typography,  AppBar, Box, IconButton, styled, Toolbar, Button, MenuItem } from "@mui/material";
+import { Menu, Modal, Typography,  AppBar, Box, IconButton, styled, Toolbar, Button, MenuItem , Badge, Divider} from "@mui/material";
 import Text from "../assets/images/Text.png";
 import { drawerWidth } from "./Layout";
 import WhiteLogo from "../assets/images/WhiteLogo.png";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import GroupButtons from "./GroupButtons";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import JuUniVerseAxios from "../API/JuUniVerseAxios";
+
 
 const AppBarStyle = styled(AppBar)(({ theme }) => ({
   boxShadow: "none",
@@ -257,6 +260,24 @@ const MainHeader = () => {
   const [hubs, setHubs] = useState([]);
   const navigate = useNavigate();
   const [openHelpModal, setOpenHelpModal] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(null);
+  const [data,setData] = useState([])
+  useEffect (()=>{
+const getAllNotifications=()=>{
+  JuUniVerseAxios.get("/notifications").then(res=>{
+    setData(res?.data?.data)
+  
+    
+  })
+  .catch(err=>{
+    console.log(err);
+    
+  })
+}
+const interval = setInterval(
+  getAllNotifications, 1000);
+return () => clearInterval(interval);
+ },[])
 
   // Update menu based on user role
   useEffect(() => {
@@ -318,6 +339,24 @@ const MainHeader = () => {
       default:
         break;
     }
+  };
+  
+  const handleOpenNotifications = (event) => {
+    setShowNotifications(event.currentTarget);
+  };
+  const handleCloseNotifications = (event) => {
+    setShowNotifications(null);
+if(data?.unreadNotifications?.length!==0){
+
+  JuUniVerseAxios.post("/notifications/readAll",{notificationIds:data?.unreadNotifications.map(index=>index.id)}).then((res)=>{
+    console.log(res);
+    
+  }).catch((err)=>{
+    console.log(err);
+    
+  })
+}
+
   };
 
   const handleOpenUserMenu = (event) => {
@@ -382,6 +421,49 @@ const MainHeader = () => {
             );
           })}
         </Box>
+        <IconButton onClick={handleOpenNotifications}>
+      
+      <Badge badgeContent={data?.numberOfUnreadNotifications} color="error">
+        <NotificationsIcon sx={{ color: "white", fontSize: "2rem" }} />
+      </Badge>
+    </IconButton>
+    
+    <Menu 
+       open={Boolean(showNotifications)}
+     anchorEl={showNotifications}
+     onClose={handleCloseNotifications}
+     
+     >
+      <Typography component={"h3"} sx={{fontWeight:"bolder",px:2 , py:1}}>Notifications</Typography>
+      <Divider></Divider>
+
+      {data?.unreadNotifications?.length===0 && data?.readNotifications?.length===0? <MenuItem>No New Notifications</MenuItem>:<>
+      {    
+     data?.unreadNotifications?.map((DataNotification)=>(
+        <MenuItem onClick={handleCloseNotifications}><b> {DataNotification.content}</b></MenuItem>
+      ))}
+      {data?.readNotifications?.length!==0?  
+    <>
+    
+    <Divider/>
+    <Typography component={"h3"} sx={{fontWeight:"bolder",px:2 , py:1}}>Read Notification</Typography>
+    <Divider/>
+    </>
+      :""}
+          {    
+          
+     data?.readNotifications?.map((DataNotification)=>(
+        <MenuItem onClick={handleCloseNotifications}> {DataNotification.content}</MenuItem>
+      ))}
+
+      </>
+ 
+      
+      }
+      
+
+
+    </Menu>
 
         {/* Right side items (User Menu) */}
         <ContainerStyle>
@@ -390,6 +472,7 @@ const MainHeader = () => {
             <KeyboardArrowDownOutlinedIcon sx={{ color: "white", fontSize: "2.2rem" }} />
           </IconButton>
 
+   
           {/* Dropdown Menu */}
           <Menu
             open={Boolean(showUserMenu)}

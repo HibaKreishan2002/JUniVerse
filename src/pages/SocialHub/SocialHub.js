@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from "../../components/Header.js";
 import JuUniVerseAxios from '../../API/JuUniVerseAxios';
-import { Typography, Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Typography, Box, Button, IconButton, Menu, MenuItem, TextField ,styled} from "@mui/material";
 import SocialHubStyle from "./SocialHubStyle.js";
 import ResponsiveDev from "../../components/ResponsiveDev.js";
 import ClearIcon from '@mui/icons-material/Clear';
 import DoneIcon from '@mui/icons-material/Done';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 function SocialHub() {
   const [message, setMessage] = useState("");
@@ -68,7 +69,18 @@ function SocialHub() {
     const interval = setInterval(getAllMessages, 1000);
     return () => clearInterval(interval);
   }, [refershPage]);
-
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
+  
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
@@ -82,6 +94,35 @@ function SocialHub() {
       const color = `hsl(${colorKey % 360}, 70%, 50%)`; // Generates a unique HSL color
       return color;
     };
+     const convertToBase64 = async (file, name) => {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          console.log(reader.result);
+          const Base64 = reader.result.split(",")[1];
+          setFileName(file.name);
+          setBase64File(Base64)
+          const fileExtensionBase = file.name.split(".");
+          setFileExtension( fileExtensionBase[fileExtensionBase.length - 1])
+          console.log(fileExtensionBase[fileExtensionBase.length - 1]);
+    
+        }
+          ;
+        reader.readAsDataURL(file);
+      };
+      const handleInputChange = (e) => {
+        const { name, value, files } = e.target;
+    
+        if (files) {
+          const file = files[0];
+          console.log(file);
+    
+          const base64 = convertToBase64(file, name);
+    
+    
+    
+        };
+    
+      }
 
   return (
     <ResponsiveDev>
@@ -136,6 +177,24 @@ function SocialHub() {
               onChange={(e) => messageInfo ? setMessageInfo({ ...messageInfo, content: e.target.value }) : setMessage(e.target.value)}
               style={SocialHubStyle.messageInputField}
             />
+               <Button sx={{  backgroundColor:'transparent', boxShadow:'none',border:'none',marginRight:'5' }}
+          component="label"
+          role={undefined}
+          tabIndex={-1}
+    
+          // startIcon={  <AttachFileIcon/>}
+        >
+       <VisuallyHiddenInput
+            type="file"
+            onChange={handleInputChange}
+
+          /> 
+          <AttachFileIcon sx={{color:'black',float:'left' ,"& .MuiOutlinedInput-root": {
+   "&:hover": {
+      backgroundColor: "none",
+      boxShadow: "none",
+    }},}}/>
+        </Button>
             {messageInfo && (
               <button onClick={() => setMessageInfo(null)} style={{ background: "transparent", border: "none", cursor: "pointer", marginRight: "10px" }}>
                 <ClearIcon />
