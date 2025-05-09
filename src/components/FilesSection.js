@@ -192,7 +192,7 @@ return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
               variant="subtitle1"
               sx={{ fontWeight: 'bold', fontStyle: 'italic', color: '#6861bd', mb: 2 }}
             >
-              Accepted Files
+              Uploaded Files
             </Typography>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
