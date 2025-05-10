@@ -61,7 +61,9 @@ function ProfilePage() {
       convertToBase64(file, name);
     } else {
       if (name === "bio") {
-        setUserBio(value);
+          setUserBio(value);
+
+        
       }
       setFormData((prevData) => ({
         ...prevData,
@@ -82,24 +84,32 @@ function ProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+   if (userBio) {
+      JuUniVerseAxios.put("/sys-user/bio", {
+        bio: formData.bio
+      }).then(() =>{ setRefershPage(refershPage + 1)
+    
+        setIsEditing(false);}
+);
+    }else{
+      return
+    }
     JuUniVerseAxios.put("/sys-user/profile-picture", {
       photoAsBase64: formData?.profilePic,
       fileExtension: formData?.profilePicEx
-    }).then(() => setRefershPage(refershPage + 1));
+    }).then(() => { setRefershPage(refershPage + 1)
+    
+        setIsEditing(false);});
 
     JuUniVerseAxios.put("/sys-user/cover-picture", {
       photoAsBase64: formData?.coverPic,
       fileExtension: formData?.coverPicEx
-    }).then(() => setRefershPage(refershPage + 1));
+    }).then(() => { setRefershPage(refershPage + 1)
+    
+        setIsEditing(false);});
 
-    if (formData.bio) {
-      JuUniVerseAxios.put("/sys-user/bio", {
-        bio: formData.bio
-      }).then(() => setRefershPage(refershPage + 1));
-    }
+ 
 
-    setIsEditing(false);
   };
 
   const handleClose = () => {
@@ -187,6 +197,8 @@ function ProfilePage() {
                     name="bio"
                     value={userBio}
                     onChange={handleInputChange}
+                    helperText={userBio?"":"Bio cannot be empty"}
+                   error={userBio ? false : true}
                   />
                 </Box>
                 <Box sx={{ marginBottom: 2 }}>

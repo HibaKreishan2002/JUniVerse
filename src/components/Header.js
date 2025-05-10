@@ -375,7 +375,7 @@ if(data?.unreadNotifications?.length!==0){
     <AppBarStyle position="fixed">
       <ToolbarStyle>
         {/* Left side items */}
-        <ContainerStyle onClick={() => navigate("/Home")}>
+        <ContainerStyle >
           <img src={WhiteLogo} width={"40px"} height={"40px"} style={{ marginLeft: 15 }} />
           <img src={Text} width={"90px"} height={"15px"} style={{ marginLeft: 5, marginTop: 18 }} />
         </ContainerStyle>

@@ -76,7 +76,7 @@ function Students() {
     
       const columns = [
         {
-          field: "id", headerName: "Student's id", width: 200, align: 'center', headerAlign: 'center',
+          field: "userId", headerName: "Student's id", width: 200, align: 'center', headerAlign: 'center',
           resizable: false,
     
         },
@@ -84,24 +84,24 @@ function Students() {
           field: "firstName", headerName: "First Name",
           headerAlign: 'center',
           align: 'center',
-          width: 280,
+          width: 220,
           resizable: false,
     
     
         },
         {
-          field: "lastName", headerName: "Last Name", headerAlign: 'center', headerAlign: 'center', align: 'center', width: 200, resizable: false,
+          field: "lastName", headerName: "Last Name", headerAlign: 'center', headerAlign: 'center', align: 'center', width: 220, resizable: false,
     
         },
     
         {
-          field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 200, resizable: false,
+          field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 280, resizable: false,
           disableColumnMenu: true,
     
     
         },
         {
-          field: "actions", headerName: "Action", headerAlign: 'center', align: 'center', width: 240, disableColumnMenu: true,
+          field: "actions", headerName: "Action", headerAlign: 'center', align: 'center', width: 220, disableColumnMenu: true,
           resizable: false,
     
     

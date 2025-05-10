@@ -361,7 +361,7 @@ function TherapistChats() {
               }}
             >
               <Badge badgeContent={user.therapistUnreadMessagesCount} color="error">
-                <span style={{ padding: 7 }}>{user.userFirstName} {user.userLastName}</span>
+                <span style={{ padding: 7 }}>{user?.userFirstName} {user?.userLastName} {`(${user?.userUserId})`}</span>
               </Badge>
             </li>
           ))}
@@ -378,12 +378,12 @@ function TherapistChats() {
               .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
               .map((msg) => (
                 <div key={msg.id} style={{ position: "relative" }}>
-                  {msg.senderUsername === "omar_khaled" && (
-                    <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
+                  {msg.senderUsername === "omar_khaled" ||msg.file ?(
+                    <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: msg.senderUsername !== "omar_khaled" &&msg.file?"left":"right" }}>
                       <MoreVertIcon />
                     </IconButton>
                     
-                  )}
+                  ):""}
                   {msg.file?
                   
                   
@@ -455,7 +455,8 @@ function TherapistChats() {
           open={Boolean(menuData.anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem
+          {menuData?.selectedMsg?.senderUsername === "omar_khaled"?
+            <MenuItem
             onClick={() => {
               setMessageInfo({
                 id: menuData.selectedMsg?.id,
@@ -464,7 +465,11 @@ function TherapistChats() {
               handleClose();
             }}
           >Edit</MenuItem>
-             <MenuItem onClick={() => {
+          :""}
+        
+          {menuData?.selectedMsg?.file?
+          <>
+            <MenuItem onClick={() => {
                       
                       // setFileID(menuData.selectedMsg?.id)
                        getFileByID(menuData.selectedMsg?.fileId)
@@ -473,7 +478,7 @@ function TherapistChats() {
                       console.log(menuData.selectedMsg);
                       // setOpenViewer(true)
                     }}>View</MenuItem>
-                    <MenuItem onClick={() => {
+                     <MenuItem onClick={() => {
           
                       // setFileID(menuData.selectedMsg?.id)
                        getFileByID(menuData.selectedMsg?.fileId, "Download")
@@ -481,6 +486,10 @@ function TherapistChats() {
                       setMenuData({ anchorEl: null });
                       console.log(menuData.selectedMsg.fileId);
                     }}>Download</MenuItem>
+          </>
+             :""}
+        
+                   
         </Menu>
 
           {attachedFile && (

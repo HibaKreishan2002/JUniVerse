@@ -30,6 +30,11 @@ const CustomCalendar = ({ reservations }) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [error,setError]=useState(false);
+  const [TitleError,setTitleError]=useState(false);
+  const [LocationError,setLocationError]=useState(false);
+
+  
+
 const getMinDateTime=()=>{
   const now=new Date ();
   const local =new Date (now.getTime()-now.getTimezoneOffset()*6000);
@@ -257,11 +262,14 @@ setRefersh(refersh+1)
       value={newEvent.title}
       onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
       sx={{ mb: 2 }}
+            error={error}
     />
     <TextField
       label="Description"
       fullWidth
       value={newEvent.description}
+                  error={error}
+
       onChange={(e) =>
         setNewEvent({ ...newEvent, description: e.target.value })
       }
@@ -271,6 +279,8 @@ setRefersh(refersh+1)
       label="Location"
       fullWidth
       value={newEvent.location}
+            error={error}
+
       onChange={(e) =>
         setNewEvent({ ...newEvent, location: e.target.value })
       }
@@ -282,11 +292,12 @@ setRefersh(refersh+1)
       fullWidth
       InputLabelProps={{ shrink: true }}
       value={newEvent.time}
-      error={error}
     inputProps={{
       min:getMinDateTime()
     }}
-    helperText={error?'Cannot select a past date/time':""}
+                error={error}
+
+    helperText={error?'Cannot add an empty event form fields':""}
       onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
     />
   </DialogContent>

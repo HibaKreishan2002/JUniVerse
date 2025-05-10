@@ -48,7 +48,7 @@ function BannedUsers() {
       }
    const columns = [
           {
-            field: "id", headerName: "ID", width: 120, align: 'center', headerAlign: 'center',
+            field: "userId", headerName: "ID", width: 120, align: 'center', headerAlign: 'center',
             resizable: false,
       
           },
@@ -67,7 +67,7 @@ function BannedUsers() {
           },
       
           {
-            field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 230, resizable: false,
+            field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 260, resizable: false,
             disableColumnMenu: true,
       
       

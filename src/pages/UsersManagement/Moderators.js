@@ -74,7 +74,7 @@ function Moderators() {
   }
       const columns = [
         {
-          field: "id", headerName: "Moderator's id", width: 200, align: 'center', headerAlign: 'center',
+          field: "userId", headerName: "Moderator's id", width: 200, align: 'center', headerAlign: 'center',
           resizable: false,
     
         },
@@ -82,18 +82,18 @@ function Moderators() {
           field: "firstName", headerName: "First Name",
           headerAlign: 'center',
           align: 'center',
-          width: 280,
+          width: 220,
           resizable: false,
     
     
         },
         {
-          field: "lastName", headerName: "Last Name", headerAlign: 'center', headerAlign: 'center', align: 'center', width: 200, resizable: false,
+          field: "lastName", headerName: "Last Name", headerAlign: 'center', headerAlign: 'center', align: 'center', width: 220, resizable: false,
     
         },
     
         {
-          field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 200, resizable: false,
+          field: "email", headerName: "Email", headerAlign: 'center', align: 'center', width: 280, resizable: false,
           disableColumnMenu: true,
     
     

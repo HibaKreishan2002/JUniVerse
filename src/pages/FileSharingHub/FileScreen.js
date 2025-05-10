@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ResponsiveDev from "../../components/ResponsiveDev";
 import FolderIcon from '@mui/icons-material/Folder';
 import JuUniVerseAxios from "../../API/JuUniVerseAxios";
-import { Morveret, Box, Grid, Stack, Tooltip, Typography, Button, IconButton, TextField, tooltipClasses, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, styled, Modal } from '@mui/material';
+import { Morveret, Box, Grid, Stack, Tooltip, Typography, Button, IconButton, TextField, tooltipClasses, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, styled, Modal, Badge } from '@mui/material';
 import { useParams } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -421,6 +421,8 @@ const VisuallyHiddenInput = styled('input')({
         >
 
           {fileDetails.map((file, index) => (
+
+          
             <Grid
               item
               xs={3}
@@ -434,9 +436,12 @@ const VisuallyHiddenInput = styled('input')({
               sx={{ WebkitBoxPack: 'unset', WebkitJustifyContent: "start" }}
 
             >
+
               <IconButton onClick={(e) => handleClick(e, file)} sx={{ ml: 15, paddingBottom: 0 }}  >
                 <MoreVertIcon />
               </IconButton>
+          
+
               <Menu
                 anchorEl={menuData.anchorEl}
                 open={Boolean(menuData.anchorEl)}
@@ -505,7 +510,7 @@ const VisuallyHiddenInput = styled('input')({
                   // setOpenViewer(true)
                 }}>Download</MenuItem>
               </Menu>
-              <Tooltip title={file.description} placement="top" arrow
+              <Tooltip title={ `  Uploaded By : ${file.ownerUsername}`} placement="top" arrow
 
                 slotProps={{
                   popper: {
@@ -513,6 +518,31 @@ const VisuallyHiddenInput = styled('input')({
                       [`&.${tooltipClasses.popper}[data-popper-placement*="bottom"] .${tooltipClasses.tooltip}`]:
                       {
                         marginTop: '0px',
+                      },
+                      [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
+                      {
+                        marginBottom: '0px',
+                      },
+                      [`&.${tooltipClasses.popper}[data-popper-placement*="right"] .${tooltipClasses.tooltip}`]:
+                      {
+                        marginLeft: '0px',
+                      },
+                      [`&.${tooltipClasses.popper}[data-popper-placement*="left"] .${tooltipClasses.tooltip}`]:
+                      {
+                        marginRight: '0px',
+                      },
+                    },
+                  },
+                }}
+              >
+                  <Tooltip title={`Description: ${file.description}` } placement="bottom" arrow
+
+                slotProps={{
+                  popper: {
+                    sx: {
+                      [`&.${tooltipClasses.popper}[data-popper-placement*="bottom"] .${tooltipClasses.tooltip}`]:
+                      {
+                        marginTop: '33px',
                       },
                       [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
                       {
@@ -558,6 +588,7 @@ const VisuallyHiddenInput = styled('input')({
                                             onMouseLeave={() => setHovered(null)}
                                           />}
 
+                                          </Tooltip>
               </Tooltip>
               <Typography variant="h6" sx={{ marginTop: 1, fontSize: 15, fontWeight: "bold" }}>
                 {file.name}

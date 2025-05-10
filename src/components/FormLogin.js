@@ -153,9 +153,9 @@ function FormLogin () {
         }}
         label="Password"
         error={errors.password ? true : false}
-        // helperText={
-        //   errors.password && "Enter a valid password (5-15 characters)"
-        // }
+        helperText={
+          errors.password && "Enter a valid password (5-15 characters)"
+        }
         {...register("password", {
           required: true,
           // minLength: 5,
