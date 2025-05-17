@@ -57,7 +57,13 @@ function SocialHub() {
       setRefershPage(refershPage + 1);
     }).catch(console.log);
   };
-
+  //Added by HIBA
+  
+   const handleDeleteSenderMessage = (id) => {
+    JuUniVerseAxios.delete(`/public-chat/${id}`).then(() => {
+      setRefershPage(refershPage + 1);
+    }).catch(console.log);
+  };
   useEffect(() => {
     const getAllMessages = () => {
       JuUniVerseAxios.get(`/public-chat/messages`)
@@ -151,12 +157,13 @@ function SocialHub() {
             ))}
           </div>
           
-          <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
+          {/* <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
             {selectedMsg && sessionStorage.getItem("username") === selectedMsg.senderUsername && (
               <MenuItem onClick={() => {
                 setMessageInfo({ id: selectedMsg.id, content: selectedMsg.content });
                 handleMenuClose();
               }}>Edit</MenuItem>
+          
             )}
             {console.log(selectedMsg)
             }
@@ -168,7 +175,48 @@ function SocialHub() {
               }}>Delete</MenuItem>
           
             )}
-          </Menu>
+          </Menu> */}
+          <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
+  {/* Edit and Delete (if sender) */}
+  {selectedMsg && sessionStorage.getItem("username") === selectedMsg.senderUsername && (
+    <>
+      <MenuItem
+        onClick={() => {
+          setMessageInfo({ id: selectedMsg.id, content: selectedMsg.content });
+          handleMenuClose();
+        }}
+      >
+        Edit
+      </MenuItem>
+{/* 
+      <MenuItem
+        onClick={() => {
+          handleDeleteSenderMessage(selectedMsg.id);
+          handleMenuClose();
+        }}
+      >
+        Delete
+      </MenuItem> */}
+    </>
+  )}
+
+  {/* Delete (if ADMIN or MODERATOR) */}
+  {selectedMsg &&
+    (sessionStorage.getItem("role") === "ADMIN" ||
+      sessionStorage.getItem("role") === "MODERATOR"  || sessionStorage.getItem("username") === selectedMsg.senderUsername)  && (
+      <MenuItem
+        onClick={() => {
+          handleDeleteMessage(selectedMsg.id);
+          handleMenuClose();
+        }}
+      >
+        Delete
+      </MenuItem>
+    )}
+
+  {console.log(selectedMsg)}
+</Menu>
+
           <div style={SocialHubStyle.messageInput}>
             <input
               type="text"

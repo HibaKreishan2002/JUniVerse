@@ -257,7 +257,7 @@ console.log(fileExtension);
   return (
     <ResponsiveDev>
     <Box style={{ height: 635, width: '100%' }}>
-    <DataGrid rows={Data} columns={columns}  pageSizeOptions={[10]}
+    <DataGrid rows={Data.reverse()} columns={columns}  pageSizeOptions={[10]}
        disableColumnSorting={true}
        disableColumnResizing={true}
        getRowClassName={(params) => `super-app-theme--${params.row.status}`}

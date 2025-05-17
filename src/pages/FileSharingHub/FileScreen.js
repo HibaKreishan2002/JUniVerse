@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ResponsiveDev from "../../components/ResponsiveDev";
 import FolderIcon from '@mui/icons-material/Folder';
 import JuUniVerseAxios from "../../API/JuUniVerseAxios";
-import { Morveret, Box, Grid, Stack, Tooltip, Typography, Button, IconButton, TextField, tooltipClasses, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, styled, Modal, Badge } from '@mui/material';
+import { Morveret, Box, Grid, Stack, Tooltip, Typography, Button, IconButton, TextField, tooltipClasses, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, styled, Modal, Badge, Alert } from '@mui/material';
 import { useParams } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -61,9 +61,19 @@ const VisuallyHiddenInput = styled('input')({
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleOpenViewer = () => setOpenViewer(true);
-  const handleClose = () => setOpen(false);
+const handleClose = () => {
+  setErrorMessage("");
+  setBase64File("");
+  setBase64FileContent("");
+  setFileName("");
+  setFileDescription(" ");
+  setFileExtension("");
+  setFileID(0);
+  setOpen(false);
+};
   const [base64FileContent, setBase64FileContent] = useState("")
   const [base64FileExtension, setBase64FileExtension] = useState("")
+  const [errorMessage, setErrorMessage] = useState("");
 
 
   useEffect(() => {
@@ -137,11 +147,15 @@ const VisuallyHiddenInput = styled('input')({
 
     }
       ;
-    reader.readAsDataURL(file);
+      console.log(file);
+      if(file){
+
+        reader.readAsDataURL(file);
+      }
   };
   const handleInputChange = (e) => {
     
-    const { name, value, files } = e.target;
+    const { name, value, files } = e?.target;
 
     if (files) {
       const file = files[0];
@@ -155,6 +169,30 @@ const VisuallyHiddenInput = styled('input')({
 
   }
   const AddFile = (name, type, base64) => {
+    
+              if (modelTitle !== "Edit File"&&(fileExtension==undefined || fileExtension.trim()=="")){
+
+     
+      setErrorMessage("Please Select the file first !")
+
+      return;
+    }
+      if (fileName==undefined || fileName.trim()==""){
+
+     
+      setErrorMessage("Please fill File Name")
+
+      return;
+    }
+       if (fileDescription==undefined || fileDescription.trim()==""){
+
+     
+      setErrorMessage("Please fill File Description")
+
+      return;
+    }
+
+ 
     if (modelTitle === "Upload File") {
       JuUniVerseAxios.post("/files", {
         name: fileName,
@@ -347,6 +385,7 @@ const VisuallyHiddenInput = styled('input')({
           >
           
             <Typography variant="h6" mb={2}>{modelTitle}<FolderIcon sx={{ fontSize: 28, color: "#ffd35a", position: "relative", top: 10 }} />
+                     {errorMessage!=""?            <Alert severity="error">{errorMessage}</Alert>:""}
 
             </Typography>
             {  modelTitle==="Upload File"?

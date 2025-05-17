@@ -40,12 +40,12 @@
 //   const navigate = useNavigate();
 
 //   const [openHelpModal, setOpenHelpModal] = useState(false);
-  
+
 
 //   // Update menu based on user role
 //   useEffect(() => {
 //     setTimeout(() => {
-  
+
 //       const role = sessionStorage.getItem("role");
 //       if (role === "THERAPIST") {
 //         setHubs(["Soical", "Mental Health", "News", "E-Card", "Therapist","Notes"]);
@@ -90,7 +90,7 @@
 //         case "Files Management":
 //           navigate("FilesManagement")
 //           break;
-        
+
 //         case "Students":
 //           navigate("Students")
 //           break;
@@ -220,7 +220,7 @@
 // export default MainHeader;
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, Modal, Typography,  AppBar, Box, IconButton, styled, Toolbar, Button, MenuItem , Badge, Divider} from "@mui/material";
+import { Menu, Modal, Typography, AppBar, Box, IconButton, styled, Toolbar, Button, MenuItem, Badge, Divider } from "@mui/material";
 import Text from "../assets/images/Text.png";
 import { drawerWidth } from "./Layout";
 import WhiteLogo from "../assets/images/WhiteLogo.png";
@@ -237,7 +237,7 @@ const AppBarStyle = styled(AppBar)(({ theme }) => ({
   background: "linear-gradient(to right, #6861bd, #3873d4,#22a9d3)",
   color: "#333333",
   [theme.breakpoints.up("sm")]: {
-    width: `calc(100% - ${drawerWidth}px)`, 
+    width: `calc(100% - ${drawerWidth}px)`,
     flexShrink: 0,
   },
 }));
@@ -261,23 +261,23 @@ const MainHeader = () => {
   const navigate = useNavigate();
   const [openHelpModal, setOpenHelpModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(null);
-  const [data,setData] = useState([])
-  useEffect (()=>{
-const getAllNotifications=()=>{
-  JuUniVerseAxios.get("/notifications").then(res=>{
-    setData(res?.data?.data)
-  
-    
-  })
-  .catch(err=>{
-    console.log(err);
-    
-  })
-}
-const interval = setInterval(
-  getAllNotifications, 1000);
-return () => clearInterval(interval);
- },[])
+  const [data, setData] = useState([])
+  useEffect(() => {
+    const getAllNotifications = () => {
+      JuUniVerseAxios.get("/notifications").then(res => {
+        setData(res?.data?.data)
+
+
+      })
+        .catch(err => {
+          console.log(err);
+
+        })
+    }
+    const interval = setInterval(
+      getAllNotifications, 1000);
+    return () => clearInterval(interval);
+  }, [])
 
   // Update menu based on user role
   useEffect(() => {
@@ -330,7 +330,7 @@ return () => clearInterval(interval);
       case "Moderators":
         navigate("Moderators");
         break;
-        case "Banned Users":
+      case "Banned Users":
         navigate("BannedUsers");
         break;
       case "News Management":
@@ -340,22 +340,61 @@ return () => clearInterval(interval);
         break;
     }
   };
-  
+
+  const handleReadAll = () => {
+    if (data?.unreadNotifications?.length !== 0) {
+
+      JuUniVerseAxios.post("/notifications/readAll", { notificationIds: data?.unreadNotifications.map(index => index.id) }).then((res) => {
+        console.log(res);
+
+      }).catch((err) => {
+        console.log(err);
+
+      })
+    }
+  }
   const handleOpenNotifications = (event) => {
     setShowNotifications(event.currentTarget);
   };
-  const handleCloseNotifications = (event) => {
-    setShowNotifications(null);
-if(data?.unreadNotifications?.length!==0){
+  const handleCloseNotifications = (content,type,id,folderId) => {
+    console.log(type);
 
-  JuUniVerseAxios.post("/notifications/readAll",{notificationIds:data?.unreadNotifications.map(index=>index.id)}).then((res)=>{
-    console.log(res);
-    
-  }).catch((err)=>{
-    console.log(err);
-    
-  })
-}
+    if (type) {
+      const role = sessionStorage.getItem("role");
+      console.log(type);
+      console.log("O",content)//To Do we will check IT inshallah
+
+      if (type == "event") {
+
+        navigate("/News");
+      }
+      else if (type == "pending file" && content!=="your file got rejected by a moderator") {
+if(folderId)
+        navigate(`/files/${folderId}`);
+
+      }
+      else if (type == "message" && role !== "THERAPIST") {
+
+        navigate("/MentalHealthHub");
+
+      } else if (type == "message" && role == "THERAPIST") {
+console.log("asdasd");
+
+        navigate("/TherapistChats");
+
+      }
+    }
+    if (id){
+        JuUniVerseAxios.post("/notifications/readAll", { notificationIds: [id] }).then((res) => {
+        console.log(res);
+
+      }).catch((err) => {
+        console.log(err);
+
+      })
+    }
+    setShowNotifications(null);
+
 
   };
 
@@ -422,48 +461,69 @@ if(data?.unreadNotifications?.length!==0){
           })}
         </Box>
         <IconButton onClick={handleOpenNotifications}>
-      
-      <Badge badgeContent={data?.numberOfUnreadNotifications} color="error">
-        <NotificationsIcon sx={{ color: "white", fontSize: "2rem" }} />
-      </Badge>
-    </IconButton>
-    
-    <Menu 
-       open={Boolean(showNotifications)}
-     anchorEl={showNotifications}
-     onClose={handleCloseNotifications}
-     
-     >
-      <Typography component={"h3"} sx={{fontWeight:"bolder",px:2 , py:1}}>Notifications</Typography>
-      <Divider></Divider>
 
-      {data?.unreadNotifications?.length===0 && data?.readNotifications?.length===0? <MenuItem>No New Notifications</MenuItem>:<>
-      {    
-     data?.unreadNotifications?.map((DataNotification)=>(
-        <MenuItem onClick={handleCloseNotifications}><b> {DataNotification.content}</b></MenuItem>
-      ))}
-      {data?.readNotifications?.length!==0?  
-    <>
-    
-    <Divider/>
-    <Typography component={"h3"} sx={{fontWeight:"bolder",px:2 , py:1}}>Read Notification</Typography>
-    <Divider/>
-    </>
-      :""}
-          {    
-          
-     data?.readNotifications?.map((DataNotification)=>(
-        <MenuItem onClick={handleCloseNotifications}> {DataNotification.content}</MenuItem>
-      ))}
+          <Badge badgeContent={data?.numberOfUnreadNotifications} color="error">
+            <NotificationsIcon sx={{ color: "white", fontSize: "2rem" }} />
+          </Badge>
+        </IconButton>
 
-      </>
- 
-      
-      }
-      
+        <Menu
+          open={Boolean(showNotifications)}
+          anchorEl={showNotifications}
+          onClose={handleCloseNotifications}
+
+        >
+          {/* <Typography component={"span"} sx={{ fontWeight: "bolder", px: 2, py: 1 }}>Notifications </Typography>
+          <Button onClick={handleReadAll} sx={{ marginLeft: "auto" }}>Read All </Button> */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+  <Typography component="span" sx={{ fontWeight: "bolder", px: 2, py: 1 }}>
+    Notifications
+  </Typography>
+  <Button onClick={() => {
+    if (data?.unreadNotifications?.length > 0) {
+      const ids = data.unreadNotifications.map(n => n.id);
+      JuUniVerseAxios.post("/notifications/readAll", { notificationIds: ids })
+        .then((res) => {
+          console.log("Marked as read:", res);
+          // Optionally: trigger UI refresh
+        })
+        .catch((err) => {
+          console.error("Error marking as read:", err);
+        });
+    }
+  }} sx={{ marginLeft: "auto" }}>
+    Read All
+  </Button>
+  </Box>
+          <Divider></Divider>
+
+          {data?.unreadNotifications?.length === 0 && data?.readNotifications?.length === 0 ? <MenuItem>No New Notifications</MenuItem> : <>
+            {
+              data?.unreadNotifications?.map((DataNotification) => (
+                <MenuItem onClick={() => handleCloseNotifications(DataNotification?.content,DataNotification?.type,DataNotification.id,DataNotification?.folderId)}><b> {DataNotification?.content}</b></MenuItem>
+              ))}
+            {data?.readNotifications?.length !== 0 ?
+              <>
+
+                <Divider />
+                <Typography component={"h3"} sx={{ fontWeight: "bolder", px: 2, py: 1 }}>Read Notification</Typography>
+                <Divider />
+              </>
+              : ""}
+            {
+
+              data?.readNotifications?.map((DataNotification) => (
+                <MenuItem onClick={() => handleCloseNotifications(DataNotification?.content,DataNotification?.type,DataNotification.id,DataNotification?.folderId)}> {DataNotification.content}</MenuItem>
+              ))}
+
+          </>
 
 
-    </Menu>
+          }
+
+
+
+        </Menu>
 
         {/* Right side items (User Menu) */}
         <ContainerStyle>
@@ -472,7 +532,7 @@ if(data?.unreadNotifications?.length!==0){
             <KeyboardArrowDownOutlinedIcon sx={{ color: "white", fontSize: "2.2rem" }} />
           </IconButton>
 
-   
+
           {/* Dropdown Menu */}
           <Menu
             open={Boolean(showUserMenu)}
@@ -489,7 +549,7 @@ if(data?.unreadNotifications?.length!==0){
           </Menu>
         </ContainerStyle>
       </ToolbarStyle>
-      
+
       {/* Help Modal */}
       <Modal
         open={openHelpModal}
@@ -510,12 +570,12 @@ if(data?.unreadNotifications?.length!==0){
             p: 4,
           }}
         >
-          <Typography id="help-modal-title" variant="h6" component="h2" sx={{textAlign:"center" , fontWeight:"bold"}}>
+          <Typography id="help-modal-title" variant="h6" component="h2" sx={{ textAlign: "center", fontWeight: "bold" }}>
             Need Help?
           </Typography>
           <Typography id="help-modal-description" sx={{ mt: 2 }}>
-            For assistance, please contact us at 
-            <br /> 
+            For assistance, please contact us at
+            <br />
             <a href="mailto:help@juniverse.com">help@juniverse.com.</a>
             <br />
             Our support team will get back to you as soon as possible.

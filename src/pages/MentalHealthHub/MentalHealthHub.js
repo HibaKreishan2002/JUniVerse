@@ -265,6 +265,7 @@ marginLeft:15
 </strong> </a> 
   </div>
   {(sessionStorage.getItem("role") !== "THERAPIST") && (
+    
   <PrivateChat></PrivateChat>
 )}
     </ResponsiveDev>

@@ -1,6 +1,7 @@
 // Full TherapistChats component with auto-scroll after sending a message
 
 import React, { useEffect, useState, useRef } from "react";
+import TherapyVideo from '../../assets/Therapy.mp4'
 import TherapistChatsStyle from "./TherapistChatsStyle.js";
 import {
   Typography,
@@ -33,6 +34,7 @@ import htmlicon from '../../assets/images/htmlicon.png'
 import cssicon from '../../assets/images/cssicon.png'
 import phpicon from '../../assets/images/phpicon.png'
 import FileIcon from '@mui/icons-material/InsertDriveFile';
+import { useNavigate } from "react-router-dom";
 function TherapistChats() {
   const [dataStudent, setDataStudent] = useState([]);
   const [message, setMessage] = useState("");
@@ -48,7 +50,7 @@ function TherapistChats() {
   const [searchQuery, setSearchQuery] = useState("");
 
 
-
+const navigate=useNavigate();
   const [attachedFile, setAttachedFile] = useState(null);
   const [attachedFilePreviewUrl, setAttachedFilePreviewUrl] = useState(null);
   const [attachedFileBase64, setAttachedFileBase64] = useState(null);
@@ -70,9 +72,14 @@ function TherapistChats() {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredUsers = dataStudent.filter((user) =>
-    `${user.userFirstName} ${user.userLastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+const filteredUsers = dataStudent.filter((user) => {
+  const fullName = `${user.userFirstName} ${user.userLastName}`.toLowerCase();
+  const userIdString = user.userUserId.toString();
+  return (
+    fullName.includes(searchQuery.toLowerCase()) ||
+    userIdString.includes(searchQuery)
   );
+});
 
   const handleClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
@@ -92,7 +99,11 @@ function TherapistChats() {
     const interval = setInterval(getMessages, 3000);
     return () => clearInterval(interval);
   }, [chatID]);
-
+const handleDeleteMessage = (id) => {
+    JuUniVerseAxios.delete(`/private-chat/${id}`).then(() => {
+          setRefreshPage(refreshPage + 1);
+    }).catch(console.log);
+  };
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -367,8 +378,7 @@ function TherapistChats() {
           ))}
         </ul>
       </div>
-
-      <div style={TherapistChatsStyle.rightPanel}>
+{selectedUserId?  <div style={TherapistChatsStyle.rightPanel}>
         <Typography sx={{ fontWeight: "bold", color: "black", marginTop: 3 }}>{receiverFullName}</Typography>
         <hr />
 
@@ -377,6 +387,7 @@ function TherapistChats() {
             {data
               .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
               .map((msg) => (
+                 msg.status === "SENT"?
                 <div key={msg.id} style={{ position: "relative" }}>
                   {msg.senderUsername === "omar_khaled" ||msg.file ?(
                     <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: msg.senderUsername !== "omar_khaled" &&msg.file?"left":"right" }}>
@@ -445,8 +456,8 @@ function TherapistChats() {
                 </p>
                   }
               
-                </div>
-              ))}
+                </div>:""
+              ))}:
           </div>
         </Box>
 
@@ -456,7 +467,8 @@ function TherapistChats() {
           onClose={handleClose}
         >
           {menuData?.selectedMsg?.senderUsername === "omar_khaled"?
-            <MenuItem
+      <>
+          <MenuItem
             onClick={() => {
               setMessageInfo({
                 id: menuData.selectedMsg?.id,
@@ -465,6 +477,14 @@ function TherapistChats() {
               handleClose();
             }}
           >Edit</MenuItem>
+              <MenuItem
+            onClick={() => {
+            
+              handleDeleteMessage(menuData.selectedMsg?.id)
+              handleClose();
+            }}
+          >Delete</MenuItem>
+      </>
           :""}
         
           {menuData?.selectedMsg?.file?
@@ -535,7 +555,21 @@ function TherapistChats() {
             </button>
           </div>
         )}
+      </div>:
+  <div style={{ perspective: '1000px', padding: '2rem', margin:'auto',paddingTop:"55px"}}>
+          <Typography sx={{mb:2, fontWeight:'bold', fontFamily: '"Georgia", serif', fontStyle: 'italic',textAlign:'center'}}>Be the calm in someone’s storm.</Typography>
+
+      <video   width={'600px'} height={'450px'}  autoPlay
+      loop
+      muted
+      playsInline>
+
+          <source src= {TherapyVideo} type="video/mp4"/>
+
+      </video>
       </div>
+      }
+    
     </div>
   );
 }

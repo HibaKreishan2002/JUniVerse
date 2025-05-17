@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import TherapistChatsStyle from "./TherapistChatsStyle.js";
-import { Button, Modal, TextField, Box, Typography, Badge, Menu, MenuItem, IconButton , InputAdornment } from '@mui/material';
+import { Button, Modal, TextField, Box, Typography, Badge, Menu, MenuItem, IconButton , InputAdornment , Paper} from '@mui/material';
 import JuUniVerseAxios from "../../API/JuUniVerseAxios.js";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Swal from "sweetalert2";
-
+import NoteIcon from '@mui/icons-material/Note';
 
 
 function TherapistNotes() {
@@ -41,9 +41,16 @@ function TherapistNotes() {
   }, []);
 
 //Filtering users for teh Search
-  const filteredUsers = dataStudent.filter(user =>
-    `${user.userFirstName} ${user.userLastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+
+
+  const filteredUsers = dataStudent.filter((user) => {
+  const fullName = `${user.userFirstName} ${user.userLastName}`.toLowerCase();
+  const userIdString = user.userUserId.toString();
+  return (
+    fullName.includes(searchQuery.toLowerCase()) ||
+    userIdString.includes(searchQuery)
   );
+});
   const getNotes = async () => {
     if (notes[selectedUser.id]) return;
 
@@ -159,7 +166,7 @@ function TherapistNotes() {
         <h2 style={TherapistChatsStyle.leftPanelHeader}  onClick={()=>         { 
       setSelectedUser(null)
     }
-}>Messages</h2>
+}>Notes</h2>
         <TextField
           fullWidth
           placeholder="Search users..."
@@ -190,7 +197,7 @@ function TherapistNotes() {
               }}
             >
               <Badge badgeContent={user.therapistUnreadMessagesCount} color="error">
-                <span style={{ padding: 7 }}>{user.userFirstName} {user.userLastName}</span>
+                <span style={{ padding: 7 }}>{user.userFirstName} {user.userLastName}  ({user.userUserId})</span>
               </Badge>
             </li>
           ))}
@@ -198,7 +205,7 @@ function TherapistNotes() {
       </div>
 
       <div style={TherapistChatsStyle.rightPanel}>
-        {selectedUser && (
+        {selectedUser?(
           <>
             <Typography sx={{ fontWeight: "bold", color: "black", marginTop: 3 }}>
               {selectedUser.userFirstName} {selectedUser.userLastName}
@@ -248,7 +255,43 @@ function TherapistNotes() {
               ))}
             </div>
           </>
-        )}
+        ):
+        
+  <div style={{ perspective: '1000px', padding: '2rem', margin:'auto'}}>
+      <Paper
+        elevation={2}
+        sx={{
+          width: 520,
+          height: 250,
+      background: 'linear-gradient(135deg,rgb(165, 164, 196) 0%,rgb(142, 188, 202) 100%)',
+
+          transition: 'all 0.3s ease-in-out',
+          padding: 2,
+          borderRadius: 2,
+          boxShadow: '8px 12px 24px rgba(0,0,0,0.3)',
+          '&:hover': {
+                       transform: 'rotate(3deg) skewY(-2deg)',
+
+          },
+        }}
+      >
+        <Typography variant="h5" gutterBottom color="#fff" sx={{  fontFamily: '"Georgia", serif', fontStyle: 'italic'
+ }} >
+          📌 Reminder
+        </Typography>
+        <Typography variant="h6" color="#fff" sx={{  fontFamily: '"Georgia", serif', 
+ }}>
+  <hr></hr>
+“Each note you write is more than a record , it’s a mirror of healing. 
+<br></br>
+<br></br>
+Write with care, support with compassion, and protect their journey.”         </Typography>
+      </Paper>
+    </div>
+
+
+
+        }
       </div>
 
       {/* Modal for Adding Notes */}

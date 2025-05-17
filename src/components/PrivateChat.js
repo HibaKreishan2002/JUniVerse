@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Typography, IconButton, Menu, MenuItem, Button, styled } from '@mui/material';
+import { Box, Typography, IconButton, Menu, MenuItem, Button, styled , Badge } from '@mui/material';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ClearIcon from '@mui/icons-material/Clear';
@@ -28,19 +28,22 @@ function PrivateChat() {
 
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [message, setMessage] = useState("");
-  const [refreshPage, setRefreshPage] = useState(0);
+  const [refreshPage, setRefreshPage] = useState(0); 
   const [scrollPage, setScrollPage] = useState(0);
   const [data, setData] = useState([]);
   const [messageInfo, setMessageInfo] = useState(null);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
+  const [selectedMsg, setSelectedMsg] = useState(null);
 
   const [attachedFile, setAttachedFile] = useState(null);
   const [attachedFilePreviewUrl, setAttachedFilePreviewUrl] = useState(null);
   const [attachedFileBase64, setAttachedFileBase64] = useState(null);
   const [attachedFileName, setAttachedFileName] = useState("");
   const [attachedFileExtension, setAttachedFileExtension] = useState("");
+  const [countUnreadMsg,setCountUnreadMsg]= useState(0);
 
-  const handleChatToggle = () => {
+
+    const handleChatToggle = () => {
     setAttachedFile(null);
     setAttachedFilePreviewUrl(null);
     setAttachedFileBase64(null);
@@ -48,6 +51,7 @@ function PrivateChat() {
     setAttachedFileExtension("");
     setIsChatVisible(!isChatVisible);
     setScrollPage(scrollPage + 1);
+    getAllMessages()
   };
 
   const handleClose = () => {
@@ -78,6 +82,8 @@ function PrivateChat() {
         })
         .catch((error) => console.log(error));
 console.log(attachedFileBase64);
+ 
+
 
       // separately upload the file if any
       if (attachedFileBase64) {
@@ -99,15 +105,26 @@ console.log(attachedFileBase64);
       }
     }
   };
+  const handleCountUnreadMsg = () => {
+  JuUniVerseAxios.get("/private-chat")
+    .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
+    .catch(err => console.log(err));
+};
 
+  //added by HIBA
+const handleDeleteMessage = (id) => {
+    JuUniVerseAxios.delete(`/private-chat/${id}`).then(() => {
+          setRefreshPage(refreshPage + 1);
+    }).catch(console.log);
+  };
   useEffect(() => {
-    const getAllMessages = () => {
-      JuUniVerseAxios.get(`/private-chat/allMessages`)
-        .then(res => setData(res.data.data))
-        .catch(error => console.log(error));
-    };
-
-    const interval = setInterval(getAllMessages, 1000);
+ 
+  const handleCountUnreadMsg = () => {
+  JuUniVerseAxios.get("/private-chat")
+    .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
+    .catch(err => console.log(err));
+};
+    const interval = setInterval(handleCountUnreadMsg, 1000);
     return () => clearInterval(interval);
   }, [refreshPage]);
 
@@ -120,6 +137,12 @@ console.log(attachedFileBase64);
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
   }
+     const getAllMessages = () => {
+      JuUniVerseAxios.get(`/private-chat/allMessages`)
+        .then(res => setData(res.data.data))
+        .catch(error => console.log(error));
+
+    };
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -286,7 +309,7 @@ const handleView = (base64FileContent, fileExtension) => {
           <Box id="chatContainer" sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}>
             <div style={SocialHubStyle.chatArea}>
               {data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).map((msg) =>
-
+msg.status === "SENT"?
                 msg.senderUsername !== "omar_khaled" ? (msg.file?
                   <div key={msg.id} style={{ position: "relative" }}>
                           
@@ -357,7 +380,7 @@ const handleView = (base64FileContent, fileExtension) => {
 
                   :
                   <p key={msg.id} style={SocialHubStyle.sentMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
-                )
+                ):""
               )}
             </div>
           </Box>
@@ -366,6 +389,11 @@ const handleView = (base64FileContent, fileExtension) => {
               setMessageInfo({ id: menuData.selectedMsg?.id, content: menuData.selectedMsg?.content });
               setMenuData({ anchorEl: null, selectedMsg: null });
             }}>Edit</MenuItem>
+
+            <MenuItem onClick={() => {
+               handleDeleteMessage(menuData.selectedMsg?.id);
+                handleClose();
+            }}>Delete</MenuItem>
             {menuData.selectedMsg?.file?
             
             <>
@@ -428,7 +456,9 @@ const handleView = (base64FileContent, fileExtension) => {
       )}
 
       <Box onClick={handleChatToggle} sx={{ position: 'fixed', bottom: '10px', right: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', zIndex: 1000 }}>
+       <Badge badgeContent={countUnreadMsg} color="error">
         <ChatBubbleIcon sx={{ fontSize: 110, color: '#22a9d3' }} />
+              </Badge> 
         <Typography sx={{ position: 'absolute', bottom: '45px', fontSize: '12px', fontWeight: 'bold', textAlign: 'center', color: "white" }}>Chat with a Therapist!</Typography>
       </Box>
     </>
