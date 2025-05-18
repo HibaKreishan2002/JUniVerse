@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import TherapistChatsStyle from "./TherapistChatsStyle.js";
 import { Button, Modal, TextField, Box, Typography, Badge, Menu, MenuItem, IconButton , InputAdornment , Paper} from '@mui/material';
 import JuUniVerseAxios from "../../API/JuUniVerseAxios.js";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Swal from "sweetalert2";
-import NoteIcon from '@mui/icons-material/Note';
 
 
 function TherapistNotes() {
@@ -16,7 +15,6 @@ function TherapistNotes() {
   const [openModal, setOpenModal] = useState(false);
   const [noteTitle, setNoteTitle] = useState("");
   const [noteDescription, setNoteDescription] = useState("");
-  const [note, setNote] = useState(""); // Note state
   const [txtModelBtn, setTxtModelBtn] = useState("Save"); // Note state
   // add them for 3 dots
   const [anchorEl, setAnchorEl] = useState(null);

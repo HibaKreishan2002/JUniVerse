@@ -25,7 +25,7 @@ import FileViewer from 'react-file-viewer';
 
 function PrivateChat() {
   const chatRef = useRef(null);
-
+const [startChat,setStartChat]=useState(false);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [refreshPage, setRefreshPage] = useState(0); 
@@ -51,6 +51,10 @@ function PrivateChat() {
     setAttachedFileExtension("");
     setIsChatVisible(!isChatVisible);
     setScrollPage(scrollPage + 1);
+
+
+      setStartChat(false);
+    
     getAllMessages()
   };
 
@@ -67,6 +71,7 @@ function PrivateChat() {
       JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, { content: messageInfo.content })
         .then(() => {
           setMessageInfo(null);
+          
           setRefreshPage(refreshPage + 1);
         })
         .catch((error) => console.log(error));
@@ -103,7 +108,13 @@ console.log(attachedFileBase64);
           })
           .catch((error) => console.log(error));
       }
+
     }
+        setAttachedFile(null);
+    setAttachedFilePreviewUrl(null);
+    setAttachedFileBase64(null);
+    setAttachedFileName("");
+    setAttachedFileExtension("");
   };
   const handleCountUnreadMsg = () => {
   JuUniVerseAxios.get("/private-chat")
@@ -123,7 +134,14 @@ const handleDeleteMessage = (id) => {
   JuUniVerseAxios.get("/private-chat")
     .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
     .catch(err => console.log(err));
+    if (isChatVisible){
+
+      getAllMessages();
+
+}
 };
+
+
     const interval = setInterval(handleCountUnreadMsg, 1000);
     return () => clearInterval(interval);
   }, [refreshPage]);

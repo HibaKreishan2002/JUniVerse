@@ -457,7 +457,7 @@ const handleDeleteMessage = (id) => {
                   }
               
                 </div>:""
-              ))}:
+              ))}
           </div>
         </Box>
 
