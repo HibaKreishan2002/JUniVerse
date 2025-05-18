@@ -92,6 +92,7 @@ const filteredUsers = dataStudent.filter((user) => {
         const res = await JuUniVerseAxios.get(`/private-chat/${chatID}/allMessages`);
         setData(res?.data?.data || []);
       } catch (error) {
+        setData([])
         console.error(error);
       }
     };
@@ -389,23 +390,22 @@ const handleDeleteMessage = (id) => {
               .map((msg) => (
                  msg.status === "SENT"?
                 <div key={msg.id} style={{ position: "relative" }}>
-                  {msg.senderUsername === "omar_khaled" ||msg.file ?(
-                    <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: msg.senderUsername !== "omar_khaled" &&msg.file?"left":"right" }}>
-                      <MoreVertIcon />
-                    </IconButton>
-                    
-                  ):""}
+              
                   {msg.file?
                   
                   
                   <p
-             onClick={()=> getFileByID(msg?.fileId)} 
                   style={
                     msg.receiverUsername === receiverUsername
                       ? TherapistChatsStyle.receivedMessage
                       : TherapistChatsStyle.sentMessage
                   }
                 >
+                    <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
+                      <MoreVertIcon />
+                    </IconButton>
+    <div              onClick={()=> getFileByID(msg?.fileId)} 
+>
                  {
                    msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
                    : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
@@ -434,7 +434,7 @@ const handleDeleteMessage = (id) => {
                                              onMouseEnter={() => setHovered(index)}
                                              onMouseLeave={() => setHovered(null)}
                                            />
-                 }
+              }  </div> 
                   <br/>
                   {msg.content.split(".")[0]}<br />
                   <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
@@ -451,6 +451,12 @@ const handleDeleteMessage = (id) => {
                       : TherapistChatsStyle.sentMessage
                   }
                 >
+                  {msg.senderUsername=="omar_khaled"?
+                     <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  :""}
+                  
                   {msg.content}<br />
                   <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
                 </p>

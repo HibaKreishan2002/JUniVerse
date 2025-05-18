@@ -22,6 +22,7 @@ import cssicon from '../assets/images/cssicon.png'
 import phpicon from '../assets/images/phpicon.png'
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import FileViewer from 'react-file-viewer';
+import Swal from 'sweetalert2';
 
 function PrivateChat() {
   const chatRef = useRef(null);
@@ -195,7 +196,42 @@ const handleDeleteMessage = (id) => {
   
       const base64 = result.split(",")[1];
       const fileExtension = file.name.split(".").pop();
+   const mimeTypes = {
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xls: "application/vnd.ms-excel",
+    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ppt: "application/vnd.ms-powerpoint",
+    png: "image/png",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    pdf: "application/pdf",
+    doc: "application/msword",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    css: "text/css",
+    html: "text/html",
+    txt: "text/html",
+    php: "application/x-httpd-php",
+    java: "text/x-java-source",
+    mp4: "video/mp4",
+    mp3: "audio/mpeg",
+    js: "application/javascript",
+    mpeg: "video/mpeg",
+  };
+
+  const mimeType = mimeTypes[fileExtension.toLowerCase()];
+  if (!mimeType) {
+   Swal.fire({
+                        title:`Unsupported file type!` ,
+                          icon: "error",
+
+                        showCancelButton: true,
+                        showConfirmButton:false,
+                        cancelButtonText:"OK"
   
+  
+                      })
+                      ;    return;}
+
       setAttachedFile(file);
       setAttachedFileBase64(base64);
       setAttachedFilePreviewUrl(URL.createObjectURL(file));
@@ -332,7 +368,9 @@ msg.status === "SENT"?
                   <div key={msg.id} style={{ position: "relative" }}>
                           
                   <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
-                  <p index={msg.id} onClick={()=> getFileByID(msg?.fileId)} style={{...SocialHubStyle.receivedMessage,cursor:"pointer"}} > {msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                  <p index={msg.id}  style={{...SocialHubStyle.receivedMessage,cursor:"pointer"}} >
+                    <div onClick={()=> getFileByID(msg?.fileId)}>
+   {msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
                   : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
                     : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
                       : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
@@ -358,7 +396,9 @@ msg.status === "SENT"?
 
                                             onMouseEnter={() => setHovered(index)}
                                             onMouseLeave={() => setHovered(null)}
-                                          />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
+                                          />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                    </div>
+                  </p>
                  
                 </div>
                   :
@@ -368,33 +408,40 @@ msg.status === "SENT"?
                   </div>
                 ) : (
                   msg.file?
-                  <p key={msg.id} onClick={()=> getFileByID(msg?.fileId)} style={SocialHubStyle.sentMessage}>{msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
-                  : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
-                    : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
-                      : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
-                        : msg.content.split(".")[1] == "xls" || msg.content.split(".")[1] == "xlsx" ? <img src={excelicon} width={'70x'} />
-                          : msg.content.split(".")[1] == "js" ? <img src={jsicon} width={'70px'} />
-                            : msg.content.split(".")[1] == "txt" ? <img src={texticon} width={'70px'} />
-                              : msg.content.split(".")[1] == "mp4" ? <img src={mp4icon} width={'70px'} />
-                                : msg.content.split(".")[1] == "mp3" ? <img src={mp3icon} width={'70px'} />
-                                  : msg.content.split(".")[1] == "java" ? <img src={javaicon} width={'70px'} />
-                                    : msg.content.split(".")[1] == "php" ? <img src={phpicon} width={'70px'} />
-                                      : msg.content.split(".")[1] == "html" ? <img src={htmlicon} width={'70px'} />
-                                        : msg.content.split(".")[1] == "css" ? <img src={cssicon} width={'70px'} />
-                                          : <FileIcon
-                                            sx={{
-                                              fontSize: 75,
-                                              padding: 0,
-                                              margin: '-32px',
-                                              color: "#ffd35a",
-                                              transition: "0.3s",
-                                              cursor: "pointer",
-                                            }}
-                                            onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
-
-                                            onMouseEnter={() => setHovered(index)}
-                                            onMouseLeave={() => setHovered(null)}
-                                          />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
+                  <div style={{ position: "relative" }}>
+                    <p key={msg.id}  style={SocialHubStyle.sentMessage}>
+                                          <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
+<div onClick={()=> getFileByID(msg?.fileId)}>
+  {msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                    : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                      : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
+                        : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                          : msg.content.split(".")[1] == "xls" || msg.content.split(".")[1] == "xlsx" ? <img src={excelicon} width={'70x'} />
+                            : msg.content.split(".")[1] == "js" ? <img src={jsicon} width={'70px'} />
+                              : msg.content.split(".")[1] == "txt" ? <img src={texticon} width={'70px'} />
+                                : msg.content.split(".")[1] == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                  : msg.content.split(".")[1] == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                    : msg.content.split(".")[1] == "java" ? <img src={javaicon} width={'70px'} />
+                                      : msg.content.split(".")[1] == "php" ? <img src={phpicon} width={'70px'} />
+                                        : msg.content.split(".")[1] == "html" ? <img src={htmlicon} width={'70px'} />
+                                          : msg.content.split(".")[1] == "css" ? <img src={cssicon} width={'70px'} />
+                                            : <FileIcon
+                                              sx={{
+                                                fontSize: 75,
+                                                padding: 0,
+                                                margin: '-32px',
+                                                color: "#ffd35a",
+                                                transition: "0.3s",
+                                                cursor: "pointer",
+                                              }}
+                                              onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
+  
+                                              onMouseEnter={() => setHovered(index)}
+                                              onMouseLeave={() => setHovered(null)}
+                                            />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+</div>
+                    </p>
+                  </div>
 
                   :
                   <p key={msg.id} style={SocialHubStyle.sentMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
@@ -403,15 +450,22 @@ msg.status === "SENT"?
             </div>
           </Box>
           <Menu anchorEl={menuData.anchorEl} open={Boolean(menuData.anchorEl)} onClose={handleClose} elevation={8} sx={{ boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)", borderRadius: "8px" }}>
-            <MenuItem onClick={() => {
+           {menuData.selectedMsg && sessionStorage.getItem("username") === menuData.selectedMsg.senderUsername?
+           <>
+              <MenuItem onClick={() => {
               setMessageInfo({ id: menuData.selectedMsg?.id, content: menuData.selectedMsg?.content });
               setMenuData({ anchorEl: null, selectedMsg: null });
             }}>Edit</MenuItem>
-
-            <MenuItem onClick={() => {
+             <MenuItem onClick={() => {
                handleDeleteMessage(menuData.selectedMsg?.id);
                 handleClose();
             }}>Delete</MenuItem>
+           </>
+           
+           :""}
+         
+
+           
             {menuData.selectedMsg?.file?
             
             <>
