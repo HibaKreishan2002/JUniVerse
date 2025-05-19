@@ -225,7 +225,7 @@ function SocialHub() {
               onChange={(e) => messageInfo ? setMessageInfo({ ...messageInfo, content: e.target.value }) : setMessage(e.target.value)}
               style={SocialHubStyle.messageInputField}
             />
-               <Button sx={{  backgroundColor:'transparent', boxShadow:'none',border:'none',marginRight:'5' }}
+               {/* <Button sx={{  backgroundColor:'transparent', boxShadow:'none',border:'none',marginRight:'5' }}
           component="label"
           role={undefined}
           tabIndex={-1}
@@ -242,7 +242,7 @@ function SocialHub() {
       backgroundColor: "none",
       boxShadow: "none",
     }},}}/>
-        </Button>
+        </Button> */}
             {messageInfo && (
               <button onClick={() => setMessageInfo(null)} style={{ background: "transparent", border: "none", cursor: "pointer", marginRight: "10px" }}>
                 <ClearIcon />

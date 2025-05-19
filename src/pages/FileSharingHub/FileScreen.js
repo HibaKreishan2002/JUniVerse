@@ -133,7 +133,27 @@ const handleClose = () => {
     }
     )
   }
-
+const mimeTypes = {
+        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xls: "application/vnd.ms-excel",
+        pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ppt: "application/vnd.ms-powerpoint",
+        png: "image/png",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        pdf: "application/pdf",
+        doc: "application/msword",
+        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        css: "text/css",
+        html: "text/html",
+        txt: "text/html",
+        php: "application/x-httpd-php",
+        java: "text/x-java-source",
+        mp4: "video/mp4",
+        mp3: "audio/mpeg",
+        js: "application/javascript",
+        mpeg: "video/mpeg",
+      };
   const convertToBase64 = async (file, name) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -159,8 +179,22 @@ const handleClose = () => {
 
     if (files) {
       const file = files[0];
-      console.log(file);
+   const mimeType = mimeTypes[file.name.split(".")[file.name.split(".").length-1].toLowerCase()];
+      if (!mimeType) {
+                  setOpen(false);
 
+        Swal.fire({
+          title: `Unsupported file type!`,
+          icon: "error",
+
+          showCancelButton: true,
+          showConfirmButton: false,
+          cancelButtonText: "OK"
+
+
+        })
+          ; return;
+      }
       const base64 = convertToBase64(file, name);
 
 
@@ -400,6 +434,8 @@ const handleClose = () => {
           Choose file
        <VisuallyHiddenInput
             type="file"
+              accept={Object.keys(mimeTypes).map(ext => "." + ext).join(",")}
+
             onChange={handleInputChange}
 
           /> 

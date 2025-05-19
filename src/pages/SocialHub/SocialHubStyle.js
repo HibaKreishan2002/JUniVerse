@@ -69,7 +69,7 @@ fontSize:"10px"
     padding: "10px",
     border: "1px solid #ddd",
     borderRadius: "5px",
-    marginRight: "0",
+    marginRight: "10px",
   },
   messageInputButton: {
     padding: "10px 20px",

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Typography, IconButton, Menu, MenuItem, Button, styled , Badge } from '@mui/material';
+import { Box, Typography, IconButton, Menu, MenuItem, Button, styled, Badge } from '@mui/material';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ClearIcon from '@mui/icons-material/Clear';
@@ -26,25 +26,26 @@ import Swal from 'sweetalert2';
 
 function PrivateChat() {
   const chatRef = useRef(null);
-const [startChat,setStartChat]=useState(false);
+  const [startChat, setStartChat] = useState(false);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [message, setMessage] = useState("");
-  const [refreshPage, setRefreshPage] = useState(0); 
+  const [refreshPage, setRefreshPage] = useState(0);
   const [scrollPage, setScrollPage] = useState(0);
   const [data, setData] = useState([]);
   const [messageInfo, setMessageInfo] = useState(null);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
   const [selectedMsg, setSelectedMsg] = useState(null);
+  const [hovered, setHovered] = useState(null);
 
   const [attachedFile, setAttachedFile] = useState(null);
   const [attachedFilePreviewUrl, setAttachedFilePreviewUrl] = useState(null);
   const [attachedFileBase64, setAttachedFileBase64] = useState(null);
   const [attachedFileName, setAttachedFileName] = useState("");
   const [attachedFileExtension, setAttachedFileExtension] = useState("");
-  const [countUnreadMsg,setCountUnreadMsg]= useState(0);
+  const [countUnreadMsg, setCountUnreadMsg] = useState(0);
 
 
-    const handleChatToggle = () => {
+  const handleChatToggle = () => {
     setAttachedFile(null);
     setAttachedFilePreviewUrl(null);
     setAttachedFileBase64(null);
@@ -54,8 +55,8 @@ const [startChat,setStartChat]=useState(false);
     setScrollPage(scrollPage + 1);
 
 
-      setStartChat(false);
-    
+    setStartChat(false);
+
     getAllMessages()
   };
 
@@ -72,7 +73,7 @@ const [startChat,setStartChat]=useState(false);
       JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, { content: messageInfo.content })
         .then(() => {
           setMessageInfo(null);
-          
+
           setRefreshPage(refreshPage + 1);
         })
         .catch((error) => console.log(error));
@@ -87,8 +88,8 @@ const [startChat,setStartChat]=useState(false);
           setRefreshPage(refreshPage + 1);
         })
         .catch((error) => console.log(error));
-console.log(attachedFileBase64);
- 
+      console.log(attachedFileBase64);
+
 
 
       // separately upload the file if any
@@ -111,36 +112,36 @@ console.log(attachedFileBase64);
       }
 
     }
-        setAttachedFile(null);
+    setAttachedFile(null);
     setAttachedFilePreviewUrl(null);
     setAttachedFileBase64(null);
     setAttachedFileName("");
     setAttachedFileExtension("");
   };
   const handleCountUnreadMsg = () => {
-  JuUniVerseAxios.get("/private-chat")
-    .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
-    .catch(err => console.log(err));
-};
+    JuUniVerseAxios.get("/private-chat")
+      .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
+      .catch(err => console.log(err));
+  };
 
   //added by HIBA
-const handleDeleteMessage = (id) => {
+  const handleDeleteMessage = (id) => {
     JuUniVerseAxios.delete(`/private-chat/${id}`).then(() => {
-          setRefreshPage(refreshPage + 1);
+      setRefreshPage(refreshPage + 1);
     }).catch(console.log);
   };
   useEffect(() => {
- 
-  const handleCountUnreadMsg = () => {
-  JuUniVerseAxios.get("/private-chat")
-    .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
-    .catch(err => console.log(err));
-    if (isChatVisible){
 
-      getAllMessages();
+    const handleCountUnreadMsg = () => {
+      JuUniVerseAxios.get("/private-chat")
+        .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
+        .catch(err => console.log(err));
+      if (isChatVisible) {
 
-}
-};
+        getAllMessages();
+
+      }
+    };
 
 
     const interval = setInterval(handleCountUnreadMsg, 1000);
@@ -156,12 +157,12 @@ const handleDeleteMessage = (id) => {
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
   }
-     const getAllMessages = () => {
-      JuUniVerseAxios.get(`/private-chat/allMessages`)
-        .then(res => setData(res.data.data))
-        .catch(error => console.log(error));
+  const getAllMessages = () => {
+    JuUniVerseAxios.get(`/private-chat/allMessages`)
+      .then(res => setData(res.data.data))
+      .catch(error => console.log(error));
 
-    };
+  };
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -177,182 +178,183 @@ const handleDeleteMessage = (id) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-  
+
     if (!file) {
       console.warn("No file selected");
       return;
     }
-  
+
     console.log("Selected file:", file);
-  
+
     const reader = new FileReader();
-  
+
     reader.onloadend = () => {
       const result = reader.result;
       if (!result) {
         console.error("Failed to read file as Base64");
         return;
       }
-  
+
       const base64 = result.split(",")[1];
       const fileExtension = file.name.split(".").pop();
-   const mimeTypes = {
-    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    xls: "application/vnd.ms-excel",
-    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    ppt: "application/vnd.ms-powerpoint",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    pdf: "application/pdf",
-    doc: "application/msword",
-    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    css: "text/css",
-    html: "text/html",
-    txt: "text/html",
-    php: "application/x-httpd-php",
-    java: "text/x-java-source",
-    mp4: "video/mp4",
-    mp3: "audio/mpeg",
-    js: "application/javascript",
-    mpeg: "video/mpeg",
-  };
+      const mimeTypes = {
+        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xls: "application/vnd.ms-excel",
+        pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ppt: "application/vnd.ms-powerpoint",
+        png: "image/png",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        pdf: "application/pdf",
+        doc: "application/msword",
+        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        css: "text/css",
+        html: "text/html",
+        txt: "text/html",
+        php: "application/x-httpd-php",
+        java: "text/x-java-source",
+        mp4: "video/mp4",
+        mp3: "audio/mpeg",
+        js: "application/javascript",
+        mpeg: "video/mpeg",
+      };
 
-  const mimeType = mimeTypes[fileExtension.toLowerCase()];
-  if (!mimeType) {
-   Swal.fire({
-                        title:`Unsupported file type!` ,
-                          icon: "error",
+      const mimeType = mimeTypes[fileExtension.toLowerCase()];
+      if (!mimeType) {
+        Swal.fire({
+          title: `Unsupported file type!`,
+          icon: "error",
 
-                        showCancelButton: true,
-                        showConfirmButton:false,
-                        cancelButtonText:"OK"
-  
-  
-                      })
-                      ;    return;}
+          showCancelButton: true,
+          showConfirmButton: false,
+          cancelButtonText: "OK"
+
+
+        })
+          ; return;
+      }
 
       setAttachedFile(file);
       setAttachedFileBase64(base64);
       setAttachedFilePreviewUrl(URL.createObjectURL(file));
       setAttachedFileName(file.name);
       setAttachedFileExtension(fileExtension);
-  
+
       console.log("Base64 ready:", base64.slice(0, 30) + "...");
     };
-  
+
     reader.onerror = (err) => {
       console.error("Error reading file:", err);
     };
-  
+
     reader.readAsDataURL(file);
   };
-  
-const getFileByID = (fileID, transition) => {
-  JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
-    console.log(res)
 
-    if (transition == "Download") {
-      handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
-    } else {
+  const getFileByID = (fileID, transition) => {
+    JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
+      console.log(res)
 
-      handleView(res.data.data.fileAsBase64, res.data.data.extension)
-    }
-  })
-    .catch(err => {
+      if (transition == "Download") {
+        handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
+      } else {
 
+        handleView(res.data.data.fileAsBase64, res.data.data.extension)
+      }
     })
-}
-const handleDownload = (base64FileContent, fileName, fileExtension) => {
-  const mimeTypes = {
-    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    xls: "application/vnd.ms-excel",
-    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    ppt: "application/vnd.ms-powerpoint",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    pdf: "application/pdf",
-    doc: "application/msword",
-    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    css: "text/css",
-    html: "text/html",
-    txt: "text/plain",  // Fixed incorrect MIME type
-    php: "application/x-httpd-php",
-    java: "text/x-java-source",
-    mp4: "video/mp4",
-    mp3: "audio/mpeg",
-    js: "application/javascript",
-    mpeg: "video/mpeg",
-  };
+      .catch(err => {
 
-  const mimeType = mimeTypes[fileExtension.toLowerCase()];
-  if (!mimeType) {
-    alert("Unsupported file type");
-    return;
+      })
   }
+  const handleDownload = (base64FileContent, fileName, fileExtension) => {
+    const mimeTypes = {
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      xls: "application/vnd.ms-excel",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ppt: "application/vnd.ms-powerpoint",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      pdf: "application/pdf",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      css: "text/css",
+      html: "text/html",
+      txt: "text/plain",  // Fixed incorrect MIME type
+      php: "application/x-httpd-php",
+      java: "text/x-java-source",
+      mp4: "video/mp4",
+      mp3: "audio/mpeg",
+      js: "application/javascript",
+      mpeg: "video/mpeg",
+    };
 
-  // Convert Base64 to binary
-  const byteCharacters = atob(base64FileContent);
-  const byteNumbers = new Array(byteCharacters.length)
-    .fill(0)
-    .map((_, i) => byteCharacters.charCodeAt(i));
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: mimeType });
+    const mimeType = mimeTypes[fileExtension.toLowerCase()];
+    if (!mimeType) {
+      alert("Unsupported file type");
+      return;
+    }
 
-  // Create object URL
-  const url = URL.createObjectURL(blob);
+    // Convert Base64 to binary
+    const byteCharacters = atob(base64FileContent);
+    const byteNumbers = new Array(byteCharacters.length)
+      .fill(0)
+      .map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
 
-  // Create a temporary anchor tag to trigger download
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${fileName}.${fileExtension}`; // Set filename
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+    // Create object URL
+    const url = URL.createObjectURL(blob);
 
-  // Revoke the object URL to free memory
-  URL.revokeObjectURL(url);
-};
-const handleView = (base64FileContent, fileExtension) => {
-  const mimeTypes = {
-    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    xls: "application/vnd.ms-excel",
-    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    ppt: "application/vnd.ms-powerpoint",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    pdf: "application/pdf",
-    doc: "application/msword",
-    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    css: "text/css",
-    html: "text/html",
-    txt: "text/html",
-    php: "application/x-httpd-php",
-    java: "text/x-java-source",
-    mp4: "video/mp4",
-    mp3: "audio/mpeg",
-    js: "application/javascript",
-    mpeg: "video/mpeg",
+    // Create a temporary anchor tag to trigger download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${fileName}.${fileExtension}`; // Set filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Revoke the object URL to free memory
+    URL.revokeObjectURL(url);
   };
+  const handleView = (base64FileContent, fileExtension) => {
+    const mimeTypes = {
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      xls: "application/vnd.ms-excel",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ppt: "application/vnd.ms-powerpoint",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      pdf: "application/pdf",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      css: "text/css",
+      html: "text/html",
+      txt: "text/html",
+      php: "application/x-httpd-php",
+      java: "text/x-java-source",
+      mp4: "video/mp4",
+      mp3: "audio/mpeg",
+      js: "application/javascript",
+      mpeg: "video/mpeg",
+    };
 
-  const mimeType = mimeTypes[fileExtension.toLowerCase()];
-  if (!mimeType) {
-    alert("Unsupported file type");
-    return;
-  }
+    const mimeType = mimeTypes[fileExtension.toLowerCase()];
+    if (!mimeType) {
+      alert("Unsupported file type");
+      return;
+    }
 
-  // Convert Base64 to binary
-  const byteCharacters = atob(base64FileContent);
-  const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: mimeType });
+    // Convert Base64 to binary
+    const byteCharacters = atob(base64FileContent);
+    const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
 
-  // Create object URL and open in new tab
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
-};
+    // Create object URL and open in new tab
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+  };
   return (
     <>
       {isChatVisible && (
@@ -363,142 +365,142 @@ const handleView = (base64FileContent, fileExtension) => {
           <Box id="chatContainer" sx={{ flexGrow: 1, overflowY: 'auto', marginBottom: '20px' }}>
             <div style={SocialHubStyle.chatArea}>
               {data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).map((msg) =>
-msg.status === "SENT"?
-                msg.senderUsername !== "omar_khaled" ? (msg.file?
-                  <div key={msg.id} style={{ position: "relative" }}>
-                          
-                  <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
-                  <p index={msg.id}  style={{...SocialHubStyle.receivedMessage,cursor:"pointer"}} >
-                    <div onClick={()=> getFileByID(msg?.fileId)}>
-   {msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
-                  : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
-                    : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
-                      : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
-                        : msg.content.split(".")[1] == "xls" || msg.content.split(".")[1] == "xlsx" ? <img src={excelicon} width={'70x'} />
-                          : msg.content.split(".")[1] == "js" ? <img src={jsicon} width={'70px'} />
-                            : msg.content.split(".")[1] == "txt" ? <img src={texticon} width={'70px'} />
-                              : msg.content.split(".")[1] == "mp4" ? <img src={mp4icon} width={'70px'} />
-                                : msg.content.split(".")[1] == "mp3" ? <img src={mp3icon} width={'70px'} />
-                                  : msg.content.split(".")[1] == "java" ? <img src={javaicon} width={'70px'} />
-                                    : msg.content.split(".")[1] == "php" ? <img src={phpicon} width={'70px'} />
-                                      : msg.content.split(".")[1] == "html" ? <img src={htmlicon} width={'70px'} />
-                                        : msg.content.split(".")[1] == "css" ? <img src={cssicon} width={'70px'} />
-                                          : <FileIcon
-                                            sx={{
-                                              fontSize: 75,
-                                              padding: 0,
-                                              margin: '-32px',
-                                              color: "#ffd35a",
-                                              transition: "0.3s",
-                                              cursor: "pointer",
-                                            }}
-                                            onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
+                msg.status === "SENT" ?
+                  msg.senderUsername !== "omar_khaled" ? (msg.file ?
+                    <div key={msg.id} style={{ position: "relative" }}>
 
-                                            onMouseEnter={() => setHovered(index)}
-                                            onMouseLeave={() => setHovered(null)}
-                                          />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                      <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
+                      <p index={msg.id} style={{ ...SocialHubStyle.receivedMessage, cursor: "pointer" }} >
+                        <div onClick={() => getFileByID(msg?.fileId)}>
+                          {msg.content.split(".")[msg.content.split(".")?.length-1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                            : msg.content.split(".")[msg.content.split(".")?.length-1] == "png" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpg" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                              : msg.content.split(".")[msg.content.split(".")?.length-1] == "doc" || msg.content.split(".")[msg.content.split(".")?.length-1] == "docx" ? <img src={wordicon} width={'70px'} />
+                                : msg.content.split(".")[msg.content.split(".")?.length-1] == "ppt" || msg.content.split(".")[msg.content.split(".")?.length-1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                                  : msg.content.split(".")[msg.content.split(".")?.length-1] == "xls" || msg.content.split(".")[msg.content.split(".")?.length-1] == "xlsx" ? <img src={excelicon} width={'70x'} />
+                                    : msg.content.split(".")[msg.content.split(".")?.length-1] == "js" ? <img src={jsicon} width={'70px'} />
+                                      : msg.content.split(".")[msg.content.split(".")?.length-1] == "txt" ? <img src={texticon} width={'70px'} />
+                                        : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                          : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                            : msg.content.split(".")[msg.content.split(".")?.length-1] == "java" ? <img src={javaicon} width={'70px'} />
+                                              : msg.content.split(".")[msg.content.split(".")?.length-1] == "php" ? <img src={phpicon} width={'70px'} />
+                                                : msg.content.split(".")[msg.content.split(".")?.length-1] == "html" ? <img src={htmlicon} width={'70px'} />
+                                                  : msg.content.split(".")[msg.content.split(".")?.length-1] == "css" ? <img src={cssicon} width={'70px'} />
+                                                    : <FileIcon
+                                                      sx={{
+                                                        fontSize: 75,
+                                                        padding: 0,
+                                                        margin: '-32px',
+                                                        color: "#ffd35a",
+                                                        transition: "0.3s",
+                                                        cursor: "pointer",
+                                                      }}
+                                                      onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
+
+                                                      onMouseEnter={() => setHovered(file.id)}
+                                                      onMouseLeave={() => setHovered(null)}
+                                                    />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                        </div>
+                      </p>
+
                     </div>
-                  </p>
-                 
-                </div>
-                  :
-                  <div key={msg.id} style={{ position: "relative" }}>
-                    <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
-                    <p index={msg.id} style={SocialHubStyle.receivedMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
-                  </div>
-                ) : (
-                  msg.file?
-                  <div style={{ position: "relative" }}>
-                    <p key={msg.id}  style={SocialHubStyle.sentMessage}>
-                                          <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
-<div onClick={()=> getFileByID(msg?.fileId)}>
-  {msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
-                    : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
-                      : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
-                        : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
-                          : msg.content.split(".")[1] == "xls" || msg.content.split(".")[1] == "xlsx" ? <img src={excelicon} width={'70x'} />
-                            : msg.content.split(".")[1] == "js" ? <img src={jsicon} width={'70px'} />
-                              : msg.content.split(".")[1] == "txt" ? <img src={texticon} width={'70px'} />
-                                : msg.content.split(".")[1] == "mp4" ? <img src={mp4icon} width={'70px'} />
-                                  : msg.content.split(".")[1] == "mp3" ? <img src={mp3icon} width={'70px'} />
-                                    : msg.content.split(".")[1] == "java" ? <img src={javaicon} width={'70px'} />
-                                      : msg.content.split(".")[1] == "php" ? <img src={phpicon} width={'70px'} />
-                                        : msg.content.split(".")[1] == "html" ? <img src={htmlicon} width={'70px'} />
-                                          : msg.content.split(".")[1] == "css" ? <img src={cssicon} width={'70px'} />
-                                            : <FileIcon
-                                              sx={{
-                                                fontSize: 75,
-                                                padding: 0,
-                                                margin: '-32px',
-                                                color: "#ffd35a",
-                                                transition: "0.3s",
-                                                cursor: "pointer",
-                                              }}
-                                              onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
-  
-                                              onMouseEnter={() => setHovered(index)}
-                                              onMouseLeave={() => setHovered(null)}
-                                            />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
-</div>
-                    </p>
-                  </div>
+                    :
+                    <div key={msg.id} style={{ position: "relative" }}>
+                      <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
+                      <p index={msg.id} style={SocialHubStyle.receivedMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
+                    </div>
+                  ) : (
+                    msg.file ?
+                      <div style={{ position: "relative" }}>
+                        <p key={msg.id} style={SocialHubStyle.sentMessage}>
+                          <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
+                          <div onClick={() => getFileByID(msg?.fileId)}>
+                            {msg.content.split(".")[msg.content.split(".")?.length-1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                              : msg.content.split(".")[msg.content.split(".")?.length-1] == "png" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpg" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                                : msg.content.split(".")[msg.content.split(".")?.length-1] == "doc" || msg.content.split(".")[msg.content.split(".")?.length-1] == "docx" ? <img src={wordicon} width={'70px'} />
+                                  : msg.content.split(".")[msg.content.split(".")?.length-1] == "ppt" || msg.content.split(".")[msg.content.split(".")?.length-1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                                    : msg.content.split(".")[msg.content.split(".")?.length-1] == "xls" || msg.content.split(".")[msg.content.split(".")?.length-1] == "xlsx" ? <img src={excelicon} width={'70x'} />
+                                      : msg.content.split(".")[msg.content.split(".")?.length-1] == "js" ? <img src={jsicon} width={'70px'} />
+                                        : msg.content.split(".")[msg.content.split(".")?.length-1] == "txt" ? <img src={texticon} width={'70px'} />
+                                          : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                            : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                              : msg.content.split(".")[msg.content.split(".")?.length-1] == "java" ? <img src={javaicon} width={'70px'} />
+                                                : msg.content.split(".")[msg.content.split(".")?.length-1] == "php" ? <img src={phpicon} width={'70px'} />
+                                                  : msg.content.split(".")[msg.content.split(".")?.length-1] == "html" ? <img src={htmlicon} width={'70px'} />
+                                                    : msg.content.split(".")[msg.content.split(".")?.length-1] == "css" ? <img src={cssicon} width={'70px'} />
+                                                      : <FileIcon
+                                                        sx={{
+                                                          fontSize: 75,
+                                                          padding: 0,
+                                                          margin: '-32px',
+                                                          color: "#ffd35a",
+                                                          transition: "0.3s",
+                                                          cursor: "pointer",
+                                                        }}
+                                                        onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
 
-                  :
-                  <p key={msg.id} style={SocialHubStyle.sentMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
-                ):""
+                                                        onMouseEnter={() => setHovered(index)}
+                                                        onMouseLeave={() => setHovered(null)}
+                                                      />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                          </div>
+                        </p>
+                      </div>
+
+                      :
+                      <p key={msg.id} style={SocialHubStyle.sentMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
+                  ) : ""
               )}
             </div>
           </Box>
           <Menu anchorEl={menuData.anchorEl} open={Boolean(menuData.anchorEl)} onClose={handleClose} elevation={8} sx={{ boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)", borderRadius: "8px" }}>
-           {menuData.selectedMsg && sessionStorage.getItem("username") === menuData.selectedMsg.senderUsername?
-           <>
-              <MenuItem onClick={() => {
-              setMessageInfo({ id: menuData.selectedMsg?.id, content: menuData.selectedMsg?.content });
-              setMenuData({ anchorEl: null, selectedMsg: null });
-            }}>Edit</MenuItem>
-             <MenuItem onClick={() => {
-               handleDeleteMessage(menuData.selectedMsg?.id);
-                handleClose();
-            }}>Delete</MenuItem>
-           </>
-           
-           :""}
-         
+            {menuData.selectedMsg && sessionStorage.getItem("username") === menuData.selectedMsg.senderUsername ?
+              <>
+                <MenuItem onClick={() => {
+                  setMessageInfo({ id: menuData.selectedMsg?.id, content: menuData.selectedMsg?.content });
+                  setMenuData({ anchorEl: null, selectedMsg: null });
+                }}>Edit</MenuItem>
+                <MenuItem onClick={() => {
+                  handleDeleteMessage(menuData.selectedMsg?.id);
+                  handleClose();
+                }}>Delete</MenuItem>
+              </>
 
-           
-            {menuData.selectedMsg?.file?
-            
-            <>
-               <MenuItem onClick={() => {
-            
-            // setFileID(menuData.selectedMsg?.id)
-             getFileByID(menuData.selectedMsg?.fileId)
+              : ""}
 
-            setMenuData({ anchorEl: null });
-            console.log(menuData.selectedMsg);
-            // setOpenViewer(true)
-          }}>View</MenuItem>
-          <MenuItem onClick={() => {
 
-            // setFileID(menuData.selectedMsg?.id)
-             getFileByID(menuData.selectedMsg?.fileId, "Download")
 
-            setMenuData({ anchorEl: null });
-            console.log(menuData.selectedMsg.fileId);
-          }}>Download</MenuItem>
-            </>
-            :""}
-          
+            {menuData.selectedMsg?.file ?
+
+              <>
+                <MenuItem onClick={() => {
+
+                  // setFileID(menuData.selectedMsg?.id)
+                  getFileByID(menuData.selectedMsg?.fileId)
+
+                  setMenuData({ anchorEl: null });
+                  console.log(menuData.selectedMsg);
+                  // setOpenViewer(true)
+                }}>View</MenuItem>
+                <MenuItem onClick={() => {
+
+                  // setFileID(menuData.selectedMsg?.id)
+                  getFileByID(menuData.selectedMsg?.fileId, "Download")
+
+                  setMenuData({ anchorEl: null });
+                  console.log(menuData.selectedMsg.fileId);
+                }}>Download</MenuItem>
+              </>
+              : ""}
+
           </Menu>
           {attachedFile && (
-              <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2" sx={{ color: "gray" }}>{attachedFile.name}</Typography>
-                {attachedFile.type.startsWith('image/') && (
-                  <img src={attachedFilePreviewUrl} alt="preview" width={40} height={40} style={{ borderRadius: 4 }} />
-                )}
-              </Box>
-            )}
-  
+            <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" sx={{ color: "gray" }}>{attachedFile.name}</Typography>
+              {attachedFile.type.startsWith('image/') && (
+                <img src={attachedFilePreviewUrl} alt="preview" width={40} height={40} style={{ borderRadius: 4 }} />
+              )}
+            </Box>
+          )}
+
 
           <div style={SocialHubStyle.messageInput}>
             <input
@@ -517,10 +519,10 @@ msg.status === "SENT"?
               } />
              
             </Button> */}
-              <label style={{ cursor: 'pointer', marginRight: 5 }}>
+            <label style={{ cursor: 'pointer', marginRight: 5 }}>
               <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
               <AttachFileIcon sx={{ color: 'black', float: 'left' }} />
-            </label>            
+            </label>
 
             <button style={SocialHubStyle.messageInputButton} onClick={handleSendMessage}>{messageInfo ? "Update" : "Send"}</button>
           </div>
@@ -528,9 +530,9 @@ msg.status === "SENT"?
       )}
 
       <Box onClick={handleChatToggle} sx={{ position: 'fixed', bottom: '10px', right: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', zIndex: 1000 }}>
-       <Badge badgeContent={countUnreadMsg} color="error">
-        <ChatBubbleIcon sx={{ fontSize: 110, color: '#22a9d3' }} />
-              </Badge> 
+        <Badge badgeContent={countUnreadMsg} color="error">
+          <ChatBubbleIcon sx={{ fontSize: 110, color: '#22a9d3' }} />
+        </Badge>
         <Typography sx={{ position: 'absolute', bottom: '45px', fontSize: '12px', fontWeight: 'bold', textAlign: 'center', color: "white" }}>Chat with a Therapist!</Typography>
       </Box>
     </>

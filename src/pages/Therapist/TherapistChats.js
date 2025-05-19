@@ -35,6 +35,7 @@ import cssicon from '../../assets/images/cssicon.png'
 import phpicon from '../../assets/images/phpicon.png'
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 function TherapistChats() {
   const [dataStudent, setDataStudent] = useState([]);
   const [message, setMessage] = useState("");
@@ -48,6 +49,7 @@ function TherapistChats() {
   const [messageInfo, setMessageInfo] = useState(null);
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
   const [searchQuery, setSearchQuery] = useState("");
+  const [hovered, setHovered] = useState(null);
 
 
 const navigate=useNavigate();
@@ -204,7 +206,42 @@ const handleDeleteMessage = (id) => {
 
       const base64 = result.split(",")[1];
       const fileExtension = file.name.split(".").pop();
+ const mimeTypes = {
+        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xls: "application/vnd.ms-excel",
+        pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ppt: "application/vnd.ms-powerpoint",
+        png: "image/png",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        pdf: "application/pdf",
+        doc: "application/msword",
+        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        css: "text/css",
+        html: "text/html",
+        txt: "text/html",
+        php: "application/x-httpd-php",
+        java: "text/x-java-source",
+        mp4: "video/mp4",
+        mp3: "audio/mpeg",
+        js: "application/javascript",
+        mpeg: "video/mpeg",
+      };
 
+      const mimeType = mimeTypes[fileExtension.toLowerCase()];
+      if (!mimeType) {
+        Swal.fire({
+          title: `Unsupported file type!`,
+          icon: "error",
+
+          showCancelButton: true,
+          showConfirmButton: false,
+          cancelButtonText: "OK"
+
+
+        })
+          ; return;
+      }
       setAttachedFile(file);
       setAttachedFileBase64(base64);
       setAttachedFilePreviewUrl(URL.createObjectURL(file));
@@ -238,32 +275,41 @@ const handleDeleteMessage = (id) => {
   }
   const handleDownload = (base64FileContent, fileName, fileExtension) => {
     const mimeTypes = {
-      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      xls: "application/vnd.ms-excel",
-      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      ppt: "application/vnd.ms-powerpoint",
-      png: "image/png",
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      pdf: "application/pdf",
-      doc: "application/msword",
-      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      css: "text/css",
-      html: "text/html",
-      txt: "text/plain",  // Fixed incorrect MIME type
-      php: "application/x-httpd-php",
-      java: "text/x-java-source",
-      mp4: "video/mp4",
-      mp3: "audio/mpeg",
-      js: "application/javascript",
-      mpeg: "video/mpeg",
-    };
-  
-    const mimeType = mimeTypes[fileExtension.toLowerCase()];
-    if (!mimeType) {
-      alert("Unsupported file type");
-      return;
-    }
+           xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+           xls: "application/vnd.ms-excel",
+           pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+           ppt: "application/vnd.ms-powerpoint",
+           png: "image/png",
+           jpg: "image/jpeg",
+           jpeg: "image/jpeg",
+           pdf: "application/pdf",
+           doc: "application/msword",
+           docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+           css: "text/css",
+           html: "text/html",
+           txt: "text/html",
+           php: "application/x-httpd-php",
+           java: "text/x-java-source",
+           mp4: "video/mp4",
+           mp3: "audio/mpeg",
+           js: "application/javascript",
+           mpeg: "video/mpeg",
+         };
+   
+         const mimeType = mimeTypes[fileExtension.toLowerCase()];
+         if (!mimeType) {
+           Swal.fire({
+             title: `Unsupported file type!`,
+             icon: "error",
+   
+             showCancelButton: true,
+             showConfirmButton: false,
+             cancelButtonText: "OK"
+   
+   
+           })
+             ; return;
+         }
   
     // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
@@ -357,7 +403,7 @@ const handleDeleteMessage = (id) => {
         />
 
         <ul style={TherapistChatsStyle.userList}>
-          {filteredUsers.map((user) => (
+          {filteredUsers.map((user,index) => (
             <li
               key={user.id}
               onClick={() => {
@@ -387,7 +433,7 @@ const handleDeleteMessage = (id) => {
           <div style={TherapistChatsStyle.chatArea} ref={chatContainerRef}>
             {data
               .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-              .map((msg) => (
+              .map((msg,index) => (
                  msg.status === "SENT"?
                 <div key={msg.id} style={{ position: "relative" }}>
               
@@ -406,20 +452,21 @@ const handleDeleteMessage = (id) => {
                     </IconButton>
     <div              onClick={()=> getFileByID(msg?.fileId)} 
 >
+
                  {
-                   msg.content.split(".")[1] == "pdf" ? <img src={pdficon} width={'70px'} />
-                   : msg.content.split(".")[1] == "png" || msg.content.split(".")[1] == "jpg" || msg.content.split(".")[1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
-                     : msg.content.split(".")[1] == "doc" || msg.content.split(".")[1] == "docx" ? <img src={wordicon} width={'70px'} />
-                       : msg.content.split(".")[1] == "ppt" || msg.content.split(".")[1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
-                         : msg.content.split(".")[1] == "xls" || msg.content.split(".")[1] == "xlsx" ? <img src={excelicon} width={'70x'} />
-                           : msg.content.split(".")[1] == "js" ? <img src={jsicon} width={'70px'} />
-                             : msg.content.split(".")[1] == "txt" ? <img src={texticon} width={'70px'} />
-                               : msg.content.split(".")[1] == "mp4" ? <img src={mp4icon} width={'70px'} />
-                                 : msg.content.split(".")[1] == "mp3" ? <img src={mp3icon} width={'70px'} />
-                                   : msg.content.split(".")[1] == "java" ? <img src={javaicon} width={'70px'} />
-                                     : msg.content.split(".")[1] == "php" ? <img src={phpicon} width={'70px'} />
-                                       : msg.content.split(".")[1] == "html" ? <img src={htmlicon} width={'70px'} />
-                                         : msg.content.split(".")[1] == "css" ? <img src={cssicon} width={'70px'} />
+                   msg.content.split(".")[msg.content.split(".")?.length-1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                   : msg.content.split(".")[msg.content.split(".")?.length-1] == "png" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpg" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                     : msg.content.split(".")[msg.content.split(".")?.length-1] == "doc" || msg.content.split(".")[msg.content.split(".")?.length-1] == "docx" ? <img src={wordicon} width={'70px'} />
+                       : msg.content.split(".")[msg.content.split(".")?.length-1] == "ppt" || msg.content.split(".")[msg.content.split(".")?.length-1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                         : msg.content.split(".")[msg.content.split(".")?.length-1] == "xls" || msg.content.split(".")[msg.content.split(".")?.length-1] == "xlsx" ? <img src={excelicon} width={'70x'} />
+                           : msg.content.split(".")[msg.content.split(".")?.length-1] == "js" ? <img src={jsicon} width={'70px'} />
+                             : msg.content.split(".")[msg.content.split(".")?.length-1] == "txt" ? <img src={texticon} width={'70px'} />
+                               : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                 : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                   : msg.content.split(".")[msg.content.split(".")?.length-1] == "java" ? <img src={javaicon} width={'70px'} />
+                                     : msg.content.split(".")[msg.content.split(".")?.length-1] == "php" ? <img src={phpicon} width={'70px'} />
+                                       : msg.content.split(".")[msg.content.split(".")?.length-1] == "html" ? <img src={htmlicon} width={'70px'} />
+                                         : msg.content.split(".")[msg.content.split(".")?.length-1] == "css" ? <img src={cssicon} width={'70px'} />
                                            : <FileIcon
                                              sx={{
                                                fontSize: 75,
@@ -431,7 +478,7 @@ const handleDeleteMessage = (id) => {
                                              }}
                                              onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
  
-                                             onMouseEnter={() => setHovered(index)}
+                                             onMouseEnter={() => setHovered(file.id)}
                                              onMouseLeave={() => setHovered(null)}
                                            />
               }  </div> 
