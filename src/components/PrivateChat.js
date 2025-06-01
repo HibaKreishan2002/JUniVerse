@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, Typography, IconButton, Menu, MenuItem, Button, styled, Badge } from '@mui/material';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -43,7 +42,32 @@ function PrivateChat() {
   const [attachedFileName, setAttachedFileName] = useState("");
   const [attachedFileExtension, setAttachedFileExtension] = useState("");
   const [countUnreadMsg, setCountUnreadMsg] = useState(0);
+  const [chatOpened, setChatOpened] = useState(false);
+  
+  // Refs for intervals to clean them up properly
+  const messagePollingRef = useRef(null);
+  const unreadCountPollingRef = useRef(null);
 
+  // Memoized function to get all messages
+  const getAllMessages = useCallback(async () => {
+    try {
+      const res = await JuUniVerseAxios.get(`/private-chat/allMessages`);
+      setData(res?.data?.data || []);
+      console.log("Messages updated:", res?.data?.data);
+    } catch (error) {
+      console.log("Error fetching messages:", error);
+    }
+  }, []);
+
+  // Memoized function to get unread message count
+  const getUnreadCount = useCallback(async () => {
+    try {
+      const res = await JuUniVerseAxios.get("/private-chat");
+      setCountUnreadMsg(res.data.data.userUnreadMessagesCount);
+    } catch (err) {
+      console.log("Error fetching unread count:", err);
+    }
+  }, []);
 
   const handleChatToggle = () => {
     setAttachedFile(null);
@@ -53,11 +77,13 @@ function PrivateChat() {
     setAttachedFileExtension("");
     setIsChatVisible(!isChatVisible);
     setScrollPage(scrollPage + 1);
-
-
+    setChatOpened(true);
     setStartChat(false);
 
-    getAllMessages()
+    // Immediately load messages when opening chat
+    if (!isChatVisible) {
+      getAllMessages();
+    }
   };
 
   const handleClose = () => {
@@ -68,29 +94,29 @@ function PrivateChat() {
     setMenuData({ anchorEl: event.currentTarget, selectedMsg: msg });
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (messageInfo) {
-      JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, { content: messageInfo.content })
-        .then(() => {
-          setMessageInfo(null);
-
-          setRefreshPage(refreshPage + 1);
-        })
-        .catch((error) => console.log(error));
+      try {
+        await JuUniVerseAxios.put(`/private-chat/${messageInfo.id}`, { content: messageInfo.content });
+        setMessageInfo(null);
+        // Immediately refresh messages after sending
+        getAllMessages();
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       const payload = {
         content: message,
       };
 
-      JuUniVerseAxios.post("/private-chat/messageToTherapist", payload)
-        .then(() => {
-          setMessage("");
-          setRefreshPage(refreshPage + 1);
-        })
-        .catch((error) => console.log(error));
-      console.log(attachedFileBase64);
-
-
+      try {
+        await JuUniVerseAxios.post("/private-chat/messageToTherapist", payload);
+        setMessage("");
+        // Immediately refresh messages after sending
+        getAllMessages();
+      } catch (error) {
+        console.log(error);
+      }
 
       // separately upload the file if any
       if (attachedFileBase64) {
@@ -100,69 +126,99 @@ function PrivateChat() {
           fileAsBase64: attachedFileBase64,
         };
 
-        JuUniVerseAxios.post("/private-chat/attachFileToTherapist", fileUploadPayload)
-          .then(() => {
-            setAttachedFile(null);
-            setAttachedFilePreviewUrl(null);
-            setAttachedFileBase64(null);
-            setAttachedFileName("");
-            setAttachedFileExtension("");
-          })
-          .catch((error) => console.log(error));
+        try {
+          await JuUniVerseAxios.post("/private-chat/attachFileToTherapist", fileUploadPayload);
+          setAttachedFile(null);
+          setAttachedFilePreviewUrl(null);
+          setAttachedFileBase64(null);
+          setAttachedFileName("");
+          setAttachedFileExtension("");
+          // Refresh messages after file upload
+          getAllMessages();
+        } catch (error) {
+          console.log(error);
+        }
       }
-
     }
+    
     setAttachedFile(null);
     setAttachedFilePreviewUrl(null);
     setAttachedFileBase64(null);
     setAttachedFileName("");
     setAttachedFileExtension("");
   };
-  const handleCountUnreadMsg = () => {
-    JuUniVerseAxios.get("/private-chat")
-      .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
-      .catch(err => console.log(err));
+
+  const handleDeleteMessage = async (id) => {
+    try {
+      await JuUniVerseAxios.delete(`/private-chat/${id}`);
+      // Immediately refresh messages after deletion
+      getAllMessages();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  //added by HIBA
-  const handleDeleteMessage = (id) => {
-    JuUniVerseAxios.delete(`/private-chat/${id}`).then(() => {
-      setRefreshPage(refreshPage + 1);
-    }).catch(console.log);
-  };
+  // Effect for managing real-time message polling when chat is open
   useEffect(() => {
-
-    const handleCountUnreadMsg = () => {
-      JuUniVerseAxios.get("/private-chat")
-        .then(res => setCountUnreadMsg(res.data.data.userUnreadMessagesCount))
-        .catch(err => console.log(err));
-      if (isChatVisible) {
-
+    if (isChatVisible && chatOpened) {
+      // Start polling for messages every 1 second
+      messagePollingRef.current = setInterval(() => {
         getAllMessages();
+      }, 1000);
 
+      // Cleanup interval on unmount or when chat is closed
+      return () => {
+        if (messagePollingRef.current) {
+          clearInterval(messagePollingRef.current);
+          messagePollingRef.current = null;
+        }
+      };
+    }
+  }, [isChatVisible, chatOpened, getAllMessages]);
+
+  // Effect for managing unread message count polling
+  useEffect(() => {
+    // Always poll for unread count every 3 seconds (less frequent than messages)
+    unreadCountPollingRef.current = setInterval(() => {
+      getUnreadCount();
+    }, 3000);
+
+    // Initial load
+    getUnreadCount();
+
+    // Cleanup interval on unmount
+    return () => {
+      if (unreadCountPollingRef.current) {
+        clearInterval(unreadCountPollingRef.current);
+        unreadCountPollingRef.current = null;
       }
     };
+  }, [getUnreadCount]);
 
-
-    const interval = setInterval(handleCountUnreadMsg, 1000);
-    return () => clearInterval(interval);
-  }, [refreshPage]);
-
+  // Effect for auto-scrolling to bottom when new messages arrive
   useEffect(() => {
     const chatBox = document.getElementById("chatContainer");
-    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-  }, [scrollPage, data.length]);
+    if (chatBox) {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  }, [data.length, scrollPage]);
+
+  // Cleanup intervals on component unmount
+  useEffect(() => {
+    return () => {
+      if (messagePollingRef.current) {
+        clearInterval(messagePollingRef.current);
+      }
+      if (unreadCountPollingRef.current) {
+        clearInterval(unreadCountPollingRef.current);
+      }
+    };
+  }, []);
 
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
   }
-  const getAllMessages = () => {
-    JuUniVerseAxios.get(`/private-chat/allMessages`)
-      .then(res => setData(res.data.data))
-      .catch(error => console.log(error));
-
-  };
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -224,14 +280,11 @@ function PrivateChat() {
         Swal.fire({
           title: `Unsupported file type!`,
           icon: "error",
-
           showCancelButton: true,
           showConfirmButton: false,
           cancelButtonText: "OK"
-
-
-        })
-          ; return;
+        });
+        return;
       }
 
       setAttachedFile(file);
@@ -250,21 +303,21 @@ function PrivateChat() {
     reader.readAsDataURL(file);
   };
 
-  const getFileByID = (fileID, transition) => {
-    JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
-      console.log(res)
+  const getFileByID = async (fileID, transition) => {
+    try {
+      const res = await JuUniVerseAxios.get(`/files/file/${fileID}`);
+      console.log(res);
 
-      if (transition == "Download") {
-        handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
+      if (transition === "Download") {
+        handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension);
       } else {
-
-        handleView(res.data.data.fileAsBase64, res.data.data.extension)
+        handleView(res.data.data.fileAsBase64, res.data.data.extension);
       }
-    })
-      .catch(err => {
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-      })
-  }
   const handleDownload = (base64FileContent, fileName, fileExtension) => {
     const mimeTypes = {
       xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -279,7 +332,7 @@ function PrivateChat() {
       docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       css: "text/css",
       html: "text/html",
-      txt: "text/plain",  // Fixed incorrect MIME type
+      txt: "text/plain",
       php: "application/x-httpd-php",
       java: "text/x-java-source",
       mp4: "video/mp4",
@@ -294,7 +347,6 @@ function PrivateChat() {
       return;
     }
 
-    // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
     const byteNumbers = new Array(byteCharacters.length)
       .fill(0)
@@ -302,20 +354,16 @@ function PrivateChat() {
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: mimeType });
 
-    // Create object URL
     const url = URL.createObjectURL(blob);
-
-    // Create a temporary anchor tag to trigger download
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${fileName}.${fileExtension}`; // Set filename
+    a.download = `${fileName}.${fileExtension}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-
-    // Revoke the object URL to free memory
     URL.revokeObjectURL(url);
   };
+
   const handleView = (base64FileContent, fileExtension) => {
     const mimeTypes = {
       xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -345,16 +393,15 @@ function PrivateChat() {
       return;
     }
 
-    // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
     const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: mimeType });
 
-    // Create object URL and open in new tab
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
   };
+
   return (
     <>
       {isChatVisible && (
@@ -368,7 +415,6 @@ function PrivateChat() {
                 msg.status === "SENT" ?
                   msg.senderUsername !== "omar_khaled" ? (msg.file ?
                     <div key={msg.id} style={{ position: "relative" }}>
-
                       <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
                       <p index={msg.id} style={{ ...SocialHubStyle.receivedMessage, cursor: "pointer" }} >
                         <div onClick={() => getFileByID(msg?.fileId)}>
@@ -394,14 +440,12 @@ function PrivateChat() {
                                                         transition: "0.3s",
                                                         cursor: "pointer",
                                                       }}
-                                                      onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
-
+                                                      onClick={() => navigate(`/files/${file.id}`)}
                                                       onMouseEnter={() => setHovered(file.id)}
                                                       onMouseLeave={() => setHovered(null)}
                                                     />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
                         </div>
                       </p>
-
                     </div>
                     :
                     <div key={msg.id} style={{ position: "relative" }}>
@@ -410,8 +454,8 @@ function PrivateChat() {
                     </div>
                   ) : (
                     msg.file ?
-                      <div style={{ position: "relative" }}>
-                        <p key={msg.id} style={SocialHubStyle.sentMessage}>
+                      <div key={msg.id} style={{ position: "relative" }}>
+                        <p style={SocialHubStyle.sentMessage}>
                           <IconButton onClick={(e) => handleClick(e, msg)} sx={{ float: "right" }}><MoreVertIcon /></IconButton>
                           <div onClick={() => getFileByID(msg?.fileId)}>
                             {msg.content.split(".")[msg.content.split(".")?.length-1] == "pdf" ? <img src={pdficon} width={'70px'} />
@@ -436,21 +480,20 @@ function PrivateChat() {
                                                           transition: "0.3s",
                                                           cursor: "pointer",
                                                         }}
-                                                        onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
-
-                                                        onMouseEnter={() => setHovered(index)}
+                                                        onClick={() => navigate(`/files/${file.id}`)}
+                                                        onMouseEnter={() => setHovered(msg.id)}
                                                         onMouseLeave={() => setHovered(null)}
                                                       />}<br /><sub>{msg.content.split(".")[0]}</sub><br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
                           </div>
                         </p>
                       </div>
-
                       :
                       <p key={msg.id} style={SocialHubStyle.sentMessage}>{msg.content}<br /><sub style={SocialHubStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub></p>
                   ) : ""
               )}
             </div>
           </Box>
+
           <Menu anchorEl={menuData.anchorEl} open={Boolean(menuData.anchorEl)} onClose={handleClose} elevation={8} sx={{ boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)", borderRadius: "8px" }}>
             {menuData.selectedMsg && sessionStorage.getItem("username") === menuData.selectedMsg.senderUsername ?
               <>
@@ -463,35 +506,24 @@ function PrivateChat() {
                   handleClose();
                 }}>Delete</MenuItem>
               </>
-
               : ""}
 
-
-
             {menuData.selectedMsg?.file ?
-
               <>
                 <MenuItem onClick={() => {
-
-                  // setFileID(menuData.selectedMsg?.id)
-                  getFileByID(menuData.selectedMsg?.fileId)
-
+                  getFileByID(menuData.selectedMsg?.fileId);
                   setMenuData({ anchorEl: null });
                   console.log(menuData.selectedMsg);
-                  // setOpenViewer(true)
                 }}>View</MenuItem>
                 <MenuItem onClick={() => {
-
-                  // setFileID(menuData.selectedMsg?.id)
-                  getFileByID(menuData.selectedMsg?.fileId, "Download")
-
+                  getFileByID(menuData.selectedMsg?.fileId, "Download");
                   setMenuData({ anchorEl: null });
                   console.log(menuData.selectedMsg.fileId);
                 }}>Download</MenuItem>
               </>
               : ""}
-
           </Menu>
+
           {attachedFile && (
             <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2" sx={{ color: "gray" }}>{attachedFile.name}</Typography>
@@ -501,7 +533,6 @@ function PrivateChat() {
             </Box>
           )}
 
-
           <div style={SocialHubStyle.messageInput}>
             <input
               type="text"
@@ -509,21 +540,19 @@ function PrivateChat() {
               placeholder="Write a message"
               onChange={(e) => messageInfo ? setMessageInfo({ ...messageInfo, content: e.target.value }) : setMessage(e.target.value)}
               style={SocialHubStyle.messageInputField}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSendMessage();
+                }
+              }}
             />
             {messageInfo && (
               <button onClick={() => setMessageInfo(null)} style={{ background: "transparent", border: "none", cursor: "pointer", marginRight: "10px" }}><ClearIcon /></button>
             )}
-            {/* <Button           startIcon={ <AttachFileIcon sx={{ color: 'black', float: 'left' }} />}
- component="label" sx={{ backgroundColor: 'transparent', boxShadow: 'none', border: 'none', marginRight: '5px' }}>
-              <VisuallyHiddenInput type="file" onChange={(e)=>console.log(e)
-              } />
-             
-            </Button> */}
             <label style={{ cursor: 'pointer', marginRight: 5 }}>
               <input type="file" onChange={handleFileChange} style={{ display: 'none' }} />
               <AttachFileIcon sx={{ color: 'black', float: 'left' }} />
             </label>
-
             <button style={SocialHubStyle.messageInputButton} onClick={handleSendMessage}>{messageInfo ? "Update" : "Send"}</button>
           </div>
         </Box>

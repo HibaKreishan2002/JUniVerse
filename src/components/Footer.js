@@ -33,7 +33,6 @@ function Footer() {
       variant="body2"
       sx={{
         cursor: 'pointer',
-        '&:hover': { color: 'red' },
       }}
       onClick={() => navigate('/AboutUs')}
     >
@@ -55,9 +54,8 @@ function Footer() {
     {/* Clickable Instagram Link */}
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <a
-        href="https://www.instagram.com/juniverse_ju_2025/" // Replace with your actual Instagram profile link
+        href="https://www.instagram.com/juniverse_ju_2025/" 
         target="_blank"
-        rel="noopener noreferrer"
         style={{ textDecoration: 'none', color: 'white', display: 'flex', alignItems: 'center' }}
       >
         <InstagramIcon sx={{ fontSize: 18, mr: 0.5 }} /> JUniVerse

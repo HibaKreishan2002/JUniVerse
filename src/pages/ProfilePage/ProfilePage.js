@@ -6,44 +6,43 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloseIcon from '@mui/icons-material/Close';
 import Dashboard from "../../components/Dashboard";
+import { DefCoverPic , DefProfilePic} from './DefaultPictures';
 
 function ProfilePage() {
   const [userName, setUserName] = useState("");
-  const [userRole, setUserRole] = useState("Admin");
-  const [userMajor, setUserMajor] = useState("Computer Science ");
-  const [userBio, setUserBio] = useState("I love coding");
+  const [userRole, setUserRole] = useState("");  
+  const [userMajor, setUserMajor] = useState("");  
+  const [userBio, setUserBio] = useState(""); 
   const [refershPage, setRefershPage] = useState(0);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    bio: '',
+  const [isEditing, setIsEditing] = useState(false); 
+  const [formData, setFormData] = useState({ 
+    bio:"",
     profilePic: "",
     coverPic: "",
     profilePicEx: "",
     coverPicEx: "",
   });
 
-  const timer = React.useRef(undefined);
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
-    clearTimeout(timer.current);
 
     JuUniVerseAxios.get("/sys-user/profile").then(res => {
-      setUserName(res.data.data.firstName + ' ' + res.data.data.lastName);
-      setUserRole(res.data.data.role);
-      setUserMajor(res.data.data.major);
-      setUserBio(res.data.data.bio);
-      sessionStorage.setItem("fullname", res.data.data.firstName + ' ' + res.data.data.lastName);
+      setUserName(res?.data?.data?.firstName + ' ' + res?.data?.data?.lastName); 
+      setUserRole(res?.data?.data?.role);
+      setUserMajor(res?.data?.data?.major);
+      setUserBio(res?.data?.data?.bio);
+      sessionStorage.setItem("fullname", res.data.data.firstName + ' ' + res.data.data.lastName); 
       sessionStorage.setItem("username", res.data.data.username);
       sessionStorage.setItem("role", res.data.data.role);
     });
 
     JuUniVerseAxios.get("/sys-user/profile-and-cover-picture").then(res => {
       setFormData({
-        coverPic: res.data.data.coverPicturesBase64,
-        coverPicEx: res.data.data.coverPicturesExtension,
-        profilePic: res.data.data.profilePictureBase64,
-        profilePicEx: res.data.data.profilePictureExtension
+        coverPic: res?.data?.data?.coverPicturesBase64,
+        coverPicEx: res?.data?.data?.coverPicturesExtension,
+        profilePic: res?.data?.data?.profilePictureBase64,
+        profilePicEx: res?.data?.data?.profilePictureExtension
       });
     }).catch(err => {});
   }, [refershPage]);
@@ -51,7 +50,8 @@ function ProfilePage() {
   const handleEditClick = () => setIsEditing(true);
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, files } = e.target; 
+    
     if (files) {
       const file = files[0];
       setFormData((prevData) => ({
@@ -83,17 +83,30 @@ function ProfilePage() {
   });
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-   if (userBio) {
+    e.preventDefault(); //to prevent REFRESHING
+
+    if(formData.coverPic=="" ||formData.profilePic==""){
+      if (formData.profilePic==""){
+handleRemoveProfilePic()
+      }
+        if (formData.coverPic==""){
+handleRemoveCoverPic();
+      }
+      
+
+    }else{
+if(!formData.bio){
+formData.bio=userBio;
+}
+          if (formData.bio) {
+
       JuUniVerseAxios.put("/sys-user/bio", {
         bio: formData.bio
       }).then(() =>{ setRefershPage(refershPage + 1)
     
         setIsEditing(false);}
 );
-    }else{
-      return
-    }
+
     JuUniVerseAxios.put("/sys-user/profile-picture", {
       photoAsBase64: formData?.profilePic,
       fileExtension: formData?.profilePicEx
@@ -107,9 +120,10 @@ function ProfilePage() {
     }).then(() => { setRefershPage(refershPage + 1)
     
         setIsEditing(false);});
-
- 
-
+    }else{
+      return 
+    }
+    }
   };
 
   const handleClose = () => {
@@ -131,6 +145,7 @@ function ProfilePage() {
   const handleRemoveProfilePic = () => {
     JuUniVerseAxios.delete("/sys-user/profile-picture").then(() => {
       setFormData(prev => ({ ...prev, profilePic: "" }));
+       setIsEditing(false)
       setRefershPage(refershPage + 1);
     });
   };
@@ -138,18 +153,19 @@ function ProfilePage() {
   const handleRemoveCoverPic = () => {
     JuUniVerseAxios.delete("/sys-user/cover-picture").then(() => {
       setFormData(prev => ({ ...prev, coverPic: "" }));
+       setIsEditing(false)
       setRefershPage(refershPage + 1);
     });
   };
 
   return (
     <>
-      <Box sx={{ backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: `url(data:${formData.coverPicEx};base64,${formData.coverPic})`, height: '250px' }} />
+      <Box sx={{ backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: formData.coverPic!=""?`url(data:${formData.coverPicEx};base64,${formData.coverPic})`:DefCoverPic, height: '250px' }} />
 
       <Stack direction="row">
         <Box>
           <img
-            src={`data:${formData.profilePicEx};base64,${formData.profilePic}`}
+            src={formData.profilePic!=""?`data:${formData.profilePicEx};base64,${formData.profilePic}`:DefProfilePic}
             width={230}
             height={230}
             style={{ borderRadius: '150px', marginLeft: 70, marginTop: -100 }}
@@ -223,7 +239,8 @@ function ProfilePage() {
                     component="label"
                     color="error"
                     startIcon={<CloseIcon />}
-                    onClick={handleRemoveProfilePic}
+                    onClick={()=>      setFormData(prev => ({ ...prev, profilePic: "" }))
+}
                   >
                     Remove
                   </Button>
@@ -250,7 +267,7 @@ function ProfilePage() {
                     component="label"
                     color="error"
                     startIcon={<CloseIcon />}
-                    onClick={handleRemoveCoverPic}
+                    onClick={()=>setFormData(prev => ({ ...prev, coverPic: "" }))}
                   >
                     Remove
                   </Button>

@@ -15,8 +15,6 @@ function NewsManagement() {
   const [newsContent, setNewsContent] = useState("");
   const [txtModelBtn, setTxtModelBtn] = useState("Save"); // Note state
 
-
-
   useEffect(() => {
     JuUniVerseAxios.get("/news").then((res) => {
       setData(res?.data?.data)
@@ -59,7 +57,6 @@ function NewsManagement() {
 
 
     }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
       if (result.isDenied) {
         JuUniVerseAxios.delete(`/news/${params.row.id}`).then(res => {
           setNewsID(0)
@@ -93,11 +90,11 @@ function NewsManagement() {
 
     {
       field: "createdAt", headerName: "Date", headerAlign: 'center', align: 'center', width: 200, resizable: false,
-      disableColumnMenu: true, renderCell:(Params)=>{
-        const date =new Date(Params.value)
+      disableColumnMenu: true, renderCell: (Params) => {
+        const date = new Date(Params.value)
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-            }
-      
+      }
+
 
 
     },
@@ -126,9 +123,6 @@ function NewsManagement() {
     },
 
   ]
-
-
-
 
   return (
     <ResponsiveDev>

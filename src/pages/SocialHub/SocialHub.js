@@ -156,26 +156,7 @@ function SocialHub() {
               ) : null
             ))}
           </div>
-          
-          {/* <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
-            {selectedMsg && sessionStorage.getItem("username") === selectedMsg.senderUsername && (
-              <MenuItem onClick={() => {
-                setMessageInfo({ id: selectedMsg.id, content: selectedMsg.content });
-                handleMenuClose();
-              }}>Edit</MenuItem>
-          
-            )}
-            {console.log(selectedMsg)
-            }
-            {selectedMsg && ( sessionStorage.getItem("role") === "ADMIN" || sessionStorage.getItem("role") === "MODERATOR") && (
-
-<MenuItem onClick={() => {
-                handleDeleteMessage(selectedMsg.id);
-                handleMenuClose();
-              }}>Delete</MenuItem>
-          
-            )}
-          </Menu> */}
+        
           <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
   {/* Edit and Delete (if sender) */}
   {selectedMsg && sessionStorage.getItem("username") === selectedMsg.senderUsername && (
@@ -188,15 +169,8 @@ function SocialHub() {
       >
         Edit
       </MenuItem>
-{/* 
-      <MenuItem
-        onClick={() => {
-          handleDeleteSenderMessage(selectedMsg.id);
-          handleMenuClose();
-        }}
-      >
-        Delete
-      </MenuItem> */}
+
+   
     </>
   )}
 
@@ -225,24 +199,7 @@ function SocialHub() {
               onChange={(e) => messageInfo ? setMessageInfo({ ...messageInfo, content: e.target.value }) : setMessage(e.target.value)}
               style={SocialHubStyle.messageInputField}
             />
-               {/* <Button sx={{  backgroundColor:'transparent', boxShadow:'none',border:'none',marginRight:'5' }}
-          component="label"
-          role={undefined}
-          tabIndex={-1}
-    
-          // startIcon={  <AttachFileIcon/>}
-        >
-       <VisuallyHiddenInput
-            type="file"
-            onChange={handleInputChange}
-
-          /> 
-          <AttachFileIcon sx={{color:'black',float:'left' ,"& .MuiOutlinedInput-root": {
-   "&:hover": {
-      backgroundColor: "none",
-      boxShadow: "none",
-    }},}}/>
-        </Button> */}
+              
             {messageInfo && (
               <button onClick={() => setMessageInfo(null)} style={{ background: "transparent", border: "none", cursor: "pointer", marginRight: "10px" }}>
                 <ClearIcon />

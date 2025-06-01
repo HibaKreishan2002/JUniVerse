@@ -1,20 +1,7 @@
-// Full TherapistChats component with auto-scroll after sending a message
-
 import React, { useEffect, useState, useRef } from "react";
 import TherapyVideo from '../../assets/Therapy.mp4'
 import TherapistChatsStyle from "./TherapistChatsStyle.js";
-import {
-  Typography,
-  Badge,
-  IconButton,
-  Menu,
-  MenuItem,
-  TextField,
-  InputAdornment,
-  Button,
-  styled,
-  Box,
-} from "@mui/material";
+import { Typography, Badge, IconButton, Menu, MenuItem, TextField, InputAdornment, Button, styled, Box, } from "@mui/material";
 import JuUniVerseAxios from "../../API/JuUniVerseAxios.js";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -50,9 +37,10 @@ function TherapistChats() {
   const [menuData, setMenuData] = useState({ anchorEl: null, selectedMsg: null });
   const [searchQuery, setSearchQuery] = useState("");
   const [hovered, setHovered] = useState(null);
+  const [refreshPage, setRefreshPage] = useState(0);
 
 
-const navigate=useNavigate();
+  const navigate = useNavigate();
   const [attachedFile, setAttachedFile] = useState(null);
   const [attachedFilePreviewUrl, setAttachedFilePreviewUrl] = useState(null);
   const [attachedFileBase64, setAttachedFileBase64] = useState(null);
@@ -74,14 +62,14 @@ const navigate=useNavigate();
     return () => clearInterval(interval);
   }, []);
 
-const filteredUsers = dataStudent.filter((user) => {
-  const fullName = `${user.userFirstName} ${user.userLastName}`.toLowerCase();
-  const userIdString = user.userUserId.toString();
-  return (
-    fullName.includes(searchQuery.toLowerCase()) ||
-    userIdString.includes(searchQuery)
-  );
-});
+  const filteredUsers = dataStudent.filter((user) => {
+    const fullName = `${user.userFirstName} ${user.userLastName}`.toLowerCase();
+    const userIdString = user.userUserId.toString();
+    return (
+      fullName.includes(searchQuery.toLowerCase()) ||
+      userIdString.includes(searchQuery)
+    );
+  });
 
   const handleClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
@@ -102,9 +90,9 @@ const filteredUsers = dataStudent.filter((user) => {
     const interval = setInterval(getMessages, 3000);
     return () => clearInterval(interval);
   }, [chatID]);
-const handleDeleteMessage = (id) => {
+  const handleDeleteMessage = (id) => {
     JuUniVerseAxios.delete(`/private-chat/${id}`).then(() => {
-          setRefreshPage(refreshPage + 1);
+      setRefreshPage(refreshPage + 1);
     }).catch(console.log);
   };
   useEffect(() => {
@@ -122,27 +110,28 @@ const handleDeleteMessage = (id) => {
         });
         setMessageInfo(null);
       } else {
-        if (message){
-        await JuUniVerseAxios.post("/private-chat/messageFromTherapist", {
-          privateChatId: chatID,
-          receiverUsername,
-          content: message,
-        }).then(res=>{
-          setMessage("");
+        if (message) {
+          await JuUniVerseAxios.post("/private-chat/messageFromTherapist", {
+            privateChatId: chatID,
+            receiverUsername,
+            content: message,
+          }).then(res => {
+            setMessage("");
 
-        }).catch(err=>{
-          console.log(err);
-          
-        });}
+          }).catch(err => {
+            console.log(err);
+
+          });
+        }
         console.log(attachedFileBase64);
-        
+
         if (attachedFileBase64) {
           const fileUploadPayload = {
             name: attachedFileName,
             extension: attachedFileExtension,
             fileAsBase64: attachedFileBase64,
           };
-  
+
           JuUniVerseAxios.post(`/private-chat/${chatID}/attachFileFromTherapist`, fileUploadPayload)
             .then(() => {
               setAttachedFile(null);
@@ -154,7 +143,7 @@ const handleDeleteMessage = (id) => {
             .catch((error) => console.log(error));
         }
       }
-    
+
 
 
       // Scroll to bottom after sending
@@ -206,7 +195,7 @@ const handleDeleteMessage = (id) => {
 
       const base64 = result.split(",")[1];
       const fileExtension = file.name.split(".").pop();
- const mimeTypes = {
+      const mimeTypes = {
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         xls: "application/vnd.ms-excel",
         pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -257,60 +246,60 @@ const handleDeleteMessage = (id) => {
 
     reader.readAsDataURL(file);
   };
-  
+
   const getFileByID = (fileID, transition) => {
     JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
       console.log(res)
-  
+
       if (transition == "Download") {
         handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
       } else {
-  
+
         handleView(res.data.data.fileAsBase64, res.data.data.extension)
       }
     })
       .catch(err => {
-  
+
       })
   }
   const handleDownload = (base64FileContent, fileName, fileExtension) => {
     const mimeTypes = {
-           xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-           xls: "application/vnd.ms-excel",
-           pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-           ppt: "application/vnd.ms-powerpoint",
-           png: "image/png",
-           jpg: "image/jpeg",
-           jpeg: "image/jpeg",
-           pdf: "application/pdf",
-           doc: "application/msword",
-           docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-           css: "text/css",
-           html: "text/html",
-           txt: "text/html",
-           php: "application/x-httpd-php",
-           java: "text/x-java-source",
-           mp4: "video/mp4",
-           mp3: "audio/mpeg",
-           js: "application/javascript",
-           mpeg: "video/mpeg",
-         };
-   
-         const mimeType = mimeTypes[fileExtension.toLowerCase()];
-         if (!mimeType) {
-           Swal.fire({
-             title: `Unsupported file type!`,
-             icon: "error",
-   
-             showCancelButton: true,
-             showConfirmButton: false,
-             cancelButtonText: "OK"
-   
-   
-           })
-             ; return;
-         }
-  
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      xls: "application/vnd.ms-excel",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ppt: "application/vnd.ms-powerpoint",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      pdf: "application/pdf",
+      doc: "application/msword",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      css: "text/css",
+      html: "text/html",
+      txt: "text/html",
+      php: "application/x-httpd-php",
+      java: "text/x-java-source",
+      mp4: "video/mp4",
+      mp3: "audio/mpeg",
+      js: "application/javascript",
+      mpeg: "video/mpeg",
+    };
+
+    const mimeType = mimeTypes[fileExtension.toLowerCase()];
+    if (!mimeType) {
+      Swal.fire({
+        title: `Unsupported file type!`,
+        icon: "error",
+
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonText: "OK"
+
+
+      })
+        ; return;
+    }
+
     // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
     const byteNumbers = new Array(byteCharacters.length)
@@ -318,10 +307,10 @@ const handleDeleteMessage = (id) => {
       .map((_, i) => byteCharacters.charCodeAt(i));
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: mimeType });
-  
+
     // Create object URL
     const url = URL.createObjectURL(blob);
-  
+
     // Create a temporary anchor tag to trigger download
     const a = document.createElement("a");
     a.href = url;
@@ -329,7 +318,7 @@ const handleDeleteMessage = (id) => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  
+
     // Revoke the object URL to free memory
     URL.revokeObjectURL(url);
   };
@@ -355,19 +344,19 @@ const handleDeleteMessage = (id) => {
       js: "application/javascript",
       mpeg: "video/mpeg",
     };
-  
+
     const mimeType = mimeTypes[fileExtension.toLowerCase()];
     if (!mimeType) {
       alert("Unsupported file type");
       return;
     }
-  
+
     // Convert Base64 to binary
     const byteCharacters = atob(base64FileContent);
     const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: mimeType });
-  
+
     // Create object URL and open in new tab
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
@@ -403,7 +392,7 @@ const handleDeleteMessage = (id) => {
         />
 
         <ul style={TherapistChatsStyle.userList}>
-          {filteredUsers.map((user,index) => (
+          {filteredUsers.map((user, index) => (
             <li
               key={user.id}
               onClick={() => {
@@ -425,7 +414,7 @@ const handleDeleteMessage = (id) => {
           ))}
         </ul>
       </div>
-{selectedUserId?  <div style={TherapistChatsStyle.rightPanel}>
+      {selectedUserId ? <div style={TherapistChatsStyle.rightPanel}>
         <Typography sx={{ fontWeight: "bold", color: "black", marginTop: 3 }}>{receiverFullName}</Typography>
         <hr />
 
@@ -433,83 +422,83 @@ const handleDeleteMessage = (id) => {
           <div style={TherapistChatsStyle.chatArea} ref={chatContainerRef}>
             {data
               .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-              .map((msg,index) => (
-                 msg.status === "SENT"?
-                <div key={msg.id} style={{ position: "relative" }}>
-              
-                  {msg.file?
-                  
-                  
-                  <p
-                  style={
-                    msg.receiverUsername === receiverUsername
-                      ? TherapistChatsStyle.receivedMessage
-                      : TherapistChatsStyle.sentMessage
-                  }
-                >
-                    <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
-                      <MoreVertIcon />
-                    </IconButton>
-    <div              onClick={()=> getFileByID(msg?.fileId)} 
->
+              .map((msg, index) => (
+                msg.status === "SENT" ?
+                  <div key={msg.id} style={{ position: "relative" }}>
 
-                 {
-                   msg.content.split(".")[msg.content.split(".")?.length-1] == "pdf" ? <img src={pdficon} width={'70px'} />
-                   : msg.content.split(".")[msg.content.split(".")?.length-1] == "png" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpg" || msg.content.split(".")[msg.content.split(".")?.length-1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
-                     : msg.content.split(".")[msg.content.split(".")?.length-1] == "doc" || msg.content.split(".")[msg.content.split(".")?.length-1] == "docx" ? <img src={wordicon} width={'70px'} />
-                       : msg.content.split(".")[msg.content.split(".")?.length-1] == "ppt" || msg.content.split(".")[msg.content.split(".")?.length-1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
-                         : msg.content.split(".")[msg.content.split(".")?.length-1] == "xls" || msg.content.split(".")[msg.content.split(".")?.length-1] == "xlsx" ? <img src={excelicon} width={'70x'} />
-                           : msg.content.split(".")[msg.content.split(".")?.length-1] == "js" ? <img src={jsicon} width={'70px'} />
-                             : msg.content.split(".")[msg.content.split(".")?.length-1] == "txt" ? <img src={texticon} width={'70px'} />
-                               : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp4" ? <img src={mp4icon} width={'70px'} />
-                                 : msg.content.split(".")[msg.content.split(".")?.length-1] == "mp3" ? <img src={mp3icon} width={'70px'} />
-                                   : msg.content.split(".")[msg.content.split(".")?.length-1] == "java" ? <img src={javaicon} width={'70px'} />
-                                     : msg.content.split(".")[msg.content.split(".")?.length-1] == "php" ? <img src={phpicon} width={'70px'} />
-                                       : msg.content.split(".")[msg.content.split(".")?.length-1] == "html" ? <img src={htmlicon} width={'70px'} />
-                                         : msg.content.split(".")[msg.content.split(".")?.length-1] == "css" ? <img src={cssicon} width={'70px'} />
-                                           : <FileIcon
-                                             sx={{
-                                               fontSize: 75,
-                                               padding: 0,
-                                               margin: '-32px',
-                                               color: "#ffd35a",
-                                               transition: "0.3s",
-                                               cursor: "pointer",
-                                             }}
-                                             onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
- 
-                                             onMouseEnter={() => setHovered(file.id)}
-                                             onMouseLeave={() => setHovered(null)}
-                                           />
-              }  </div> 
-                  <br/>
-                  {msg.content.split(".")[0]}<br />
-                  <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
-                </p>
-                  
-                  :
-                  
-                  
-                  
-                  <p
-                  style={
-                    msg.receiverUsername === receiverUsername
-                      ? TherapistChatsStyle.receivedMessage
-                      : TherapistChatsStyle.sentMessage
-                  }
-                >
-                  {msg.senderUsername=="omar_khaled"?
-                     <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
-                      <MoreVertIcon />
-                    </IconButton>
-                  :""}
-                  
-                  {msg.content}<br />
-                  <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
-                </p>
-                  }
-              
-                </div>:""
+                    {msg.file ?
+
+
+                      <p
+                        style={
+                          msg.receiverUsername === receiverUsername
+                            ? TherapistChatsStyle.receivedMessage
+                            : TherapistChatsStyle.sentMessage
+                        }
+                      >
+                        <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
+                          <MoreVertIcon />
+                        </IconButton>
+                        <div onClick={() => getFileByID(msg?.fileId)}
+                        >
+
+                          {
+                            msg.content.split(".")[msg.content.split(".")?.length - 1] == "pdf" ? <img src={pdficon} width={'70px'} />
+                              : msg.content.split(".")[msg.content.split(".")?.length - 1] == "png" || msg.content.split(".")[msg.content.split(".")?.length - 1] == "jpg" || msg.content.split(".")[msg.content.split(".")?.length - 1] == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                                : msg.content.split(".")[msg.content.split(".")?.length - 1] == "doc" || msg.content.split(".")[msg.content.split(".")?.length - 1] == "docx" ? <img src={wordicon} width={'70px'} />
+                                  : msg.content.split(".")[msg.content.split(".")?.length - 1] == "ppt" || msg.content.split(".")[msg.content.split(".")?.length - 1] == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                                    : msg.content.split(".")[msg.content.split(".")?.length - 1] == "xls" || msg.content.split(".")[msg.content.split(".")?.length - 1] == "xlsx" ? <img src={excelicon} width={'70x'} />
+                                      : msg.content.split(".")[msg.content.split(".")?.length - 1] == "js" ? <img src={jsicon} width={'70px'} />
+                                        : msg.content.split(".")[msg.content.split(".")?.length - 1] == "txt" ? <img src={texticon} width={'70px'} />
+                                          : msg.content.split(".")[msg.content.split(".")?.length - 1] == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                            : msg.content.split(".")[msg.content.split(".")?.length - 1] == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                              : msg.content.split(".")[msg.content.split(".")?.length - 1] == "java" ? <img src={javaicon} width={'70px'} />
+                                                : msg.content.split(".")[msg.content.split(".")?.length - 1] == "php" ? <img src={phpicon} width={'70px'} />
+                                                  : msg.content.split(".")[msg.content.split(".")?.length - 1] == "html" ? <img src={htmlicon} width={'70px'} />
+                                                    : msg.content.split(".")[msg.content.split(".")?.length - 1] == "css" ? <img src={cssicon} width={'70px'} />
+                                                      : <FileIcon
+                                                        sx={{
+                                                          fontSize: 75,
+                                                          padding: 0,
+                                                          margin: '-32px',
+                                                          color: "#ffd35a",
+                                                          transition: "0.3s",
+                                                          cursor: "pointer",
+                                                        }}
+                                                        onClick={() => navigate(`/files/${msg?.id}`)} // Navigate to file screen
+
+                                                        onMouseEnter={() => setHovered(msg?.id)}
+                                                        onMouseLeave={() => setHovered(null)}
+                                                      />
+                          }  </div>
+                        <br />
+                        {msg.content.split(".")[0]}<br />
+                        <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                      </p>
+
+                      :
+
+
+
+                      <p
+                        style={
+                          msg.receiverUsername === receiverUsername
+                            ? TherapistChatsStyle.receivedMessage
+                            : TherapistChatsStyle.sentMessage
+                        }
+                      >
+                        {msg.senderUsername == "omar_khaled" ?
+                          <IconButton onClick={(e) => setMenuData({ anchorEl: e.currentTarget, selectedMsg: msg })} sx={{ float: "right" }}>
+                            <MoreVertIcon />
+                          </IconButton>
+                          : ""}
+
+                        {msg.content}<br />
+                        <sub style={TherapistChatsStyle.DateTimeStyle}>{formatTimestamp(msg.timestamp)}</sub>
+                      </p>
+                    }
+
+                  </div> : ""
               ))}
           </div>
         </Box>
@@ -519,60 +508,60 @@ const handleDeleteMessage = (id) => {
           open={Boolean(menuData.anchorEl)}
           onClose={handleClose}
         >
-          {menuData?.selectedMsg?.senderUsername === "omar_khaled"?
-      <>
-          <MenuItem
-            onClick={() => {
-              setMessageInfo({
-                id: menuData.selectedMsg?.id,
-                content: menuData.selectedMsg?.content
-              });
-              handleClose();
-            }}
-          >Edit</MenuItem>
+          {menuData?.selectedMsg?.senderUsername === "omar_khaled" ?
+            <>
               <MenuItem
-            onClick={() => {
-            
-              handleDeleteMessage(menuData.selectedMsg?.id)
-              handleClose();
-            }}
-          >Delete</MenuItem>
-      </>
-          :""}
-        
-          {menuData?.selectedMsg?.file?
-          <>
-            <MenuItem onClick={() => {
-                      
-                      // setFileID(menuData.selectedMsg?.id)
-                       getFileByID(menuData.selectedMsg?.fileId)
-          
-                      setMenuData({ anchorEl: null });
-                      console.log(menuData.selectedMsg);
-                      // setOpenViewer(true)
-                    }}>View</MenuItem>
-                     <MenuItem onClick={() => {
-          
-                      // setFileID(menuData.selectedMsg?.id)
-                       getFileByID(menuData.selectedMsg?.fileId, "Download")
-          
-                      setMenuData({ anchorEl: null });
-                      console.log(menuData.selectedMsg.fileId);
-                    }}>Download</MenuItem>
-          </>
-             :""}
-        
-                   
+                onClick={() => {
+                  setMessageInfo({
+                    id: menuData.selectedMsg?.id,
+                    content: menuData.selectedMsg?.content
+                  });
+                  handleClose();
+                }}
+              >Edit</MenuItem>
+              <MenuItem
+                onClick={() => {
+
+                  handleDeleteMessage(menuData.selectedMsg?.id)
+                  handleClose();
+                }}
+              >Delete</MenuItem>
+            </>
+            : ""}
+
+          {menuData?.selectedMsg?.file ?
+            <>
+              <MenuItem onClick={() => {
+
+                // setFileID(menuData.selectedMsg?.id)
+                getFileByID(menuData.selectedMsg?.fileId)
+
+                setMenuData({ anchorEl: null });
+                console.log(menuData.selectedMsg);
+                // setOpenViewer(true)
+              }}>View</MenuItem>
+              <MenuItem onClick={() => {
+
+                // setFileID(menuData.selectedMsg?.id)
+                getFileByID(menuData.selectedMsg?.fileId, "Download")
+
+                setMenuData({ anchorEl: null });
+                console.log(menuData.selectedMsg.fileId);
+              }}>Download</MenuItem>
+            </>
+            : ""}
+
+
         </Menu>
 
-          {attachedFile && (
-              <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2" sx={{ color: "gray" }}>{attachedFile.name}</Typography>
-                {attachedFile.type.startsWith('image/') && (
-                  <img src={attachedFilePreviewUrl} alt="preview" width={40} height={40} style={{ borderRadius: 4 }} />
-                )}
-              </Box>
+        {attachedFile && (
+          <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="body2" sx={{ color: "gray" }}>{attachedFile.name}</Typography>
+            {attachedFile.type.startsWith('image/') && (
+              <img src={attachedFilePreviewUrl} alt="preview" width={40} height={40} style={{ borderRadius: 4 }} />
             )}
+          </Box>
+        )}
         {chatID != null && (
           <div style={{ ...TherapistChatsStyle.messageInput, position: "sticky", bottom: 0, backgroundColor: "#fff" }}>
             <input
@@ -586,7 +575,7 @@ const handleDeleteMessage = (id) => {
               }
               style={TherapistChatsStyle.messageInputField}
             />
-            
+
 
             {messageInfo && (
               <button
@@ -608,21 +597,21 @@ const handleDeleteMessage = (id) => {
             </button>
           </div>
         )}
-      </div>:
-  <div style={{ perspective: '1000px', padding: '2rem', margin:'auto',paddingTop:"55px"}}>
-          <Typography sx={{mb:2, fontWeight:'bold', fontFamily: '"Georgia", serif', fontStyle: 'italic',textAlign:'center'}}>Be the calm in someone’s storm.</Typography>
+      </div> :
+        <div style={{ perspective: '1000px', padding: '2rem', margin: 'auto', paddingTop: "55px" }}>
+          <Typography sx={{ mb: 2, fontWeight: 'bold', fontFamily: '"Georgia", serif', fontStyle: 'italic', textAlign: 'center' }}>Be the calm in someone’s storm.</Typography>
 
-      <video   width={'600px'} height={'450px'}  autoPlay
-      loop
-      muted
-      playsInline>
+          <video width={'600px'} height={'450px'} autoPlay
+            loop
+            muted
+            playsInline>
 
-          <source src= {TherapyVideo} type="video/mp4"/>
+            <source src={TherapyVideo} type="video/mp4" />
 
-      </video>
-      </div>
+          </video>
+        </div>
       }
-    
+
     </div>
   );
 }

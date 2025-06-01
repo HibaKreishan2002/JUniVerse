@@ -1,15 +1,6 @@
 
 const SocialHubStyle = {
-  // chatPage: {
-  //   display: 'flex',
-  //   justifyContent: 'center', // Center content horizontally
-  //   alignItems: 'center', // Center content vertically
-  //  height:'80vh',
-  //  width:'130vh',
-  //  marginLeft:'20%',
-  //   fontFamily: 'Arial, sans-serif',
-  //   marginTop: '1%',
-  // },
+
   DateTimeStyle:{
 fontSize:"10px"
   },
@@ -41,9 +32,9 @@ fontSize:"10px"
     marginBottom: "10px",
     maxWidth: "55%",
     marginLeft:"auto",
-    wordWrap:"break-word", // يجبر النص على النزول للسطر عند الحاجة
-    overflowWrap: "break-word", // يعالج الكلمات الطويلة
-    whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
+    wordWrap:"break-word", 
+    overflowWrap: "break-word",
+    whiteSpace: "pre-wrap", 
   },
   sentMessage: {
     backgroundColor: "#d1e7dd",
@@ -52,9 +43,9 @@ fontSize:"10px"
     marginBottom: "10px",
     alignSelf: "flex-end",
     maxWidth: "55%",
-    wordWrap: "break-word", // يجبر النص على النزول للسطر عند الحاجة
-    overflowWrap: "break-word", // يعالج الكلمات الطويلة
-    whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
+    wordWrap: "break-word", 
+    overflowWrap: "break-word", 
+    whiteSpace: "pre-wrap", 
 
   },
   messageInput: {

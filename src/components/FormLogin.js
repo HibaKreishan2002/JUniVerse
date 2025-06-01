@@ -7,7 +7,6 @@ import { Box } from "@mui/material";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import SectionDivider from "./SectionDivider";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios";
 import JuUniVerseAxios from "../API/JuUniVerseAxios";
 import Swal from "sweetalert2";
 // style
@@ -76,10 +75,11 @@ function FormLogin () {
  //Handlling show password and remember 
   const [showPassword, setShowPassord] = useState(false);
   const [remember, setRemember] = useState(true);
-  const [token , setToken]=useState("")
+
   const handleTogglePassword = () => setShowPassord(!showPassword);
   const handleToggleRemember = () => setRemember(!remember);
-  const navigate = useNavigate(); // why here?
+
+  const navigate = useNavigate(); 
  
   // hook form
   const {
@@ -98,14 +98,14 @@ function FormLogin () {
     sessionStorage.clear();
   },[])
   // prevent Default
-  const preventDefault = (e) => e.preventDefault();  //
+  const preventDefault = (e) => e.preventDefault();  
 
   // form submit
 
   const onSubmit = (data) => {//This method we use it to handle Login Button 
   JuUniVerseAxios.post("/auth/signIn",{username:data.email,password:data.password}).then(res=>{
  
-    sessionStorage.setItem("AUTH_TOKEN",res.data.data.token)
+    sessionStorage.setItem("AUTH_TOKEN",res.data.data.token) 
   navigate("/ProfilePage");
 }).catch(err=>{
   if (err?.response?.data?.message==undefined){
@@ -133,7 +133,7 @@ function FormLogin () {
         type="text"
         label="Username"
         error={errors.email ? true : false}
-        helperText={errors.email && "Enter a valid username"}//Done 
+        helperText={errors.email && "Enter a valid username"}
         {...register("email", { required: true })}
       />
 
@@ -156,11 +156,7 @@ function FormLogin () {
         helperText={
           errors.password && "Enter a valid password (5-15 characters)"
         }
-        {...register("password", {
-          required: true,
-          // minLength: 5,
-          // maxLength: 15,
-        })}
+        {...register("password", {required: true  })}
       />
 
       <Box

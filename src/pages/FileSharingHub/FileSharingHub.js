@@ -200,11 +200,7 @@ console.log(error);
       </Box>
 
       <Box sx={{
-        // display: "flex",
-        // justifyContent: "center",
-        // alignItems: "center",
 
-        // height: "85vh"
         float: 'left'
 
       }}>

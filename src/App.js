@@ -27,12 +27,8 @@ function App() {
     <>
       <Routes>
       <Route path="/" element={<Homepage />} />
-
-        <Route path="/Login" element={<Login />} />
+   <Route path="/Login" element={<Login />} />
         <Route path="/AboutUs" element={<AboutUs/>} />
-
-
-
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/ProfilePage" element={<ProfilePage />} />
@@ -49,23 +45,11 @@ function App() {
               <Route path="/Students" element={<Students/>} />
               <Route path="/Moderators" element={<Moderators/>} />
               <Route path="/BannedUsers" element={<BannedUsers/>} />
-
-
-
-
-
-
-
           </Route>
         </Route>
-
-
-
-
-        <Route path="*" element={<NotFound />} />
+    <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
 }
-
 export default App;

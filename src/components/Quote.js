@@ -3,9 +3,7 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import JuUniVerseAxios from '../API/JuUniVerseAxios';
 
 function Quote() {
-  const [quote, setQuote] = useState(
-    '“When we strive to become better than we are, everything around us becomes better too.”'
-  );
+  const [quote, setQuote] = useState('');
   const [quoteInput, setQuoteInput] = useState('');
   const [refershPage, setRefershPage] = useState(0);
 

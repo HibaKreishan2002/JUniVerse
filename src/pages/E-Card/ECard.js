@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Corrected import for useState and useEffect
+import React, { useState, useEffect } from "react"; 
 import { Box, Typography } from "@mui/material";
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import CircleIcon from '@mui/icons-material/Circle';
@@ -24,14 +24,14 @@ function ECard() {
       top: "50%",
       left: "50%",
       transform: "translate(-50%, -50%)",
-      // padding: 2,
+     
     }}>
 
       <Box sx={{ backgroundColor: "white", height: 60, marginTop: 8, padding: 1 }}>
         <Typography
           sx={{
-            fontWeight: "bold", // makes the text bold
-            fontSize: 35, // adjusts the size of the text
+            fontWeight: "bold", 
+            fontSize: 35, 
             lineHeight: "40px", // vertically centers the text inside the white box
             color: "#FF0000",
           }}
@@ -56,12 +56,11 @@ function ECard() {
         }}
       >
 
-        {/* Square black background around the icon */}
         <Box
           sx={{
-            backgroundColor: "black", // Black background
-            width: "50px", // Match the icon size (width)
-            height: "50px", // Match the icon size (height)
+            backgroundColor: "black", 
+            width: "50px",
+            height: "50px",
             display: "flex", // Center the icon inside the box
             justifyContent: "center", // Align horizontally
             alignItems: "center", // Align vertically
@@ -69,31 +68,23 @@ function ECard() {
             marginRight: 5,
           }}
         >
-          <AccountBoxIcon sx={{ fontSize: 80, color: "white" }} /> {/* White filled icon */}
-
+          <AccountBoxIcon sx={{ fontSize: 80, color: "white" }} /> 
         </Box>
-
-
-
       </Box>
+
       <Box sx={{ float: 'right', marginRight: '70px' }}> <CircleIcon
         sx={{
           color: "#ffc000",
           fontSize: 60,
           marginTop: 5,
           marginRight: '-22px'
-          // marginRight: 5,
         }}
       />
-
-        {/* Yellow Circle */}
         <CircleIcon
           sx={{
             color: "#f00",
             fontSize: 60,
             marginTop: 5,
-
-            // marginLeft: 5,
           }}
         /> </Box>
 

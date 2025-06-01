@@ -5,8 +5,6 @@ import JuUniVerseAxios from "../../API/JuUniVerseAxios.js";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Swal from "sweetalert2";
-
-
 function TherapistNotes() {
   const [dataStudent, setDataStudent] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,10 +57,11 @@ function TherapistNotes() {
         [selectedUser.id]: res?.data?.data || [] 
       }));
     } catch (error) {
+                  setNotes({})
+
       console.error("Error fetching notes:", error);
     }
   };
-//مو فاهمة
   useEffect(() => {
     if (!selectedUser?.id) return;
 
@@ -72,7 +71,6 @@ function TherapistNotes() {
     const interval = setInterval(getNotes, 3000); 
     return () => clearInterval(interval); 
   }, [selectedUser]); 
-  //مو فاهمةة//
 
   // Handle user selection
   const handleClick = (event, user) => {
@@ -121,7 +119,7 @@ function TherapistNotes() {
     setOpenModal(true)
 
     JuUniVerseAxios.put(`/therapist-chat/notes/note/${selectedNote.id}?title=${noteTitle}&description=${noteDescription}`).then(res=>{
-
+getNotes();
     })
     
     console.log('Edit note', selectedNote);
@@ -141,7 +139,7 @@ function TherapistNotes() {
         if (result.isDenied) {
           // Second Swal: Warning about related files being deleted
           JuUniVerseAxios.delete(`/therapist-chat/notes/note/${selectedNote.id}`).then(res=>{
-            setNotes({})
+    getNotes();
                         Swal.fire({
               title: 'Note Deleted Successfully!',
               icon: 'success',
@@ -210,6 +208,8 @@ function TherapistNotes() {
             </Typography>
              <Button variant="contained" color="primary" sx={{ width: "120px", alignSelf: "flex-end", marginLeft: "auto", marginBottom:2  }}
               onClick={() => { setTxtModelBtn("Save")
+                   setNoteTitle("");
+          setNoteDescription("");
                 setOpenModal(true)
 
               }}>

@@ -88,9 +88,9 @@ const TherapistChats = {
       marginBottom: '10px',
       maxWidth: '70%',
        marginLeft:'auto',
-       wordWrap:"break-word", // يجبر النص على النزول للسطر عند الحاجة
-       overflowWrap: "break-word", // يعالج الكلمات الطويلة
-       whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
+       wordWrap:"break-word", 
+       overflowWrap: "break-word", 
+       whiteSpace: "pre-wrap", 
        wordBreak: "break-word"
     },
     sentMessage: {
@@ -100,9 +100,9 @@ const TherapistChats = {
       marginBottom: '10px',
       alignSelf: 'flex-end',
       maxWidth: '70%',
-      wordWrap:"break-word", // يجبر النص على النزول للسطر عند الحاجة
-      overflowWrap: "break-word", // يعالج الكلمات الطويلة
-      whiteSpace: "pre-wrap", // يحافظ على التنسيق والنزول التلقائي
+      wordWrap:"break-word", 
+      overflowWrap: "break-word", 
+      whiteSpace: "pre-wrap", 
       wordBreak: "break-word"
 
     },

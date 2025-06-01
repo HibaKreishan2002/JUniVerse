@@ -6,79 +6,77 @@ import { SellTwoTone } from '@mui/icons-material';
 import ResponsiveDev from '../../components/ResponsiveDev';
 import Swal from 'sweetalert2';
 
-
-
-
 function FilesManagement() {
-    const [Data,setData]=useState([])
-    const [refershPage, setRefershPage] = useState(0);
-      const [fileID, setFileID] = useState(0);
-    
-    
-useEffect(()=>{ 
+  const [Data, setData] = useState([])
+  const [refershPage, setRefershPage] = useState(0);
+  const [fileID, setFileID] = useState(0);
+
+
+  useEffect(() => {
     JuUniVerseAxios.get("files/file/pending").then((res) => {
-        setData(res?.data?.data)
-      }).catch(err=>{
-        setData([])
+      setData(res?.data?.data?.reverse())
+    }).catch(err => {
+      setData([])
 
-      }) 
-},[refershPage])
-
-
-
-const onAcceptBtn=(params)=>{
-  console.log(params);
-  
-   Swal.fire({
-                        title:`Do you want to Accept this file?` ,
-                        showCancelButton: true,
-                        showConfirmButton:true,
-                        confirmButtonText: `Yes`
-  
-  
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          JuUniVerseAxios.put(`/files/file/${params.id}/accept`).then(res=>{
-                            setRefershPage(refershPage+1)
-                          })
-                          console.log(params);
-                          
-  
-                        } 
-                      });
-
-}
-const onRejectBtn=(params)=>{ console.log(params);
-  
-  Swal.fire({
-                       title:`Do you want to Reject this file?` ,
-                       showCancelButton: true,
-                       showConfirmButton:true,
-                       confirmButtonText: `Yes`
- 
- 
-                     }).then((result) => {
-                       if (result.isConfirmed) {
-                         JuUniVerseAxios.put(`/files/file/${params.id}/reject`).then(res=>{
-                           setRefershPage(refershPage+1)
-                         })
-                         console.log(params);
-                         
- 
-                       } 
-                     });
+    })
+  }, [refershPage])
 
 
-}
- const getFileByID = (fileID, transaction) => {
-  console.log(transaction);
-  
+
+  const onAcceptBtn = (params) => {
+    console.log(params);
+
+    Swal.fire({
+      title: `Do you want to Accept this file?`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: `Yes`
+
+
+    }).then((result) => {
+      if (result.isConfirmed) {
+        JuUniVerseAxios.put(`/files/file/${params.id}/accept`).then(res => {
+          setRefershPage(refershPage + 1)
+        })
+        console.log(params);
+
+
+      }
+    });
+
+  }
+  const onRejectBtn = (params) => {
+    console.log(params);
+
+    Swal.fire({
+      title: `Do you want to Reject this file?`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: `Yes`
+
+
+    }).then((result) => {
+      if (result.isConfirmed) {
+        JuUniVerseAxios.put(`/files/file/${params.id}/reject`).then(res => {
+          setRefershPage(refershPage + 1)
+        })
+        console.log(params);
+
+
+      }
+    });
+
+
+  }
+  const getFileByID = (fileID, transaction) => {
+    console.log(transaction);
+
     JuUniVerseAxios.get(`/files/file/${fileID}`).then(res => {
       console.log(res)
-   
+
       if (transaction == "Download") {
         console.log(transaction);
-        
+
         handleDownload(res.data.data.fileAsBase64, "JuUnFile", res.data.data.extension)
       } else {
         console.log(transaction);
@@ -113,9 +111,9 @@ const onRejectBtn=(params)=>{ console.log(params);
       js: "application/javascript",
       mpeg: "video/mpeg",
     };
-console.log(fileName);
-console.log(base64FileContent);
-console.log(fileExtension);
+    console.log(fileName);
+    console.log(base64FileContent);
+    console.log(fileExtension);
 
     const mimeType = mimeTypes[fileExtension.toLowerCase()];
     if (!mimeType) {
@@ -144,7 +142,7 @@ console.log(fileExtension);
 
     // Revoke the object URL to free memory
     console.log(url);
-    
+
     URL.revokeObjectURL(url);
   };
   const handleView = (base64FileContent, fileExtension) => {
@@ -186,89 +184,93 @@ console.log(fileExtension);
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
   };
-    const columns = [
-        { field: 'ownerUsername', headerName: 'Uploader',    width: 250,  align: 'center',    headerAlign: 'center',
-          resizable: false,
+  const columns = [
+    {
+      field: 'ownerUsername', headerName: 'Uploader', width: 250, align: 'center', headerAlign: 'center',
+      resizable: false,
 
-        },
-        { 
-          field: 'folderName', 
-          headerName: 'Folder Name', 
-          headerAlign: 'center', 
-          align: 'center', 
-          width: 200, 
-          resizable: false ,
-          
-          
-        },
-        { field: 'name', headerName: 'File', headerAlign: 'center', headerAlign: 'center',align: 'center',    width: 300,    resizable: false,
+    },
+    {
+      field: 'folderName',
+      headerName: 'Folder Name',
+      headerAlign: 'center',
+      align: 'center',
+      width: 200,
+      resizable: false,
 
-          renderCell: (params) => (
-            <span
-              style={{ cursor: "pointer", color: "#3953cd" }}
-              onClick={() => getFileByID(params.id, "View")
-              }
-            >
-              {params.value}
-            </span>
-          ),
-        
-    
-        },
-   
-         { field: 'status', headerName: 'Download',  headerAlign: 'center',align: 'center',   width: 200,    resizable: false,
-          disableColumnMenu : true,
-          renderCell: (params) => (
-            <>
-              <Button 
-    variant="contained" 
-    color="primary" 
-    size="small" 
-    onClick={() => {
-        setFileID(params.id);
-        getFileByID(params.id, "Download");
-        // setMenuData({ anchorEl: null });
-        // console.log(menuData.selectedMsg);
-    }}
->
-    DOWNLOAD
-</Button>
-            </>
-        )},  
-         { fiLeld: 'action', headerName: 'Action' ,    headerAlign: 'center',align: 'center', width: 200,    disableColumnMenu :true,
-          resizable: false,
 
-          
-          renderCell: (params) => (
-            <>
-            
-              <Button variant="contained" color="success" size="small" sx={{ mr: 1 }} onClick={()=>onAcceptBtn(params)}>
-                Accept
-              </Button>
-              <Button variant="contained" color="error" size="small" onClick={()=>onRejectBtn(params)}>
-                Reject
-              </Button>
-            </>
-          ),
-         },
+    },
+    {
+      field: 'name', headerName: 'File', headerAlign: 'center', headerAlign: 'center', align: 'center', width: 300, resizable: false,
 
-    ]
-    
+      renderCell: (params) => (
+        <span
+          style={{ cursor: "pointer", color: "#3953cd" }}
+          onClick={() => getFileByID(params.id, "View")
+          }
+        >
+          {params.value}
+        </span>
+      ),
+
+
+    },
+
+    {
+      field: 'status', headerName: 'Download', headerAlign: 'center', align: 'center', width: 200, resizable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => {
+              setFileID(params.id);
+              getFileByID(params.id, "Download");
+
+            }}
+          >
+            DOWNLOAD
+          </Button>
+        </>
+      )
+    },
+    {
+      fiLeld: 'action', headerName: 'Action', headerAlign: 'center', align: 'center', width: 200, disableColumnMenu: true,
+      resizable: false,
+
+
+      renderCell: (params) => (
+        <>
+
+          <Button variant="contained" color="success" size="small" sx={{ mr: 1 }} onClick={() => onAcceptBtn(params)}>
+            Accept
+          </Button>
+          <Button variant="contained" color="error" size="small" onClick={() => onRejectBtn(params)}>
+            Reject
+          </Button>
+        </>
+      ),
+    },
+
+  ]
+
   return (
     <ResponsiveDev>
-    <Box style={{ height: 635, width: '100%' }}>
-    <DataGrid rows={Data.reverse()} columns={columns}  pageSizeOptions={[10]}
-       disableColumnSorting={true}
-       disableColumnResizing={true}
-       getRowClassName={(params) => `super-app-theme--${params.row.status}`}
+      <Box style={{ height: 635, width: '100%' }}>
+        <DataGrid rows={Data} columns={columns} pageSizeOptions={[10]}
+          disableColumnSorting={true}
+          disableColumnResizing={true}
+          getRowClassName={(params) => `super-app-theme--${params.row.status}`}
 
-       initialState={{
-          pagination: {
-            paginationModel: { pageSize: 10 },
-          },
-        }} />
-  </Box>
-  </ResponsiveDev>
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10 },
+            },
+          }} />
+      </Box>
+    </ResponsiveDev>
   )
 }
 

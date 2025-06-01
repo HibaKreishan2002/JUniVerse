@@ -23,16 +23,6 @@ import phpicon from '../../assets/images/phpicon.png'
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import FileViewer from 'react-file-viewer';
 
-
-
-
-
-
-
-
-
-
-
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -45,7 +35,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-    function FileScreen() {
+function FileScreen() {
   const { folderId } = useParams(); // Get folderId from URL
   const [fileName, setFileName] = useState("")
   const [base64File, setBase64File] = useState("")
@@ -61,16 +51,16 @@ const VisuallyHiddenInput = styled('input')({
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleOpenViewer = () => setOpenViewer(true);
-const handleClose = () => {
-  setErrorMessage("");
-  setBase64File("");
-  setBase64FileContent("");
-  setFileName("");
-  setFileDescription(" ");
-  setFileExtension("");
-  setFileID(0);
-  setOpen(false);
-};
+  const handleClose = () => {
+    setErrorMessage("");
+    setBase64File("");
+    setBase64FileContent("");
+    setFileName("");
+    setFileDescription(" ");
+    setFileExtension("");
+    setFileID(0);
+    setOpen(false);
+  };
   const [base64FileContent, setBase64FileContent] = useState("")
   const [base64FileExtension, setBase64FileExtension] = useState("")
   const [errorMessage, setErrorMessage] = useState("");
@@ -87,7 +77,7 @@ const handleClose = () => {
   }, [refershPage])
 
   //EDIT
-  const handleEditFile=()=>{
+  const handleEditFile = () => {
 
     JuUniVerseAxios.put(`files/file/${fileID}/name?fileName=${fileName}`, { name: fileName, description: fileDescription }).then((res) => {
       setRefershPage(refershPage + 1);
@@ -99,15 +89,16 @@ const handleClose = () => {
       setFileDescription(" ");
       setFileName("");
       setOpen(false)
-    }).catch(err=>{console.log(err?.response?.data?.errorDescription)
-  
-        Swal.fire({
-            title: "ERROR",
-            text: err?.response?.data?.errorDescription,
-            icon: "error"
-          });
-          handleClose();
-  
+    }).catch(err => {
+      console.log(err?.response?.data?.errorDescription)
+
+      Swal.fire({
+        title: "ERROR",
+        text: err?.response?.data?.errorDescription,
+        icon: "error"
+      });
+      handleClose();
+
     }
     )
 
@@ -121,39 +112,40 @@ const handleClose = () => {
       setFileDescription(" ");
       setFileName("");
       setOpen(false)
-    }).catch(err=>{console.log(err?.response?.data?.errorDescription)
-  
-        Swal.fire({
-            title: "ERROR",
-            text: err?.response?.data?.errorDescription,
-            icon: "error"
-          });
-          handleClose();
-  
+    }).catch(err => {
+      console.log(err?.response?.data?.errorDescription)
+
+      Swal.fire({
+        title: "ERROR",
+        text: err?.response?.data?.errorDescription,
+        icon: "error"
+      });
+      handleClose();
+
     }
     )
   }
-const mimeTypes = {
-        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        xls: "application/vnd.ms-excel",
-        pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ppt: "application/vnd.ms-powerpoint",
-        png: "image/png",
-        jpg: "image/jpeg",
-        jpeg: "image/jpeg",
-        pdf: "application/pdf",
-        doc: "application/msword",
-        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        css: "text/css",
-        html: "text/html",
-        txt: "text/html",
-        php: "application/x-httpd-php",
-        java: "text/x-java-source",
-        mp4: "video/mp4",
-        mp3: "audio/mpeg",
-        js: "application/javascript",
-        mpeg: "video/mpeg",
-      };
+  const mimeTypes = {
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xls: "application/vnd.ms-excel",
+    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ppt: "application/vnd.ms-powerpoint",
+    png: "image/png",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    pdf: "application/pdf",
+    doc: "application/msword",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    css: "text/css",
+    html: "text/html",
+    txt: "text/html",
+    php: "application/x-httpd-php",
+    java: "text/x-java-source",
+    mp4: "video/mp4",
+    mp3: "audio/mpeg",
+    js: "application/javascript",
+    mpeg: "video/mpeg",
+  };
   const convertToBase64 = async (file, name) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -162,26 +154,26 @@ const mimeTypes = {
       setFileName(file.name);
       setBase64File(Base64)
       const fileExtensionBase = file.name.split(".");
-      setFileExtension( fileExtensionBase[fileExtensionBase.length - 1])
+      setFileExtension(fileExtensionBase[fileExtensionBase.length - 1])
       console.log(fileExtensionBase[fileExtensionBase.length - 1]);
 
     }
       ;
-      console.log(file);
-      if(file){
+    console.log(file);
+    if (file) {
 
-        reader.readAsDataURL(file);
-      }
+      reader.readAsDataURL(file);
+    }
   };
   const handleInputChange = (e) => {
-    
+
     const { name, value, files } = e?.target;
 
     if (files) {
       const file = files[0];
-   const mimeType = mimeTypes[file.name.split(".")[file.name.split(".").length-1].toLowerCase()];
+      const mimeType = mimeTypes[file.name.split(".")[file.name.split(".").length - 1].toLowerCase()];
       if (!mimeType) {
-                  setOpen(false);
+        setOpen(false);
 
         Swal.fire({
           title: `Unsupported file type!`,
@@ -203,30 +195,30 @@ const mimeTypes = {
 
   }
   const AddFile = (name, type, base64) => {
-    
-              if (modelTitle !== "Edit File"&&(fileExtension==undefined || fileExtension.trim()=="")){
 
-     
+    if (modelTitle !== "Edit File" && (fileExtension == undefined || fileExtension.trim() == "")) {
+
+
       setErrorMessage("Please Select the file first !")
 
       return;
     }
-      if (fileName==undefined || fileName.trim()==""){
+    if (fileName == undefined || fileName.trim() == "") {
 
-     
+
       setErrorMessage("Please fill File Name")
 
       return;
     }
-       if (fileDescription==undefined || fileDescription.trim()==""){
+    if (fileDescription == undefined || fileDescription?.trim() == "") {
 
-     
+
       setErrorMessage("Please fill File Description")
 
       return;
     }
 
- 
+
     if (modelTitle === "Upload File") {
       JuUniVerseAxios.post("/files", {
         name: fileName,
@@ -237,13 +229,14 @@ const mimeTypes = {
       })
         .then((res) => {
           setRefershPage(refershPage + 1);
-  
+          setErrorMessage("");
+
           if (
-            sessionStorage.getItem("role") == "STUDENT" 
+            sessionStorage.getItem("role") == "STUDENT"
           ) {
             Swal.fire("Your file is being moderated!");
           }
-  
+
           setOpen(false);
         })
         .catch((err) => {
@@ -253,7 +246,7 @@ const mimeTypes = {
       handleEditFile();
     }
   };
-  
+
   const handleMenuClose = () => {
     setMenuData({ anchorEl: null, selectedMsg: null });
   };
@@ -403,57 +396,57 @@ const mimeTypes = {
 
     <ResponsiveDev>
 
-<Modal open={open} onClose={handleClose}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 3,
-              borderRadius: 2,
-            }}
-          >
-          
-            <Typography variant="h6" mb={2}>{modelTitle}<FolderIcon sx={{ fontSize: 28, color: "#ffd35a", position: "relative", top: 10 }} />
-                     {errorMessage!=""?            <Alert severity="error">{errorMessage}</Alert>:""}
-
-            </Typography>
-            {  modelTitle==="Upload File"?
-        <Button sx={{ float: "right" }}
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-    
-          startIcon={<CloudUploadIcon />}
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 3,
+            borderRadius: 2,
+          }}
         >
-          Choose file
-       <VisuallyHiddenInput
-            type="file"
-              accept={Object.keys(mimeTypes).map(ext => "." + ext).join(",")}
 
-            onChange={handleInputChange}
+          <Typography variant="h6" mb={2}>{modelTitle}<FolderIcon sx={{ fontSize: 28, color: "#ffd35a", position: "relative", top: 10 }} />
+            {errorMessage != "" ? <Alert severity="error">{errorMessage}</Alert> : ""}
 
-          /> 
-        </Button>:""}
-            <TextField fullWidth label="File Name" variant="outlined" margin="normal" value={fileName}
-              onChange={(e) => setFileName(e.target.value)} />
-            <TextField fullWidth label="File Description" variant="outlined" margin="normal" value={fileDescription}
-              onChange={(e) => setFileDescription(e.target.value)} />
-            <Box mt={2} display="flex" gap={2}>
-              <Button variant="contained" color="primary" onClick={()=>AddFile(fileName, fileExtension, base64File)}>
-                SAVE
-              </Button>
-              <Button variant="outlined" color="secondary" onClick={handleClose}>
-                CANCEL
-              </Button>
-            </Box>
+          </Typography>
+          {modelTitle === "Upload File" ?
+            <Button sx={{ float: "right" }}
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+
+              startIcon={<CloudUploadIcon />}
+            >
+              Choose file
+              <VisuallyHiddenInput
+                type="file"
+                accept={Object.keys(mimeTypes).map(ext => "." + ext).join(",")}
+
+                onChange={handleInputChange}
+
+              />
+            </Button> : ""}
+          <TextField fullWidth label="File Name" variant="outlined" margin="normal" value={fileName}
+            onChange={(e) => setFileName(e.target.value)} />
+          <TextField fullWidth label="File Description" variant="outlined" margin="normal" value={fileDescription}
+            onChange={(e) => setFileDescription(e.target.value)} />
+          <Box mt={2} display="flex" gap={2}>
+            <Button variant="contained" color="primary" onClick={() => AddFile(fileName, fileExtension, base64File)}>
+              SAVE
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={handleClose}>
+              CANCEL
+            </Button>
           </Box>
-        </Modal>
+        </Box>
+      </Modal>
       <Box sx={{
         float: "right"
 
@@ -464,23 +457,19 @@ const mimeTypes = {
           role={undefined}
           variant="contained"
           tabIndex={-1}
-          onClick={()=>{
+          onClick={() => {
             setModelTitle("Upload File")
             setFileName("");
             setFileDescription(" ");
 
-            setOpen(true)}}
+            setOpen(true)
+          }}
           startIcon={<CloudUploadIcon />}
         >
           Upload files
-          {/* <VisuallyHiddenInput
-            type="file"
-            onChange={handleInputChange}
 
-          /> */}
         </Button>
       </Box>
-      {/* <img src={pdficon} width={'133px'}/> */}
       <Box sx={{
 
 
@@ -497,7 +486,7 @@ const mimeTypes = {
 
           {fileDetails.map((file, index) => (
 
-          
+
             <Grid
               item
               xs={3}
@@ -515,7 +504,7 @@ const mimeTypes = {
               <IconButton onClick={(e) => handleClick(e, file)} sx={{ ml: 15, paddingBottom: 0 }}  >
                 <MoreVertIcon />
               </IconButton>
-          
+
 
               <Menu
                 anchorEl={menuData.anchorEl}
@@ -529,43 +518,42 @@ const mimeTypes = {
                   }
                 }}
               >
-          
-                   {(sessionStorage.getItem("role") == "ADMIN" ) ||( sessionStorage.getItem("role") == "MODERATOR" )?(
-               <> 
-               <MenuItem onClick={() => {
-                  setModelTitle("Edit File")
-                  setFileID(menuData.selectedMsg?.id)
-                  setFileName(menuData.selectedMsg?.name);
-                  setFileDescription(menuData.selectedMsg?.description);
-                  handleOpen();
-                  setMenuData({ anchorEl: null });
-                  console.log(menuData.selectedMsg);
 
-                }}>Edit</MenuItem>
-        
-                <MenuItem onClick={() => {
+                {(sessionStorage.getItem("role") == "ADMIN") || (sessionStorage.getItem("role") == "MODERATOR") ? (
+                  <>
+                    <MenuItem onClick={() => {
+                      setModelTitle("Edit File")
+                      setFileID(menuData.selectedMsg?.id)
+                      setFileName(menuData.selectedMsg?.name);
+                      setFileDescription(menuData.selectedMsg?.description);
+                      handleOpen();
+                      setMenuData({ anchorEl: null });
+                      console.log(menuData.selectedMsg);
 
-                  setMenuData({ anchorEl: null });
-                  Swal.fire({
-                    title: ` Do you want to Delete "${menuData.selectedMsg?.name}" File? `,
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    showConfirmButton: false,
-                    denyButtonText: `Delete`
+                    }}>Edit</MenuItem>
+
+                    <MenuItem onClick={() => {
+
+                      setMenuData({ anchorEl: null });
+                      Swal.fire({
+                        title: ` Do you want to Delete "${menuData.selectedMsg?.name}" File? `,
+                        showCancelButton: true,
+                        showDenyButton: true,
+                        showConfirmButton: false,
+                        denyButtonText: `Delete`
 
 
-                  }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isDenied) {
-                      handleDeletedFiles(menuData.selectedMsg?.id)
+                      }).then((result) => {
+                        if (result.isDenied) {
+                          handleDeletedFiles(menuData.selectedMsg?.id)
 
-                    }
-                  });
-                }}>Delete</MenuItem> </>
+                        }
+                      });
+                    }}>Delete</MenuItem> </>
 
-):""} 
+                ) : ""}
 
-        
+
                 <MenuItem onClick={() => {
 
                   setFileID(menuData.selectedMsg?.id)
@@ -585,7 +573,7 @@ const mimeTypes = {
                   // setOpenViewer(true)
                 }}>Download</MenuItem>
               </Menu>
-              <Tooltip title={ `  Uploaded By : ${file.ownerUsername}`} placement="top" arrow
+              <Tooltip title={`  Uploaded By : ${file.ownerUsername}`} placement="top" arrow
 
                 slotProps={{
                   popper: {
@@ -610,60 +598,60 @@ const mimeTypes = {
                   },
                 }}
               >
-                  <Tooltip title={`Description: ${file.description}` } placement="bottom" arrow
+                <Tooltip title={`Description: ${file.description}`} placement="bottom" arrow
 
-                slotProps={{
-                  popper: {
-                    sx: {
-                      [`&.${tooltipClasses.popper}[data-popper-placement*="bottom"] .${tooltipClasses.tooltip}`]:
-                      {
-                        marginTop: '33px',
-                      },
-                      [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
-                      {
-                        marginBottom: '0px',
-                      },
-                      [`&.${tooltipClasses.popper}[data-popper-placement*="right"] .${tooltipClasses.tooltip}`]:
-                      {
-                        marginLeft: '0px',
-                      },
-                      [`&.${tooltipClasses.popper}[data-popper-placement*="left"] .${tooltipClasses.tooltip}`]:
-                      {
-                        marginRight: '0px',
+                  slotProps={{
+                    popper: {
+                      sx: {
+                        [`&.${tooltipClasses.popper}[data-popper-placement*="bottom"] .${tooltipClasses.tooltip}`]:
+                        {
+                          marginTop: '33px',
+                        },
+                        [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
+                        {
+                          marginBottom: '0px',
+                        },
+                        [`&.${tooltipClasses.popper}[data-popper-placement*="right"] .${tooltipClasses.tooltip}`]:
+                        {
+                          marginLeft: '0px',
+                        },
+                        [`&.${tooltipClasses.popper}[data-popper-placement*="left"] .${tooltipClasses.tooltip}`]:
+                        {
+                          marginRight: '0px',
+                        },
                       },
                     },
-                  },
-                }}
-              >
-                {file.extension == "pdf" ? <img src={pdficon} width={'70px'} />
-                  : file.extension == "png" || file.extension == "jpg" || file.extension == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
-                    : file.extension == "doc" || file.extension == "docx" ? <img src={wordicon} width={'70px'} />
-                      : file.extension == "ppt" || file.extension == "pptx" ? <img src={powerpointicon} width={'70px'} />
-                        : file.extension == "xls" || file.extension == "xlsx" ? <img src={excelicon} width={'70x'} />
-                          : file.extension == "js" ? <img src={jsicon} width={'70px'} />
-                            : file.extension == "txt" ? <img src={texticon} width={'70px'} />
-                              : file.extension == "mp4" ? <img src={mp4icon} width={'70px'} />
-                                : file.extension == "mp3" ? <img src={mp3icon} width={'70px'} />
-                                  : file.extension == "java" ? <img src={javaicon} width={'70px'} />
-                                    : file.extension == "php" ? <img src={phpicon} width={'70px'} />
-                                      : file.extension == "html" ? <img src={htmlicon} width={'70px'} />
-                                        : file.extension == "css" ? <img src={cssicon} width={'70px'} />
-                                          : <FileIcon
-                                            sx={{
-                                              fontSize: 75,
-                                              padding: 0,
-                                              margin: '-32px',
-                                              color: "#ffd35a",
-                                              transition: "0.3s",
-                                              cursor: "pointer",
-                                            }}
-                                            onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
+                  }}
+                >
+                  {file.extension == "pdf" ? <img src={pdficon} width={'70px'} />
+                    : file.extension == "png" || file.extension == "jpg" || file.extension == "jpeg" ? <ImageIcon sx={{ fontSize: 75, color: "#247dd1" }} />
+                      : file.extension == "doc" || file.extension == "docx" ? <img src={wordicon} width={'70px'} />
+                        : file.extension == "ppt" || file.extension == "pptx" ? <img src={powerpointicon} width={'70px'} />
+                          : file.extension == "xls" || file.extension == "xlsx" ? <img src={excelicon} width={'70x'} />
+                            : file.extension == "js" ? <img src={jsicon} width={'70px'} />
+                              : file.extension == "txt" ? <img src={texticon} width={'70px'} />
+                                : file.extension == "mp4" ? <img src={mp4icon} width={'70px'} />
+                                  : file.extension == "mp3" ? <img src={mp3icon} width={'70px'} />
+                                    : file.extension == "java" ? <img src={javaicon} width={'70px'} />
+                                      : file.extension == "php" ? <img src={phpicon} width={'70px'} />
+                                        : file.extension == "html" ? <img src={htmlicon} width={'70px'} />
+                                          : file.extension == "css" ? <img src={cssicon} width={'70px'} />
+                                            : <FileIcon
+                                              sx={{
+                                                fontSize: 75,
+                                                padding: 0,
+                                                margin: '-32px',
+                                                color: "#ffd35a",
+                                                transition: "0.3s",
+                                                cursor: "pointer",
+                                              }}
+                                              onClick={() => navigate(`/files/${file.id}`)} // Navigate to file screen
 
-                                            onMouseEnter={() => setHovered(index)}
-                                            onMouseLeave={() => setHovered(null)}
-                                          />}
+                                              onMouseEnter={() => setHovered(index)}
+                                              onMouseLeave={() => setHovered(null)}
+                                            />}
 
-                                          </Tooltip>
+                </Tooltip>
               </Tooltip>
               <Typography variant="h6" sx={{ marginTop: 1, fontSize: 15, fontWeight: "bold" }}>
                 {file.name}
@@ -690,6 +678,6 @@ const mimeTypes = {
       </Modal>
     </ResponsiveDev>
   );
-    }
+}
 
-  export default FileScreen; 
+export default FileScreen; 
