@@ -57,7 +57,7 @@ function SocialHub() {
       setRefershPage(refershPage + 1);
     }).catch(console.log);
   };
-  //Added by HIBA
+
 
   const handleDeleteSenderMessage = (id) => {
     JuUniVerseAxios.delete(`/public-chat/${id}`).then(() => {

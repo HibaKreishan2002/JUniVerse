@@ -1,9 +1,11 @@
 import { Box, Container } from "@mui/material";
 import FormLogin from "../../components/FormLogin";
 import LoginPhoto from "../../assets/images/Logo.png";
+import ResponsiveDev from "../../components/ResponsiveDev";
 
 const Login = () => {
   return (
+    <>
     <Box
       sx={{
         display: "flex",
@@ -16,16 +18,16 @@ const Login = () => {
           width: "350px",
           display: "flex",
           flexDirection: "column",
-          alignItems: "flex-start", // align to left within the box
+          // alignItems: "flex-start", // align to left within the box
           justifyContent: "center",
           padding: 1,
-          ml: 20, // push content to the right inside the box
+          marginLeft: 20, // push content to the right inside the box
         }}
       >
         <img
           src={LoginPhoto}
           alt="Login Image"
-          style={{ maxWidth: "100%", height: "auto" }}
+          style={{ Width: "100%", height: "auto" }}
         />
      
       </Box>
@@ -40,11 +42,13 @@ const Login = () => {
           pl: 6, // push the form to the right a bit
         }}
       >
-        <Container maxWidth="xs">
+
+        <Container sx={{width:"500px",marginLeft:15}}>
           <FormLogin />
         </Container>
       </Box>
     </Box>
+    </>
   );
 };
 

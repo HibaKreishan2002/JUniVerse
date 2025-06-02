@@ -9,6 +9,7 @@ import SectionDivider from "./SectionDivider";
 import { useNavigate } from "react-router-dom";
 import JuUniVerseAxios from "../API/JuUniVerseAxios";
 import Swal from "sweetalert2";
+import ResponsiveDev from "./ResponsiveDev";
 // style
 const FormStyle = styled("form")(({ theme }) => ({
   // root style
@@ -125,7 +126,8 @@ function FormLogin () {
 }) }; 
 
   return (
-    <FormStyle component="form" onSubmit={handleSubmit(onSubmit)}>
+    <ResponsiveDev>
+ <FormStyle component="form" onSubmit={handleSubmit(onSubmit)}>
       {/* Email */}
       <TextField
         variant="outlined"
@@ -186,6 +188,8 @@ function FormLogin () {
       </Button>
 
     </FormStyle>
+    </ResponsiveDev>
+   
   );
 };
 
