@@ -259,8 +259,8 @@ marginLeft:15
           ))}
         </Grid>
       </Box>
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px'  }}><a href="https://www.who.int/health-topics/mental-health#tab=tab_1"> <strong > Read more about your mental health! </strong> </a> 
-      <a href="https://findahelpline.com/countries/jo"> <strong >Reach out for JCPA Hotline! 
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px'  }}><a href="https://www.who.int/health-topics/mental-health#tab=tab_1" target="_blank"> <strong > Read more about your mental health! </strong> </a> 
+      <a href="https://findahelpline.com/countries/jo" target="_blank"> <strong >Reach out for JCPA Hotline! 
 
 </strong> </a> 
   </div>
